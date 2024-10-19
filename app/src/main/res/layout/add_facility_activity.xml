@@ -1,0 +1,67 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!-- Street EditText -->
+    <EditText
+        android:id="@+id/editTextStreet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Street"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- City EditText -->
+    <EditText
+        android:id="@+id/editTextCity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="City"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextStreet"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Province EditText -->
+    <EditText
+        android:id="@+id/editTextProvince"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Province"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextCity"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Postal Code EditText -->
+    <EditText
+        android:id="@+id/editTextPostalCode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Postal Code"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextProvince"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Create Facility Button -->
+    <Button
+        android:id="@+id/buttonCreateFacility"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Create Facility"
+        app:layout_constraintTop_toBottomOf="@id/editTextPostalCode"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="32dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
