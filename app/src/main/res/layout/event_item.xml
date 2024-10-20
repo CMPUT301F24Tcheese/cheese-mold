@@ -1,22 +1,37 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
 
+    <!-- Poster Image -->
+    <ImageView
+        android:id="@+id/eventPoster"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Event Title -->
     <TextView
         android:id="@+id/eventTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:paddingBottom="4dp"/>
+        android:textColor="@android:color/black"/>
 
+    <!-- Event Description -->
     <TextView
         android:id="@+id/eventDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:paddingBottom="8dp"/>
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="4dp"/>
+
 </LinearLayout>

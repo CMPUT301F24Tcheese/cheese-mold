@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- Street EditText -->
     <EditText
         android:id="@+id/editTextStreet"
         android:layout_width="0dp"
@@ -17,7 +16,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- City EditText -->
     <EditText
         android:id="@+id/editTextCity"
         android:layout_width="0dp"
@@ -29,7 +27,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Province EditText -->
     <EditText
         android:id="@+id/editTextProvince"
         android:layout_width="0dp"
@@ -41,7 +38,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Postal Code EditText -->
     <EditText
         android:id="@+id/editTextPostalCode"
         android:layout_width="0dp"
@@ -53,24 +49,22 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Create Facility Button -->
     <Button
-        android:id="@+id/buttonCreateFacility"
+        android:id="@+id/buttonUpdateFacility"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Create Facility"
+        android:text="Update Facility"
         app:layout_constraintTop_toBottomOf="@id/editTextPostalCode"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="32dp"/>
 
-    <!-- Back Button -->
     <Button
-        android:id="@+id/buttonBackToFacility"
+        android:id="@+id/buttonCancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Back"
-        app:layout_constraintTop_toBottomOf="@id/buttonCreateFacility"
+        android:text="Cancel"
+        app:layout_constraintTop_toBottomOf="@id/buttonUpdateFacility"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>

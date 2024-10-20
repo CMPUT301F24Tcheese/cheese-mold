@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +24,25 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         return new FacilityViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull FacilityViewHolder holder, int position) {
-        // Bind each facility to the view
         Facility facility = facilityList.get(position);
         holder.facilityName.setText(facility.getName());
         holder.facilityDescription.setText(facility.getDescription());
+
+        // Click Listener to open EditFacilityActivity
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(view.getContext(), EditFacilityActivity.class);
+            intent.putExtra("facilityId", facility.getId());
+            intent.putExtra("street", facility.getStreet());
+            intent.putExtra("city", facility.getCity());
+            intent.putExtra("province", facility.getProvince());
+            intent.putExtra("postalCode", facility.getPostalCode());
+            view.getContext().startActivity(intent);
+        });
     }
+
 
     @Override
     public int getItemCount() {

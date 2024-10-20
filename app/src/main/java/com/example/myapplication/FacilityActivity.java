@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -8,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,16 +41,7 @@ public class FacilityActivity extends AppCompatActivity {
 
         // Button to navigate back to EventActivity
         Button buttonBackToEvents = findViewById(R.id.buttonBackToEvents);
-        buttonBackToEvents.setOnClickListener(view -> {
-            finish(); // Close FacilityActivity and return to EventActivity
-        });
-
-        // Floating Action Button to add a new Facility
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            // Navigate to Add Facility Activity
-            startActivity(new Intent(FacilityActivity.this, AddFacilityActivity.class));
-        });
+        buttonBackToEvents.setOnClickListener(view -> finish());
     }
 
     private void loadFacilitiesFromFirestore() {
@@ -67,10 +56,9 @@ public class FacilityActivity extends AppCompatActivity {
                 }
 
                 if (value != null) {
-                    // Update the facility list and notify the adapter
                     facilityList.clear();
                     facilityList.addAll(value.toObjects(Facility.class));
-                    facilityAdapter.notifyDataSetChanged(); // Notify adapter to refresh the list
+                    facilityAdapter.notifyDataSetChanged();
                 }
             }
         });

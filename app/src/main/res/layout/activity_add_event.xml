@@ -1,35 +1,111 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@android:color/white">
 
+    <!-- Event Name EditText -->
     <EditText
         android:id="@+id/editTextEventName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Event Name"
+        android:background="#E5E0E8"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
+    <!-- Event Description EditText -->
     <EditText
         android:id="@+id/editTextEventDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Event Description"
+        android:background="#E5E0E8"
         app:layout_constraintTop_toBottomOf="@id/editTextEventName"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <Button
-        android:id="@+id/buttonSaveEvent"
-        android:layout_width="wrap_content"
+    <!-- Date and Time EditText -->
+    <EditText
+        android:id="@+id/editTextEventDateTime"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Save Event"
+        android:hint="Date and Time"
+        android:background="#E5E0E8"
         app:layout_constraintTop_toBottomOf="@id/editTextEventDescription"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp"/>
+        android:layout_margin="16dp"/>
+
+    <!-- Limit Entrants Number EditText -->
+    <EditText
+        android:id="@+id/editTextLimitEntrants"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Limit entrants number (optional)"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextEventDateTime"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Upload Poster Button -->
+    <Button
+        android:id="@+id/buttonUploadPoster"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="+ Upload Poster"
+        app:layout_constraintTop_toBottomOf="@id/editTextLimitEntrants"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Poster Display TextView -->
+    <TextView
+        android:id="@+id/textViewPosterDisplay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Poster Display:"
+        app:layout_constraintTop_toBottomOf="@id/buttonUploadPoster"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Enable Geolocation Switch -->
+    <Switch
+        android:id="@+id/switchGeolocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable geolocation"
+        app:layout_constraintTop_toBottomOf="@id/textViewPosterDisplay"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Poster Preview ImageView -->
+    <ImageView
+        android:id="@+id/imageViewPosterPreview"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@id/buttonUploadPoster"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop"
+        android:background="#CCCCCC"/>
+
+    <!-- Create Event Button -->
+    <Button
+        android:id="@+id/buttonSaveEvent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Create Event"
+        app:layout_constraintTop_toBottomOf="@id/switchGeolocation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="32dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

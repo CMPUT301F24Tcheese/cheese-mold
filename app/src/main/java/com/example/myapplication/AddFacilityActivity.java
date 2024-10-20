@@ -2,26 +2,21 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-import java.util.List;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 public class AddFacilityActivity extends AppCompatActivity {
 
     private EditText editTextStreet, editTextCity, editTextProvince, editTextPostalCode;
-    private Button buttonCreateFacility;
+    private Button buttonCreateFacility, buttonBackToFacility;
     private FirebaseFirestore db;
 
     @Override
@@ -29,16 +24,20 @@ public class AddFacilityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_facility_activity);
 
+        // Initialize views
         editTextStreet = findViewById(R.id.editTextStreet);
         editTextCity = findViewById(R.id.editTextCity);
         editTextProvince = findViewById(R.id.editTextProvince);
         editTextPostalCode = findViewById(R.id.editTextPostalCode);
         buttonCreateFacility = findViewById(R.id.buttonCreateFacility);
+        buttonBackToFacility = findViewById(R.id.buttonBackToFacility);
 
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
+        // Set click listeners
         buttonCreateFacility.setOnClickListener(v -> createFacility());
+        buttonBackToFacility.setOnClickListener(view -> finish());
     }
 
     private void createFacility() {
@@ -58,7 +57,6 @@ public class AddFacilityActivity extends AppCompatActivity {
             db.collection("Facilities").document(id).set(facility)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(AddFacilityActivity.this, "Facility built", Toast.LENGTH_SHORT).show();
-                        // Return to FacilityActivity
                         startActivity(new Intent(AddFacilityActivity.this, FacilityActivity.class));
                         finish();
                     })
@@ -69,24 +67,5 @@ public class AddFacilityActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // Optional: Method for loading facilities (if needed for future extensions)
-    private void loadFacilitiesFromFirestore() {
-        CollectionReference facilityCollection = db.collection("Facilities");
-
-        facilityCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@NonNull QuerySnapshot value, @NonNull FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w("AddFacilityActivity", "Listen failed.", error);
-                    return;
-                }
-
-                if (value != null) {
-                    // You can use this method to handle changes or updates to facilities, if needed.
-                }
-            }
-        });
     }
 }

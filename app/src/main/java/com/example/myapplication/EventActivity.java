@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.myapplication.Event;
 
 public class EventActivity extends AppCompatActivity {
 
@@ -75,7 +75,6 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onEvent(@NonNull QuerySnapshot value, @NonNull FirebaseFirestoreException error) {
                 if (error != null) {
-                    // Log error if any
                     return;
                 }
 
