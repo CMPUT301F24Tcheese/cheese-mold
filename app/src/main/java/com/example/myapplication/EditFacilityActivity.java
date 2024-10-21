@@ -12,64 +12,57 @@ import com.google.firebase.firestore.SetOptions;
 
 public class EditFacilityActivity extends AppCompatActivity {
 
-    private EditText editTextStreet, editTextCity, editTextProvince, editTextPostalCode;
-    private Button buttonUpdateFacility, buttonCancel;
-    private FirebaseFirestore db;
-    private String facilityId;
+    private EditText editTextStreet, editTextCity, editTextProvince, editTextPostalCode; // Input fields for facility details
+    private Button buttonUpdateFacility, buttonCancel; // Buttons for updating facility and canceling the operation
+    private FirebaseFirestore db; // Firestore database instance
+    private String facilityId; // Unique identifier for the facility to be edited
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_facility);
+        super.onCreate(savedInstanceState); // Call the parent class's onCreate method
+        setContentView(R.layout.activity_edit_facility); // Set the layout file for this activity
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance(); // Initialize the Firestore database instance
 
-        // Initialize Views
-        editTextStreet = findViewById(R.id.editTextStreet);
-        editTextCity = findViewById(R.id.editTextCity);
-        editTextProvince = findViewById(R.id.editTextProvince);
-        editTextPostalCode = findViewById(R.id.editTextPostalCode);
-        buttonUpdateFacility = findViewById(R.id.buttonUpdateFacility);
-        buttonCancel = findViewById(R.id.buttonCancel);
+        editTextStreet = findViewById(R.id.editTextStreet); // Link the street EditText to its layout element
+        editTextCity = findViewById(R.id.editTextCity); // Link the city EditText to its layout element
+        editTextProvince = findViewById(R.id.editTextProvince); // Link the province EditText to its layout element
+        editTextPostalCode = findViewById(R.id.editTextPostalCode); // Link the postal code EditText to its layout element
+        buttonUpdateFacility = findViewById(R.id.buttonUpdateFacility); // Link the update button to its layout element
+        buttonCancel = findViewById(R.id.buttonCancel); // Link the cancel button to its layout element
 
-        // Get Facility data from intent
-        Intent intent = getIntent();
-        facilityId = intent.getStringExtra("facilityId");
-        editTextStreet.setText(intent.getStringExtra("street"));
-        editTextCity.setText(intent.getStringExtra("city"));
-        editTextProvince.setText(intent.getStringExtra("province"));
-        editTextPostalCode.setText(intent.getStringExtra("postalCode"));
+        Intent intent = getIntent(); // Retrieve the intent that started this activity
+        facilityId = intent.getStringExtra("facilityId"); // Get the facility ID from the intent
+        editTextStreet.setText(intent.getStringExtra("street")); // Set the street EditText with data from the intent
+        editTextCity.setText(intent.getStringExtra("city")); // Set the city EditText with data from the intent
+        editTextProvince.setText(intent.getStringExtra("province")); // Set the province EditText with data from the intent
+        editTextPostalCode.setText(intent.getStringExtra("postalCode")); // Set the postal code EditText with data from the intent
 
-        // Update Facility Button
-        buttonUpdateFacility.setOnClickListener(view -> updateFacility());
+        buttonUpdateFacility.setOnClickListener(view -> updateFacility()); // Set click listener for updating facility
 
-        // Cancel Button
-        buttonCancel.setOnClickListener(view -> finish());
+        buttonCancel.setOnClickListener(view -> finish()); // Set click listener for canceling and closing the activity
     }
 
     private void updateFacility() {
-        String street = editTextStreet.getText().toString().trim();
-        String city = editTextCity.getText().toString().trim();
-        String province = editTextProvince.getText().toString().trim();
-        String postalCode = editTextPostalCode.getText().toString().trim();
+        String street = editTextStreet.getText().toString().trim(); // Get the street input and remove leading/trailing spaces
+        String city = editTextCity.getText().toString().trim(); // Get the city input and remove leading/trailing spaces
+        String province = editTextProvince.getText().toString().trim(); // Get the province input and remove leading/trailing spaces
+        String postalCode = editTextPostalCode.getText().toString().trim(); // Get the postal code input and remove leading/trailing spaces
 
         if (!street.isEmpty() && !city.isEmpty() && !province.isEmpty() && !postalCode.isEmpty()) {
-            // Create updated Facility object
-            Facility updatedFacility = new Facility(facilityId, street, city, province, postalCode);
+            Facility updatedFacility = new Facility(facilityId, street, city, province, postalCode); // Create a Facility object with updated data
 
-            // Save updates to Firestore
-            db.collection("Facilities").document(facilityId)
-                    .set(updatedFacility, SetOptions.merge())
+            db.collection("Facilities").document(facilityId) // Access the "Facilities" collection and target the specific document by ID
+                    .set(updatedFacility, SetOptions.merge()) // Update the document with new data, merging fields if they already exist
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(EditFacilityActivity.this, "Facility updated", Toast.LENGTH_SHORT).show();
-                        finish(); // Return to previous screen
+                        Toast.makeText(EditFacilityActivity.this, "Facility updated", Toast.LENGTH_SHORT).show(); // Show success message on successful update
+                        finish(); // Close the activity and return to the previous screen
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(EditFacilityActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditFacilityActivity.this, "Update failed", Toast.LENGTH_SHORT).show(); // Show error message if the update fails
                     });
         } else {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show(); // Show warning if any field is left empty
         }
     }
 }

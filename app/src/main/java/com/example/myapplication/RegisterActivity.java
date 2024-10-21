@@ -12,17 +12,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,106 +32,105 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
-    private FirebaseAuth auth;
-    private FirebaseFirestore db;
-    private StorageReference storageReference;
-    private CollectionReference usersRef;
-    private EditText registerEmail;
-    private  EditText registerPassword;
-    private EditText registerFirstname;
-    private EditText registerLastname;
-    private Spinner roleSelector;
-    private Button registerBtn;
-    private TextView loginRedirect;
-    private ImageView profilePicture;
-    Uri imageUri;
+
+    private FirebaseAuth auth; // Firebase authentication object
+    private FirebaseFirestore db; // Firestore database object
+    private StorageReference storageReference; // Firebase Storage reference for storing images
+    private CollectionReference usersRef; // Reference to the "users" collection in Firestore
+    private EditText registerEmail; // EditText for user to input email
+    private EditText registerPassword; // EditText for user to input password
+    private EditText registerFirstname; // EditText for user to input first name
+    private EditText registerLastname; // EditText for user to input last name
+    private Spinner roleSelector; // Spinner for selecting user roles (not used in current implementation)
+    private Button registerBtn; // Button to trigger registration
+    private TextView loginRedirect; // TextView to redirect user to login page
+    private ImageView profilePicture; // ImageView to display profile picture
+    Uri imageUri; // URI for the selected profile picture
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_register);
+        super.onCreate(savedInstanceState); // Call to parent class onCreate
+        setContentView(R.layout.activity_register); // Set the layout for the activity
 
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        usersRef = db.collection("users");
-        storageReference = FirebaseStorage.getInstance().getReference();
+        // Initialize Firebase services
+        auth = FirebaseAuth.getInstance(); // Initialize Firebase authentication
+        db = FirebaseFirestore.getInstance(); // Initialize Firestore database
+        usersRef = db.collection("users"); // Get reference to the "users" collection in Firestore
+        storageReference = FirebaseStorage.getInstance().getReference(); // Initialize Firebase Storage reference
 
-        registerEmail = findViewById(R.id.registerEmail);
-        registerPassword = findViewById(R.id.registerPassword);
-        registerFirstname = findViewById(R.id.registerFirstName);
-        registerLastname = findViewById(R.id.registerLastName);
-        registerBtn = findViewById(R.id.registerBtn);
-        loginRedirect = findViewById(R.id.loginRedirectText);
-        profilePicture = findViewById(R.id.profilePicture);
+        // Initialize UI elements
+        registerEmail = findViewById(R.id.registerEmail); // Get reference to EditText for email
+        registerPassword = findViewById(R.id.registerPassword); // Get reference to EditText for password
+        registerFirstname = findViewById(R.id.registerFirstName); // Get reference to EditText for first name
+        registerLastname = findViewById(R.id.registerLastName); // Get reference to EditText for last name
+        registerBtn = findViewById(R.id.registerBtn); // Get reference to registration button
+        loginRedirect = findViewById(R.id.loginRedirectText); // Get reference to TextView for login redirect
+        profilePicture = findViewById(R.id.profilePicture); // Get reference to ImageView for profile picture
 
-
+        // Set click listener for profile picture selection
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                activityResultLauncher.launch(intent);
+                Intent intent = new Intent(Intent.ACTION_PICK); // Create an Intent to pick an image from gallery
+                intent.setType("image/*"); // Set the intent to filter for images only
+                activityResultLauncher.launch(intent); // Launch the intent to select an image
             }
         });
 
+        // Set click listener for login redirection
         loginRedirect.setOnClickListener(view -> {
-            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-            finish();
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class)); // Start LoginActivity
+            finish(); // Close the current RegisterActivity
         });
 
+        // Set click listener for registration button
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstname = registerFirstname.getText().toString().trim();
-                String lastname = registerLastname.getText().toString().trim();
-                String email = registerEmail.getText().toString().trim();
-                String password = registerPassword.getText().toString().trim();
+                String firstname = registerFirstname.getText().toString().trim(); // Get the entered first name
+                String lastname = registerLastname.getText().toString().trim(); // Get the entered last name
+                String email = registerEmail.getText().toString().trim(); // Get the entered email
+                String password = registerPassword.getText().toString().trim(); // Get the entered password
 
+                // Check if any of the fields are empty
                 if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show(); // Show error message
                 } else {
-
+                    // Register the user with Firebase authentication
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(RegisterActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                String userId = auth.getCurrentUser().getUid(); // gets the unique userId to store in the database
+                            if (task.isSuccessful()) { // Check if registration is successful
+                                Toast.makeText(RegisterActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show(); // Show success message
+                                String userId = auth.getCurrentUser().getUid(); // Get the unique userId for the newly registered user
 
+                                // Check if a profile picture was selected, if not use a default one
                                 if (imageUri == null) {
-                                    String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // API link for default profile photo
-                                    uploadUserData(userId, firstname, lastname, email, defaultProfilePicUrl);
+                                    String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
+                                    uploadUserData(userId, firstname, lastname, email, defaultProfilePicUrl); // Upload user data with default profile picture
                                 } else {
-                                    uploadImageAndData(imageUri, userId, firstname, lastname, email);
+                                    uploadImageAndData(imageUri, userId, firstname, lastname, email); // Upload selected image and user data
                                 }
 
                             } else {
+                                // Handle case where email is already registered
                                 if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    // Handle case where the email is already registered
-                                    Toast.makeText(RegisterActivity.this, "Email already registered", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Email already registered", Toast.LENGTH_SHORT).show(); // Show error for existing email
                                 } else {
-                                    // Handle the case if signup fails
-                                    Toast.makeText(RegisterActivity.this, "SignUp Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    // Handle other registration failures
+                                    Toast.makeText(RegisterActivity.this, "SignUp Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show(); // Show general error
                                 }
                             }
                         }
                     });
                 }
-
             }
         });
-
     }
-
-
 
     /**
      * Launcher is used to launch the gallery when selecting photo. It takes the image URI
@@ -145,14 +139,13 @@ public class RegisterActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
-            if (o.getResultCode() == RESULT_OK) {
+            if (o.getResultCode() == RESULT_OK) { // Check if image selection was successful
                 if (o.getData() != null) {
-                    imageUri = o.getData().getData();
-                    profilePicture.setImageURI(imageUri); // sets the profile pic to the selected picture
+                    imageUri = o.getData().getData(); // Get the URI of the selected image
+                    profilePicture.setImageURI(imageUri); // Set the ImageView to display the selected picture
                 }
-
             } else {
-                Toast.makeText(RegisterActivity.this, "Please select an image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Please select an image", Toast.LENGTH_SHORT).show(); // Show message if no image was selected
             }
         }
     });
@@ -161,63 +154,63 @@ public class RegisterActivity extends AppCompatActivity {
      * Stores the profile photo into firebase storage in the profile image directory
      * If upload is successful, generates a URL for the image which is passed into
      * uploadUserData function which then goes on to upload all the data in firestore
-     * @param image
-     * @param userId
-     * @param firstname
-     * @param lastname
-     * @param email
+     * @param image URI of the selected profile image
+     * @param userId Unique user ID for the registered user
+     * @param firstname User's first name
+     * @param lastname User's last name
+     * @param email User's email
      */
     private void uploadImageAndData(Uri image, String userId, String firstname, String lastname, String email) {
-        StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID() + ".jpg");
-        reference.putFile(image)
+        StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID() + ".jpg"); // Create a unique path for the profile image
+        reference.putFile(image) // Upload the image to Firebase Storage
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                     @Override
-                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                             String downloadUrl = uri.toString();
-                             uploadUserData(userId, firstname, lastname, email, downloadUrl);
-                         });
-                     }
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String downloadUrl = uri.toString(); // Get the download URL of the uploaded image
+                            uploadUserData(userId, firstname, lastname, email, downloadUrl); // Upload user data along with the image URL
+                        });
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(RegisterActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show(); // Show error if image upload fails
                 });
     }
 
     /**
-     * Resets the input field after successful user registration
+     * Resets the input fields after successful user registration
      */
     private void resetFields() {
-        registerEmail.setText("");
-        registerPassword.setText("");
-        registerFirstname.setText("");
-        registerLastname.setText("");
-        profilePicture.setImageResource(R.drawable.baseline_person_outline_24);
+        registerEmail.setText(""); // Clear the email field
+        registerPassword.setText(""); // Clear the password field
+        registerFirstname.setText(""); // Clear the first name field
+        registerLastname.setText(""); // Clear the last name field
+        profilePicture.setImageResource(R.drawable.baseline_person_outline_24); // Reset the profile picture to default icon
     }
 
     /**
      * Function takes the user data and uploads them into firestore database
-     * Redirects the user to login storing is successful.
-     * @param userId
-     * @param firstname
-     * @param lastname
-     * @param email
-     * @param profilePicUrl
+     * Redirects the user to login if storing is successful.
+     * @param userId Unique user ID for the registered user
+     * @param firstname User's first name
+     * @param lastname User's last name
+     * @param email User's email
+     * @param profilePicUrl URL of the user's profile picture
      */
     private void uploadUserData(String userId, String firstname, String lastname, String email, String profilePicUrl) {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("Email", email);
-        data.put("Firstname", firstname);
-        data.put("Lastname", lastname);
-        data.put("Profile Picture", profilePicUrl);
+        HashMap<String, String> data = new HashMap<>(); // Create a HashMap to store user data
+        data.put("Email", email); // Add user's email to the map
+        data.put("Firstname", firstname); // Add user's first name to the map
+        data.put("Lastname", lastname); // Add user's last name to the map
+        data.put("Profile Picture", profilePicUrl); // Add user's profile picture URL to the map
 
-        usersRef.document(userId).set(data)
+        usersRef.document(userId).set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "User data added successfully!");
-                    resetFields();
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class)); //Redirects to login after registration
-                    finish();
+                    Log.d("Firestore", "User data added successfully!"); // Log success message
+                    resetFields(); // Reset input fields after successful registration
+                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class)); // Redirect to login screen
+                    finish(); // Close the current RegisterActivity
                 })
-                .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e));
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e)); // Log error if data upload fails
     }
 }
