@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 21
-        targetSdk = 33
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -36,12 +36,18 @@ android {
 dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-firestore:25.0.0")
-    implementation("com.google.firebase:firebase-database")
+
+    implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-analytics")
     // Firebase Firestore and Realtime Database
+
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+
+
 
 
     // AndroidX Libraries
@@ -50,6 +56,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
 
     // Retain original library references
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -60,9 +67,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
 
 // Ensure Google services plugin is applied at the app level
