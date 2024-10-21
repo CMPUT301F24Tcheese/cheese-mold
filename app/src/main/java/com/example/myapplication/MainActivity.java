@@ -7,11 +7,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.app.Application;
+import com.google.firebase.FirebaseApp;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         welcomeText = findViewById(R.id.welcomeTextView);
@@ -54,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
         updateProfileBtn.setOnClickListener(view -> {
             startActivity(new Intent(MainActivity.this, UpdateProfileActivity.class));
             finish();
+        });
+
+        
+        
+        // Button to navigate to activity
+        Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage);
+        btnOpenEventPage.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, EventActivity.class);
+            startActivity(intent);
+
         });
 
         if (currentUser != null) {
