@@ -2,9 +2,11 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +21,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,11 +135,92 @@ public class AddEventActivity extends AppCompatActivity {
         db.collection("events")
                 .add(event)
                 .addOnSuccessListener(documentReference -> {
+                    //Log.d("EventCreation", "Event created successfully!");
+                    String eventId = documentReference.getId();
+
+                    //Generate QR code to Firebase Storage, the method is defined right after this one
+                    Bitmap qrCode = generateQRCode(posterUrl);
+                    if (qrCode != null) {
+                        //upload QR code to Firebase, the method is defined after
+                        uploadQRCodeToStorage(eventId, qrCode);
+                    }
                     Toast.makeText(AddEventActivity.this, "Event Created", Toast.LENGTH_SHORT).show();
-                    // Return to Event Activity
                     startActivity(new Intent(AddEventActivity.this, EventActivity.class));
                     finish();
                 })
-                .addOnFailureListener(e -> Toast.makeText(AddEventActivity.this, "Failed to create event", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddEventActivity.this, "Failed to create event", Toast.LENGTH_SHORT).show();
+                    Log.e("EventCreation", "Failed to create event: " + e.getMessage());
+                });
+    }
+
+    /**
+     * This will generate the QR code
+     * @param text
+     *  This will be the poster associated with the QR code
+     * @return
+     *  This will return a bitmap typed QR code
+     */
+    private Bitmap generateQRCode(String text) {
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 500, 500);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+
+            return bmp;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * This method will upload the QR code to Firebase
+     * @param eventId
+     *  This is the event name
+     * @param qrCodeBitmap
+     *  This is the QR code
+     */
+    private void uploadQRCodeToStorage(String eventId, Bitmap qrCodeBitmap) {
+        ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+        qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOut);
+        byte[] data = byteArrayOut.toByteArray();
+
+        // Save QR code with the event ID as the filename
+        StorageReference qrCodeRef = storageReference.child("qrcodes/" + eventId + "_qr.jpg");
+        UploadTask uploadTask = qrCodeRef.putBytes(data);
+
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            qrCodeRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                //Save QR Code URL in Firestore
+                saveQRCodeUrlToFirestore(eventId, uri.toString());
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AddEventActivity.this, "Failed to upload QR code", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    /**
+     * This method save the download URL of the QR code to Firebase
+     * @param eventId
+     * @param qrCodeUrl
+     */
+    private void saveQRCodeUrlToFirestore(String eventId, String qrCodeUrl) {
+        db.collection("events").document(eventId)
+                .update("qrCodeUrl", qrCodeUrl)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(AddEventActivity.this, "QR Code Saved", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddEventActivity.this, "Failed to save QR Code URL", Toast.LENGTH_SHORT).show();
+                });
     }
 }

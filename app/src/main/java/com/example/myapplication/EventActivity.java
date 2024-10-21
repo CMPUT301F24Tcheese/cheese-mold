@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.myapplication.Event;
 
 public class EventActivity extends AppCompatActivity {
 
@@ -35,7 +34,7 @@ public class EventActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         // Initialize RecyclerView and Adapter
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerViewEvent);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventList = new ArrayList<>();
         eventAdapter = new EventAdapter(eventList);
