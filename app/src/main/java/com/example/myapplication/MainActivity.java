@@ -2,108 +2,149 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.administrator.AdministratorMainActivity;
+import com.example.myapplication.entrant.EntrantMainActivity;
+import com.example.myapplication.organizer.OrganizerMainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.concurrent.TimeUnit;
 
 // MainActivity handles the main screen of the app where user details are displayed after login
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth; // Firebase authentication object for managing user sessions
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
-    private TextView welcomeText; // TextView to display the welcome message with the user's name
-    private ImageView profilePic; // ImageView to display the user's profile picture
-    private Button signoutBtn; // Button for users to sign out of their account
-    private Button updateProfileBtn; // Button for users to navigate to the update profile screen
+    private String device;
+    private String documentID;
+    private String role;
+    private String email;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
-        setContentView(R.layout.activity_main); // Set the layout for the main activity screen
-
-        // Initialize Firebase services
-        FirebaseApp.initializeApp(this); // Ensure Firebase is initialized before using any Firebase services
-        auth = FirebaseAuth.getInstance(); // Get the instance of Firebase authentication
-        db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
-
-        // Initialize the UI elements
-        welcomeText = findViewById(R.id.welcomeTextView); // Find the TextView by its ID to display the welcome message
-        profilePic = findViewById(R.id.welcomeProfilePictureMain); // Find the ImageView by its ID for profile picture display
-        signoutBtn = findViewById(R.id.signoutBtn); // Find the Button by its ID for signing out
-        updateProfileBtn = findViewById(R.id.updateProfileBtn); // Find the Button by its ID for navigating to update profile screen
-
-        // Get the currently logged-in user, if any
-        FirebaseUser currentUser = auth.getCurrentUser();
-
-        // Set a click listener on the sign-out button
-        signoutBtn.setOnClickListener(view -> {
-            auth.signOut(); // Sign out the current user
-            startActivity(new Intent(MainActivity.this, LoginActivity.class)); // Navigate back to the login screen
+    void SetRole(String role) {
+        if (role.equals("Entrant")) {
+            startActivity(new Intent(this, EntrantMainActivity.class)); // Navigate back to the login screen
             finish(); // Close the MainActivity
-        });
-
-        // Set a click listener on the update profile button
-        updateProfileBtn.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
+        } else if (role.equals("Organizer")) {
+            startActivity(new Intent(this, OrganizerMainActivity.class)); // Navigate back to the login screen
             finish(); // Close the MainActivity
-        });
-
-        // Initialize the button to navigate to EventActivity
-        Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage); // Find the button by its ID
-        btnOpenEventPage.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, EventActivity.class); // Create an intent to open EventActivity
-            startActivity(intent); // Start EventActivity
-        });
-
-        // Check if a user is logged in
-        if (currentUser != null) {
-            String userId = currentUser.getUid(); // Get the unique ID of the currently logged-in user
-            getData(userId); // Retrieve user data from Firestore
-        } else {
-            // Redirect to login screen if no user is logged in
-            startActivity(new Intent(MainActivity.this, LoginActivity.class)); // Navigate to LoginActivity
+        } else if (role.equals("Administrator")) {
+            startActivity(new Intent(this, AdministratorMainActivity.class)); // Navigate back to the login screen
+            finish(); // Close the MainActivity
         }
     }
 
-    /**
-     * Retrieves user data from Firestore and loads it into the activity UI components
-     * @param userId The unique ID of the logged-in user
-     */
-    private void getData(String userId) {
-        // Access the "users" collection in Firestore and get the document corresponding to the userId
-        db.collection("users").document(userId).get()
+    void SetEmail(String email) {
+        auth.signInWithEmailAndPassword(email, device)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        db.collection("users").document(auth.getCurrentUser().getUid()).get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document.exists()) {
+                                            SetRole(document.getString("role"));
+                                        } else {
+                                            Log.d("MainActivity", "No such document"); // Log a message if the document does not exist
+                                        }
+                                    } else {
+                                        Log.w("MainActivity", "Error getting documents.", task.getException()); // Log a warning if there was an error retrieving the document
+                                    }
+                                });
+
+                        Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startActivity(new Intent(MainActivity.this, RegisterActivity.class)); // Navigate back to the login screen
+                    }
+                });
+    }
+
+    void setDocumentID(String doc) {
+        db.collection("users").document(doc).get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) { // Check if the data retrieval task was successful
-                        DocumentSnapshot document = task.getResult(); // Get the document snapshot from Firestore
-
-                        if(document.exists()) { // Verify that the document exists
-                            String firstname = document.getString("Firstname"); // Retrieve the user's first name from the document
-                            String lastname = document.getString("Lastname"); // Retrieve the user's last name from the document
-                            String profilePicUrl = document.getString("Profile Picture"); // Retrieve the URL of the user's profile picture
-                            welcomeText.setText("Welcome " + firstname + " " + lastname); // Set the welcome text with the user's full name
-
-                            // Load the user's profile picture using Glide, a third-party image loading library
-                            Glide.with(MainActivity.this)
-                                    .load(profilePicUrl) // Load the image from the URL obtained from Firestore
-                                    .placeholder(R.drawable.baseline_person_outline_24) // Display a default placeholder while the image loads
-                                    .error(R.drawable.baseline_person_outline_24) // Show a default image if loading the picture fails
-                                    .into(profilePic); // Set the loaded image into the ImageView
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            SetEmail(document.getString("Email"));
                         } else {
                             Log.d("MainActivity", "No such document"); // Log a message if the document does not exist
                         }
                     } else {
                         Log.w("MainActivity", "Error getting documents.", task.getException()); // Log a warning if there was an error retrieving the document
                     }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        SetEmail("none");
+                    }
                 });
+    }
+
+    void getEmail(String device) {
+        db.collection("users").whereEqualTo("sUID", device).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                setDocumentID(document.getId());
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        SetEmail("none");
+                    }
+                });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
+
+        // Initialize Firebase services
+        FirebaseApp.initializeApp(this); // Ensure Firebase is initialized before using any Firebase services
+        auth = FirebaseAuth.getInstance(); // Get the instance of Firebase authentication
+        db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
+
+        /**
+         * checking the role of the user joining and redirecting to the respective
+         * main activity and view
+         */
+        device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        getEmail(device);
+
+        setContentView(R.layout.activity_main); // Set the layout for the main activity screen
+
+
     }
 }

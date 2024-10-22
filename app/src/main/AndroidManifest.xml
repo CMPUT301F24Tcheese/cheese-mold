@@ -47,6 +47,15 @@
             </intent-filter>
         </activity>
 
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".administrator.AdministratorMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".organizer.OrganizerMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".entrant.EntrantMainActivity"/>
+
         <!-- Register EventActivity -->
         <activity android:name=".EventActivity" android:exported="true"/>
 
