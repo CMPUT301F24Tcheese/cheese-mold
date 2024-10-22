@@ -13,9 +13,21 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
+    private OnItemClickListener onItemClickListener;
 
     public EventAdapter(List<Event> eventList) {
         this.eventList = eventList;
+    }
+
+
+    // Interface for click listener
+    public interface OnItemClickListener {
+        void onItemClick(Event event);
+    }
+
+    // Set the listener from outside
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
@@ -37,6 +49,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         } else {
             holder.posterImageView.setVisibility(View.GONE); // Hide the image view if no poster is available
         }
+
+        // Handle item click
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(event);
+            }
+        });
+
     }
 
     @Override

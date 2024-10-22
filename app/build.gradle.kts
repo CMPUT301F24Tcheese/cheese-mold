@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services") // Ensure Google services plugin is applied
+
 }
 
 android {
@@ -35,7 +36,8 @@ android {
 
 dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+
 
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
@@ -67,6 +69,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation ("com.google.android.gms:play-services-auth:21.2.0")
 }
 
 // Ensure Google services plugin is applied at the app level

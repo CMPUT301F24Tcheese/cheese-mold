@@ -1,8 +1,23 @@
 package com.example.myapplication;
 
-public class Users {
-    private String firstName;
-    private String lastName;
+import java.io.Serializable;
+
+public class Users implements Serializable {
     private String email;
-    private Integer phoneNumber;
+
+
+    public Users(String email){
+        this.email = email;
+
+    }
+
+    public void setEmail(String uemail){
+        this.email = uemail;
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+
+
 }

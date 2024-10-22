@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = loginEmail.getText().toString().trim();
                 String password = loginPassword.getText().toString().trim();
 
+
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show();
                 } else {
@@ -63,7 +64,9 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
                                     Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class)); // Successful login redirects the user to main activity
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.putExtra("email",loginEmail.getText().toString());
+                                    startActivity(intent); // Successful login redirects the user to main activity
                                     finish();
                                 }
                             })

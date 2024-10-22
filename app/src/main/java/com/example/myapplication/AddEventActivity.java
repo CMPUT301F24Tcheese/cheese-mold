@@ -127,6 +127,10 @@ public class AddEventActivity extends AppCompatActivity {
         db.collection("events")
                 .add(event)
                 .addOnSuccessListener(documentReference -> {
+
+
+                    String documentId = documentReference.getId();
+
                     Toast.makeText(AddEventActivity.this, "Event Created", Toast.LENGTH_SHORT).show();
                     // Return to Event Activity
                     startActivity(new Intent(AddEventActivity.this, EventActivity.class));

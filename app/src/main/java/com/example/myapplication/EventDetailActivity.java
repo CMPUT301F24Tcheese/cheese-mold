@@ -81,6 +81,11 @@ public class EventDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param eventId
+     * @param email
+     */
     private void FremoveWaitingList(String eventId, String email) {
         db.collection("event").document(eventId)
                 .update("waitingList", FieldValue.arrayRemove(email));

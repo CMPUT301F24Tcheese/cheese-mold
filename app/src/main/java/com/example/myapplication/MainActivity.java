@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.welcomeProfilePictureMain);
         signoutBtn = findViewById(R.id.signoutBtn);
         updateProfileBtn = findViewById(R.id.updateProfileBtn);
+        Intent intentFromLogin = getIntent();
+        String email = intentFromLogin.getStringExtra("email");
 
         FirebaseUser currentUser = auth.getCurrentUser(); // checks if any user is currently logged in
 
@@ -64,7 +66,10 @@ public class MainActivity extends AppCompatActivity {
         // Button to navigate to activity
         Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage);
         btnOpenEventPage.setOnClickListener(view -> {
+
             Intent intent = new Intent(MainActivity.this, EventActivity.class);
+            intent.putExtra("email",email);
+
             startActivity(intent);
 
         });
