@@ -5,7 +5,7 @@
     android:id="@+id/registerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity"
+    tools:context=".users.RegisterActivity"
     android:orientation="vertical"
     android:gravity="center">
     
@@ -48,6 +48,7 @@
 
 
             <Spinner
+                android:id="@+id/roleSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_gravity="center_horizontal"
@@ -55,7 +56,8 @@
                 android:elevation="20dp"
                 android:textAlignment="center"
                 android:padding="8dp"
-                android:background="@drawable/login_signup_custom_edittext"/>
+                android:background="@drawable/login_signup_custom_edittext"
+                android:entries="@array/user_role"/>
 
 
             <EditText
@@ -97,20 +99,6 @@
 
             </EditText>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:id="@+id/registerPassword"
-                android:background="@drawable/login_signup_custom_edittext"
-                android:padding="8dp"
-                android:paddingStart="20dp"
-                android:layout_marginTop="15dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:textColor="@color/black">
-
-            </EditText>
-
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -120,17 +108,6 @@
                 android:layout_marginTop="15dp"
                 android:backgroundTint="@color/lavender"/>
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/loginRedirectText"
-                android:text="Already have an account? Login"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:layout_marginTop="5dp"
-                android:textSize="18sp"
-                android:textColor="@color/lavender"/>
 
         </LinearLayout>
 

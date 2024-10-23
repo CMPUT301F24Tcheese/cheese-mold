@@ -9,6 +9,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.myapplication.objects.Event;
+import com.example.myapplication.organizer.AddEventActivity;
+import com.example.myapplication.organizer.AddFacilityActivity;
+import com.example.myapplication.organizer.EventEditActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
