@@ -7,54 +7,40 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.EventActivity;
-import com.example.myapplication.LoginActivity;
-import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.RegisterActivity;
-import com.example.myapplication.UpdateProfileActivity;
-import com.example.myapplication.entrant.EntrantMainActivity;
-import com.example.myapplication.organizer.OrganizerMainActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdministratorMainActivity extends AppCompatActivity {
-    private FirebaseAuth auth; // Firebase authentication object for managing user sessions
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
     private TextView welcomeText; // TextView to display the welcome message with the user's name
     private ImageView profilePic; // ImageView to display the user's profile picture
     private Button updateProfileBtn; // Button for users to navigate to the update profile screen
+    private String device;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
 
         // Initialize Firebase services
-        FirebaseApp.initializeApp(this); // Ensure Firebase is initialized before using any Firebase services
-        auth = FirebaseAuth.getInstance(); // Get the instance of Firebase authentication
         db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
 
-        setContentView(R.layout.acitvity_administrator_main); // Set the layout for the main activity screen
+        setContentView(R.layout.activity_organizer_main); // Set the layout for the main activity screen
 
         // Initialize the UI elements
         welcomeText = findViewById(R.id.welcomeTextView); // Find the TextView by its ID to display the welcome message
         profilePic = findViewById(R.id.welcomeProfilePictureMain); // Find the ImageView by its ID for profile picture display
         updateProfileBtn = findViewById(R.id.updateProfileBtn); // Find the Button by its ID for navigating to update profile screen
 
-        // Get the currently logged-in user, if any
-        FirebaseUser currentUser = auth.getCurrentUser();
+        device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        getData(device);
 
         // Set a click listener on the update profile button
         updateProfileBtn.setOnClickListener(view -> {
@@ -68,24 +54,15 @@ public class AdministratorMainActivity extends AppCompatActivity {
             Intent intent = new Intent(AdministratorMainActivity.this, EventActivity.class); // Create an intent to open EventActivity
             startActivity(intent); // Start EventActivity
         });
-
-        // Check if a user is logged in
-        if (currentUser != null) {
-            String userId = currentUser.getUid(); // Get the unique ID of the currently logged-in user
-            getData(userId); // Retrieve user data from Firestore
-        } else {
-            // Redirect to login screen if no user is logged in
-            startActivity(new Intent(AdministratorMainActivity.this, LoginActivity.class)); // Navigate to LoginActivity
-        }
     }
 
     /**
      * Retrieves user data from Firestore and loads it into the activity UI components
-     * @param userId The unique ID of the logged-in user
+     * @param device The unique ID of the logged-in user
      */
-    private void getData(String userId) {
+    private void getData(String device) {
         // Access the "users" collection in Firestore and get the document corresponding to the userId
-        db.collection("users").document(userId).get()
+        db.collection("users").document(device).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) { // Check if the data retrieval task was successful
                         DocumentSnapshot document = task.getResult(); // Get the document snapshot from Firestore
@@ -110,5 +87,4 @@ public class AdministratorMainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

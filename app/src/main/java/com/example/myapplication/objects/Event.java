@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.objects;
 
 // The Event class represents an event with various attributes like ID, title, description, poster URL, date, and limit on entrants.
 public class Event {

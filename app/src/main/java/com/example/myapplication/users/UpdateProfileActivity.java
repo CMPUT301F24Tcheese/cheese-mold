@@ -1,6 +1,5 @@
-package com.example.myapplication;
+package com.example.myapplication.users;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,20 +15,13 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.example.myapplication.R;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -103,9 +95,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 if (email.isEmpty()) {
                     Toast.makeText(UpdateProfileActivity.this, "Please enter email", Toast.LENGTH_SHORT).show(); // Display error message
                 } else {
-                    HashMap<String, String> data = new HashMap<>(); // Create a HashMap to store user data
-                    data.put("Email", email); // Add user's email to the map
-                    db.collection("users").document(device).set(data);
+                    db.collection("users").document(device).update("Email", email);
                 }
             }
         });
