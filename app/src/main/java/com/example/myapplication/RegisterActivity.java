@@ -42,7 +42,6 @@ import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth; // Firebase authentication object
     private FirebaseFirestore db; // Firestore database object
     private StorageReference storageReference; // Firebase Storage reference for storing images
     private CollectionReference usersRef; // Reference to the "users" collection in Firestore
@@ -64,7 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         // Initialize Firebase services
-        auth = FirebaseAuth.getInstance(); // Initialize Firebase authentication
         db = FirebaseFirestore.getInstance(); // Initialize Firestore database
         usersRef = db.collection("users"); // Get reference to the "users" collection in Firestore
         storageReference = FirebaseStorage.getInstance().getReference(); // Initialize Firebase Storage reference
@@ -100,34 +98,12 @@ public class RegisterActivity extends AppCompatActivity {
                 if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show(); // Show error message
                 } else {
-                    // Register the user with Firebase authentication
-
-                    auth.createUserWithEmailAndPassword(email, device).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) { // Check if registration is successful
-                                Toast.makeText(RegisterActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show(); // Show success message
-                                String userId = auth.getCurrentUser().getUid(); // Get the unique userId for the newly registered user
-
-                                // Check if a profile picture was selected, if not use a default one
-                                if (imageUri == null) {
-                                    String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
-                                    uploadUserData(userId, firstname, lastname, email, role, device, defaultProfilePicUrl); // Upload user data with default profile picture
-                                } else {
-                                    uploadImageAndData(imageUri, userId, firstname, lastname, email, device, role); // Upload selected image and user data
-                                }
-
-                            } else {
-                                // Handle case where email is already registered
-                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    Toast.makeText(RegisterActivity.this, "Email already registered", Toast.LENGTH_SHORT).show(); // Show error for existing email
-                                } else {
-                                    // Handle other registration failures
-                                    Toast.makeText(RegisterActivity.this, "SignUp Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show(); // Show general error
-                                }
-                            }
-                        }
-                    });
+                    if (imageUri == null) {
+                        String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
+                        uploadUserData(firstname, lastname, email, role, device, defaultProfilePicUrl); // Upload user data with default profile picture
+                    } else {
+                        uploadImageAndData(imageUri, firstname, lastname, email, device, role); // Upload selected image and user data
+                    }
                 }
             }
         });
@@ -156,12 +132,13 @@ public class RegisterActivity extends AppCompatActivity {
      * If upload is successful, generates a URL for the image which is passed into
      * uploadUserData function which then goes on to upload all the data in firestore
      * @param image URI of the selected profile image
-     * @param userId Unique user ID for the registered user
      * @param firstname User's first name
      * @param lastname User's last name
      * @param email User's email
+     * @param device User's device id
+     * @param role user's selected role
      */
-    private void uploadImageAndData(Uri image, String userId, String firstname, String lastname, String email, String role, String device) {
+    private void uploadImageAndData(Uri image, String firstname, String lastname, String email, String role, String device) {
         StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID() + ".jpg"); // Create a unique path for the profile image
         reference.putFile(image) // Upload the image to Firebase Storage
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -169,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
                             String downloadUrl = uri.toString(); // Get the download URL of the uploaded image
-                            uploadUserData(userId, firstname, lastname, email, role, device, downloadUrl); // Upload user data along with the image URL
+                            uploadUserData(firstname, lastname, email, role, device, downloadUrl); // Upload user data along with the image URL
                         });
                     }
                 })
@@ -191,22 +168,22 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * Function takes the user data and uploads them into firestore database
      * Redirects the user to login if storing is successful.
-     * @param userId Unique user ID for the registered user
      * @param firstname User's first name
      * @param lastname User's last name
      * @param email User's email
+     * @param role User's role
+     * @param device User's device id
      * @param profilePicUrl URL of the user's profile picture
      */
-    private void uploadUserData(String userId, String firstname, String lastname, String email, String role, String device, String profilePicUrl) {
+    private void uploadUserData(String firstname, String lastname, String email, String role, String device, String profilePicUrl) {
         HashMap<String, String> data = new HashMap<>(); // Create a HashMap to store user data
         data.put("Email", email); // Add user's email to the map
         data.put("role", role);
-        data.put("sUID", device);
         data.put("Firstname", firstname); // Add user's first name to the map
         data.put("Lastname", lastname); // Add user's last name to the map
         data.put("Profile Picture", profilePicUrl); // Add user's profile picture URL to the map
 
-        usersRef.document(userId).set(data) // Store the user data in Firestore under the user's unique ID
+        usersRef.document(device).set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!"); // Log success message
                     resetFields(); // Reset input fields after successful registration

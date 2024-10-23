@@ -30,19 +30,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 // MainActivity handles the main screen of the app where user details are displayed after login
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth; // Firebase authentication object for managing user sessions
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
     private String device;
-    private String documentID;
-    private String role;
-    private String email;
 
-    void SetRole(String role) {
+    void openAppForRole(String role) {
         if (role.equals("Entrant")) {
             startActivity(new Intent(this, EntrantMainActivity.class)); // Navigate back to the login screen
             finish(); // Close the MainActivity
@@ -55,43 +52,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void SetEmail(String email) {
-        auth.signInWithEmailAndPassword(email, device)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        db.collection("users").document(auth.getCurrentUser().getUid()).get()
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if (document.exists()) {
-                                            SetRole(document.getString("role"));
-                                        } else {
-                                            Log.d("MainActivity", "No such document"); // Log a message if the document does not exist
-                                        }
-                                    } else {
-                                        Log.w("MainActivity", "Error getting documents.", task.getException()); // Log a warning if there was an error retrieving the document
-                                    }
-                                });
-
-                        Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        startActivity(new Intent(MainActivity.this, RegisterActivity.class)); // Navigate back to the login screen
-                    }
-                });
-    }
-
-    void setDocumentID(String doc) {
-        db.collection("users").document(doc).get()
+    void getUser(String device) {
+        db.collection("users").document(device).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            SetEmail(document.getString("Email"));
+                            String role = document.getString("role");
+                            if (role != null) {
+                                openAppForRole(role);
+                            } else {
+                                HashMap<String, String> data = new HashMap<>(); // Create a HashMap to store user data
+                                data.put("role", "Entrant"); // Add user's email to the map
+                                db.collection("users").document(device).set(data);
+                            }
                         } else {
                             Log.d("MainActivity", "No such document"); // Log a message if the document does not exist
                         }
@@ -102,38 +76,19 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        SetEmail("none");
+                        startActivity(new Intent(MainActivity.this, RegisterActivity.class)); // Navigate back to the login screen
                     }
                 });
-    }
 
-    void getEmail(String device) {
-        db.collection("users").whereEqualTo("sUID", device).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                setDocumentID(document.getId());
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        SetEmail("none");
-                    }
-                });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
+        setContentView(R.layout.activity_main); // Set the layout for the main activity screen
 
         // Initialize Firebase services
         FirebaseApp.initializeApp(this); // Ensure Firebase is initialized before using any Firebase services
-        auth = FirebaseAuth.getInstance(); // Get the instance of Firebase authentication
         db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
 
         /**
@@ -141,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
          * main activity and view
          */
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        getEmail(device);
-
-        setContentView(R.layout.activity_main); // Set the layout for the main activity screen
-
-
+        getUser(device);
     }
 }
