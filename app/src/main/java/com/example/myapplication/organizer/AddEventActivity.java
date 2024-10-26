@@ -27,9 +27,12 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 
 public class AddEventActivity extends AppCompatActivity {
 
@@ -69,6 +72,7 @@ public class AddEventActivity extends AppCompatActivity {
         });
     }
 
+
     private void openFileChooser() {
         Intent intent = new Intent(); // Create an intent for file selection
         intent.setType("image/*"); // Set the intent to select images
@@ -105,6 +109,9 @@ public class AddEventActivity extends AppCompatActivity {
             event.put("dateTime", eventDateTime); // Add event date and time to the map
             event.put("limitEntrants", limitEntrants.isEmpty() ? null : Integer.parseInt(limitEntrants)); // Add limit entrants or null if not set
             event.put("geolocationEnabled", geolocationEnabled); // Add geolocation status to the map
+
+            List<String> waitlist = new ArrayList<>();
+            event.put("waitlist", waitlist); // **(2) Add waitlist to the event map**
 
             if (posterUri != null) {
                 uploadPosterAndSaveEvent(event); // Upload poster image and save the event
