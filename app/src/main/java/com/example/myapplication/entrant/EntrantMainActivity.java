@@ -7,11 +7,13 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.EventActivity;
+import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -42,6 +44,7 @@ public class EntrantMainActivity extends AppCompatActivity {
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         getData(device);
+
 
         // Set a click listener on the update profile button
         updateProfileBtn.setOnClickListener(view -> {
