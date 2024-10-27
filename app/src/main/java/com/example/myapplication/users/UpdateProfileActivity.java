@@ -191,15 +191,15 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
                             // Use Glide to update the profile picture with the default image
                             Glide.with(UpdateProfileActivity.this)
-                                    .load(currentProfilePicUrl)
-                                    .placeholder(R.drawable.baseline_person_outline_24)
-                                    .error(R.drawable.baseline_person_outline_24)
-                                    .into(updateProfilePic);
+                                .load(currentProfilePicUrl)
+                                .placeholder(R.drawable.baseline_person_outline_24)
+                                .error(R.drawable.baseline_person_outline_24)
+                                .into(updateProfilePic);
                         }
                     }
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(UpdateProfileActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show(); // Show error if unable to fetch data
-                });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(UpdateProfileActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show(); // Show error if unable to fetch data
+        });
     }
 
     /**
@@ -210,11 +210,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
      * @param lastname
      */
     private void updateUserProfile(String device, String firstname, String lastname) {
-        if (imageUri != null) {
-            updateProfileImageAndData(device, firstname, lastname); // Upload new image and update data
-        } else {
-            updateUserDataInFirestore(device, firstname, lastname, currentProfilePicUrl); // Update Firestore without image change//
-        }
+            if (imageUri != null) {
+                updateProfileImageAndData(device, firstname, lastname); // Upload new image and update data
+            } else {
+                updateUserDataInFirestore(device, firstname, lastname, currentProfilePicUrl); // Update Firestore without image change//
+            }
     }
 
     /**
