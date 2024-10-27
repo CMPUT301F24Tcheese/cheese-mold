@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".users.UpdateProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".users.RegisterActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".users.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".administrator.AdministratorMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".organizer.OrganizerMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".entrant.EntrantMainActivity"/>
+
+        <!-- Register EventActivity -->
+        <activity android:name=".EventActivity" android:exported="true"/>
+
+        <!-- Register ProfileActivity -->
+        <activity android:name=".ProfileActivity" android:exported="true"/>
+
+        <!-- Register EmailActivity -->
+        <activity android:name=".EmailActivity" android:exported="true"/>
+
+        <!-- Register AddEventActivity (for adding events) -->
+        <activity android:name=".organizer.AddEventActivity" android:exported="true"/>
+
+        <!-- Register AddFacilityActivity (for adding facilities) -->
+        <activity android:name=".organizer.AddFacilityActivity" android:exported="true"/>
+
+        <activity android:name=".FacilityActivity" android:exported="true"/>
+
+        <activity android:name=".organizer.EditFacilityActivity" />
+
+        <activity android:name=".organizer.EventEditActivity" />
+
+
+
+    </application>
+
+</manifest>

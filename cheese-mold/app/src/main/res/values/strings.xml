@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string-array name="user_role">
+        <item>Entrant</item>
+        <item>Organizer</item>
+    </string-array>
+</resources>
