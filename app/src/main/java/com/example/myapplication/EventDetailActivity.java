@@ -3,16 +3,20 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.objects.Event;
+import com.example.myapplication.objects.Users;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EventDetailActivity extends AppCompatActivity {
+
     private FirebaseFirestore db;
 
     @SuppressLint("SetTextI18n")
@@ -30,36 +34,28 @@ public class EventDetailActivity extends AppCompatActivity {
 
         // Retrieve the event and user that were clicked/passed from the previous activity
         Intent intent = getIntent();
+        String users = intent.getStringExtra("device");
         Event event = (Event) intent.getSerializableExtra("event");
-        Users users = (Users) intent.getSerializableExtra("user");
+        String eventDescription = event.getDescription();
 
-        assert event != null;
-        textView.setText(event.getDescription()); // set the event description on the detail activity
+        textView.setText(eventDescription); // set the event description on the detail activity
 
 
         // When join event button is clicked, the user is added to the waitingList
-        if (!event.getWaitingList().contains( users))
+        if (event.getWaitingList() != null && event.getWaitingList().contains(users)) {
+            joinEvent.setText("Unjoin Event"); // replace the text button with unjoin event
+            event.removeWaitingList(users);
+            FirestoreRemoveWaitingList(event.getId(),users);
 
+
+        } else {
             joinEvent.setOnClickListener(v -> {
                 event.addWaitingList(users);
-                assert users != null;
-
-                // add the user to waitinglist in firestore
-                FaddWaitingList(event.getEventId(),users.getEmail());
-
+                FirestoreAddWaitingList(event.getId(),users);
             });
-        else {
-            joinEvent.setText("Unjoin Event");
-            joinEvent.setOnClickListener(v -> {
-                event.removeWaitingList(users);
-                assert users != null;
-
-                // remove the user from waitinglist in firestore
-                FremoveWaitingList(event.getEventId(),users.getEmail());
-
-            });
-
         }
+
+
 
         // Exit from this activity when cancel button is clicked
         cancel.setOnClickListener(v -> {
@@ -69,26 +65,32 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * This method add the user to the event.
+     * Add the device to the waiting list of an event on Firebase
      * @param eventId
-     *         The unique iD for an event(The document ID)
-     * @param email
-     *         verification of the user
+     *      The id of the event
+     * @param device
+     *      The users who is going to jonin
      */
-    private void FaddWaitingList(String eventId, String email) {
-        db.collection("event").document(eventId)
-                .update("waitingList", FieldValue.arrayUnion(email));
-
+    public void FirestoreAddWaitingList(String eventId,String device){
+        db.collection("events").document(eventId)
+                .update("waitingList", FieldValue.arrayUnion(device))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
     }
 
     /**
-     *
+     * Remove the device to the waiting list of an event on Firebase
      * @param eventId
-     * @param email
+     *      The id of the event
+     * @param device
+     *      The users who is going to jonin
      */
-    private void FremoveWaitingList(String eventId, String email) {
-        db.collection("event").document(eventId)
-                .update("waitingList", FieldValue.arrayRemove(email));
-
+    public void FirestoreRemoveWaitingList(String eventId,String device) {
+        db.collection("events").document(eventId)
+                .update("waitingList", FieldValue.arrayRemove(device))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
+
+
 }

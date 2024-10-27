@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.entrant;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.EmailActivity;
+import com.example.myapplication.EventActivity;
+import com.example.myapplication.EventAdapter;
+import com.example.myapplication.EventDetailActivity;
+import com.example.myapplication.ProfileActivity;
+import com.example.myapplication.R;
 import com.example.myapplication.entrant.MyEventActivity;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
@@ -28,24 +34,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EventActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener {
+public class MyEventActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener {
 
     private RecyclerView recyclerView; // RecyclerView for displaying the list of events.
     private EventAdapter eventAdapter; // Adapter for handling and binding event data to the RecyclerView.
     private List<Event> eventList; // List to store event objects.
     private FirebaseFirestore db; // Firebase Firestore instance for database operations.
-    private Users user; // The user who is using the app
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the superclass method to handle activity creation.
-        setContentView(R.layout.activity_event); // Set the XML layout for this activity.
+        setContentView(R.layout.activity_my_event); // Set the XML layout for this activity.
 
         db = FirebaseFirestore.getInstance(); // Initialize the Firestore database instance.
 
-        recyclerView = findViewById(R.id.recyclerViewEvent); // Link the RecyclerView to the layout.
+        recyclerView = findViewById(R.id.myOwnEvents); // Link the RecyclerView to the layout.
         recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Set layout manager for linear arrangement of items.
         eventList = new ArrayList<>(); // Initialize the list that will hold events.
         eventAdapter = new EventAdapter(eventList, this); // Create an instance of the adapter and set the click listener.
@@ -55,45 +60,22 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         // Load Events from Firestore
         loadEventsFromFirestore();
 
-        // Floating Action Button to add Event or Facility
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> showAddDialog());
-
-        Button myFacilityButton = findViewById(R.id.buttonMyFacility);
-        myFacilityButton.setOnClickListener(view -> {
-            Intent intent = new Intent(EventActivity.this, FacilityActivity.class);
-            startActivity(intent);
-        });
 
         // Profile and Email ImageView Listeners
         ImageView profileImage = findViewById(R.id.profileImage);
         profileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(EventActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(MyEventActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
 
         ImageView emailImage = findViewById(R.id.emailImage);
         emailImage.setOnClickListener(v -> {
-            Intent intent = new Intent(EventActivity.this, EmailActivity.class);
+            Intent intent = new Intent(MyEventActivity.this, EmailActivity.class);
             startActivity(intent);
         });
 
-
-        // when click the event on the event list, it directs to EventDetailActivity that shows the details of the event.
-        // The EventDetail activity allow the user to join the activity.
-//        eventAdapter.setOnEventClickListener(event -> {
-//            Intent intent = new Intent(EventActivity.this, EventDetailActivity.class);
-//            intent.putExtra("event", event); // send the event to new activity
-//            intent.putExtra("user",user); // send user to new activity
-//            startActivity(intent);
-//        });
-
-        Button myEventButton = findViewById(R.id.myeventbutt);
-        myEventButton.setOnClickListener(v->{
-            Intent intent = new Intent(EventActivity.this, MyEventActivity.class);
-            startActivity(intent);
-        });
     }
+
 
     private void loadEventsFromFirestore() {
         CollectionReference eventCollection = db.collection("events"); // Get reference to the Firestore collection named "events".
@@ -118,36 +100,16 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         });
     }
 
-    private void showAddDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this); // Create an AlertDialog builder.
-        builder.setTitle("Choose Action"); // Set the title of the dialog.
-        String[] options = {"Add Event", "Add Facility"}; // Define options for the dialog.
-        builder.setItems(options, (dialog, which) -> { // Set what happens when a user selects an option.
-            if (which == 0) { // If the user selects "Add Event"
-                startActivity(new Intent(EventActivity.this, AddEventActivity.class)); // Start AddEventActivity.
-            } else { // If the user selects "Add Facility"
-                startActivity(new Intent(EventActivity.this, AddFacilityActivity.class)); // Start AddFacilityActivity.
-            }
-        });
-        builder.create().show(); // Display the dialog.
-    }
+
 
     @Override
     public void onEventClick(Event event) {
+        Intent intentFromEM = getIntent();
+        String device = intentFromEM.getStringExtra("device");
 
-        Intent intentFromEntrant = getIntent();
-        String device = intentFromEntrant.getStringExtra("device");
-        String role = intentFromEntrant.getStringExtra("role");
-
-        Intent intent;
-
-        if (Objects.equals(role, "Entrant")){
-            intent =  new Intent(EventActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
-        }
-        else {
-            intent =  new Intent(EventActivity.this, EventEditActivity.class);
-        }
-        intent.putExtra("event_id", event.getId()); // Attach the event ID as extra data to the intent.
+        Intent intent =  new Intent(MyEventActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
+        intent.putExtra("device",device);
+        intent.putExtra("event",event);
         startActivity(intent); // Start the new activity to edit the event.
     }
 

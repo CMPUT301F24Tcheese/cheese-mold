@@ -8,27 +8,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.example.myapplication.objects.Event;
+
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
-    private OnItemClickListener onItemClickListener;
+    private OnEventClickListener onEventClickListener;
 
-    public EventAdapter(List<Event> eventList) {
+    public EventAdapter(List<Event> eventList, OnEventClickListener onEventClickListener) {
         this.eventList = eventList;
+        this.onEventClickListener = onEventClickListener;
     }
 
-
-    // Interface for click listener
-    public interface OnItemClickListener {
-        void onItemClick(Event event);
-    }
-
-    // Set the listener from outside
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.onItemClickListener = listener;
-    }
 
     @NonNull
     @Override
@@ -45,18 +38,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         // Load poster image if available
         if (event.getPosterUrl() != null && !event.getPosterUrl().isEmpty()) {
-            Glide.with(holder.itemView.getContext()).load(event.getPosterUrl()).into(holder.posterImageView);
+            Glide.with(holder.itemView.getContext())
+                    .load(event.getPosterUrl())
+                    .into(holder.posterImageView);
+            holder.posterImageView.setVisibility(View.VISIBLE);
         } else {
             holder.posterImageView.setVisibility(View.GONE); // Hide the image view if no poster is available
         }
 
-        // Handle item click
+        // Set click listener
         holder.itemView.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(event);
+            if (onEventClickListener != null) {
+                onEventClickListener.onEventClick(event);
             }
         });
-
     }
 
     @Override
@@ -64,15 +59,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
-    static class EventViewHolder extends RecyclerView.ViewHolder {
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView, descriptionTextView;
         ImageView posterImageView;
 
-        EventViewHolder(@NonNull View itemView) {
+        public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.eventTitle);
             descriptionTextView = itemView.findViewById(R.id.eventDescription);
             posterImageView = itemView.findViewById(R.id.eventPoster);
         }
+    }
+
+    public interface OnEventClickListener {
+        void onEventClick(Event event);
     }
 }

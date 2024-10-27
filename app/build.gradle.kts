@@ -49,13 +49,17 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
-
+    //ZXing libraries for QR code
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
 
     // AndroidX Libraries
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.9.0")
+
+
 
     // Retain original library references
 
@@ -71,6 +75,9 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
+
+
+
 }
 
 // Ensure Google services plugin is applied at the app level

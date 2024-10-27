@@ -4,4 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lavender">#8692f7</color>
     <color name="toolbarBackground">#FDF7FE</color>
+    <color name="purple">#673AB7</color>
+    <color name="light_purple">#DDC3F8</color>
+    <color name="red">#F10A0A</color>
+    <color name="grey">#EAE2E2</color>
 </resources>

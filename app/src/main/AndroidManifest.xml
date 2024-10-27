@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -21,34 +20,29 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".UpdateProfileActivity"
+            android:name=".users.UpdateProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".users.RegisterActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".users.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".administrator.AdministratorMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".organizer.OrganizerMainActivity"/>
+
+        <!-- Register EntrantMainActivity -->
+        <activity android:name=".entrant.EntrantMainActivity"/>
 
         <!-- Register EventActivity -->
         <activity android:name=".EventActivity" android:exported="true"/>
@@ -60,28 +54,20 @@
         <activity android:name=".EmailActivity" android:exported="true"/>
 
         <!-- Register AddEventActivity (for adding events) -->
-        <activity android:name=".AddEventActivity" android:exported="true"/>
+        <activity android:name=".organizer.AddEventActivity" android:exported="true"/>
 
         <!-- Register AddFacilityActivity (for adding facilities) -->
-        <activity android:name=".AddFacilityActivity" android:exported="true"/>
+        <activity android:name=".organizer.AddFacilityActivity" android:exported="true"/>
 
         <activity android:name=".FacilityActivity" android:exported="true"/>
 
-        <activity android:name=".EditFacilityActivity" />
+        <activity android:name=".organizer.EditFacilityActivity" />
 
-        <activity android:name=".MyEventActivity" android:exported="true"/>
+        <activity android:name=".organizer.EventEditActivity" />
+
+        <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
 
         <activity android:name=".EventDetailActivity" android:exported="true"/>
-
-
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
 
 
 
