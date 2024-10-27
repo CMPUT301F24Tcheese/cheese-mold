@@ -35,15 +35,21 @@ android {
 
 dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-database")
+
+    //New firebase
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+    // Old firebase
+    //implementation("com.google.firebase:firebase-firestore")
+    //implementation("com.google.firebase:firebase-auth")
+    //implementation("com.google.firebase:firebase-storage")
+    //implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-analytics")
-    // Firebase Firestore and Realtime Database
 
+    // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
