@@ -13,7 +13,7 @@ public class Event implements Serializable {
     private String posterUrl; // URL pointing to the event's poster image stored in Firebase Storage.
     private String dateTime; // Date and time of the event.
     private Long limitEntrants; // Maximum number of entrants allowed for the event; stored as a Long to handle larger numbers.
-    private WaitingList waitingList ;
+    private WaitingList waitingList = new WaitingList();
 
     // Default constructor required by Firestore to create instances of the Event class.
     public Event() {
@@ -27,7 +27,7 @@ public class Event implements Serializable {
         this.description = description; // Set the event description.
         this.posterUrl = posterUrl; // Set the URL for the event's poster image.
         this.limitEntrants = limitEntrants; // Set the maximum number of entrants allowed.
-        this.waitingList = new WaitingList();
+
     }
 
     // Getter method to retrieve the event ID.

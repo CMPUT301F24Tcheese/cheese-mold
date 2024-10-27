@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services") // Ensure Google services plugin is applied
-
 }
 
 android {
@@ -36,16 +35,21 @@ android {
 
 dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
 
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-database")
+    //New firebase
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+    // Old firebase
+    //implementation("com.google.firebase:firebase-firestore")
+    //implementation("com.google.firebase:firebase-auth")
+    //implementation("com.google.firebase:firebase-storage")
+    //implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-analytics")
-    // Firebase Firestore and Realtime Database
 
+    // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
@@ -73,11 +77,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation ("com.google.android.gms:play-services-auth:21.2.0")
-
-
-
 }
 
 // Ensure Google services plugin is applied at the app level
