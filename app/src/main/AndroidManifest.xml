@@ -35,6 +35,8 @@
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".administrator.AdministratorMainActivity"/>
+        <activity android:name=".administrator.AdminBrowseFacilities"/>
+        <activity android:name=".administrator.AdminBrowseUsers"/>
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".organizer.OrganizerMainActivity"/>
