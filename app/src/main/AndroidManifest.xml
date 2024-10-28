@@ -65,6 +65,9 @@
 
         <activity android:name=".organizer.EventEditActivity" />
 
+        <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
+
+        <activity android:name=".EventDetailActivity" android:exported="true"/>
 
 
     </application>

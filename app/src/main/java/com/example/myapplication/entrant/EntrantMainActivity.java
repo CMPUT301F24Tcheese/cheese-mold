@@ -13,11 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.EventActivity;
+import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.users.UpdateProfileActivity;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EntrantMainActivity extends AppCompatActivity {
 
@@ -27,6 +32,7 @@ public class EntrantMainActivity extends AppCompatActivity {
     private Button updateProfileBtn; // Button for users to navigate to the update profile screen
     private String device;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
@@ -34,7 +40,7 @@ public class EntrantMainActivity extends AppCompatActivity {
         // Initialize Firebase services
         db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
 
-        setContentView(R.layout.activity_organizer_main); // Set the layout for the main activity screen
+        setContentView(R.layout.activity_entrant_main); // Set the layout for the main activity screen
 
         // Initialize the UI elements
         welcomeText = findViewById(R.id.welcomeTextView); // Find the TextView by its ID to display the welcome message
@@ -45,17 +51,17 @@ public class EntrantMainActivity extends AppCompatActivity {
 
         getData(device);
 
-
         // Set a click listener on the update profile button
         updateProfileBtn.setOnClickListener(view -> {
             startActivity(new Intent(EntrantMainActivity.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
             finish(); // Close the MainActivity
         });
 
-        // Initialize the button to navigate to EventActivity
+        // Initialize the button to navigate to MyEventActivity
         Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage); // Find the button by its ID
         btnOpenEventPage.setOnClickListener(view -> {
-            Intent intent = new Intent(EntrantMainActivity.this, EventActivity.class); // Create an intent to open EventActivity
+            Intent intent = new Intent(EntrantMainActivity.this, MyEventActivity.class); // Create an intent to open EventActivity
+            intent.putExtra("device",device);
             startActivity(intent); // Start EventActivity
         });
     }
