@@ -61,7 +61,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
         });
 
         browseFacilitiesBtn.setOnClickListener(view -> {
-            // TODO fill later
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
         });
 
         browseEventsBtn.setOnClickListener(view -> {
@@ -69,7 +69,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
         });
 
         browseProfilesBtn.setOnClickListener(view -> {
-            // TODO fill later
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseUsers.class));
         });
 
         browseImagesBtn.setOnClickListener(view -> {
