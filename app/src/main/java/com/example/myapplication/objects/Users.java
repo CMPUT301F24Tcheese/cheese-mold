@@ -1,23 +1,41 @@
 package com.example.myapplication.objects;
 
-import java.io.Serializable;
+public class Users {
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String profilePicture;
+    private String role;
 
-public class Users implements Serializable {
-    private String device;
-
-
-    public Users(String email){
-        this.device = email;
-
+    public Users(String firstName, String lastName, String email, String profilePicture, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.profilePicture = profilePicture;
+        this.role = role;
     }
 
-    public void setEmail(String device){
-        this.device = device;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public String getEmail(){
-        return this.device;
+    public String getLastName() {
+        return lastName;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getName() {
+        return firstName + ' ' + lastName;
+    }
 }

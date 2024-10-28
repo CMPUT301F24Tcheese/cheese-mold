@@ -22,6 +22,11 @@ public class AdministratorMainActivity extends AppCompatActivity {
     private TextView welcomeText; // TextView to display the welcome message with the user's name
     private ImageView profilePic; // ImageView to display the user's profile picture
     private Button updateProfileBtn; // Button for users to navigate to the update profile screen
+    private Button browseFacilitiesBtn;
+    private Button browseEventsBtn;
+    private Button browseProfilesBtn;
+    private Button browseImagesBtn;
+    private Button browseQRCodeBtn;
     private String device;
 
     @Override
@@ -31,12 +36,19 @@ public class AdministratorMainActivity extends AppCompatActivity {
         // Initialize Firebase services
         db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
 
-        setContentView(R.layout.activity_organizer_main); // Set the layout for the main activity screen
+        setContentView(R.layout.acitvity_administrator_main); // Set the layout for the main activity screen
 
         // Initialize the UI elements
         welcomeText = findViewById(R.id.welcomeTextView); // Find the TextView by its ID to display the welcome message
         profilePic = findViewById(R.id.welcomeProfilePictureMain); // Find the ImageView by its ID for profile picture display
         updateProfileBtn = findViewById(R.id.updateProfileBtn); // Find the Button by its ID for navigating to update profile screen
+
+        // initialize the browse button UI elements
+        browseFacilitiesBtn = findViewById(R.id.browseFacilitiesBtn);
+        browseEventsBtn = findViewById(R.id.browseEventsBtn);
+        browseProfilesBtn = findViewById(R.id.browseProfilesBtn);
+        browseImagesBtn = findViewById(R.id.browseImagesBtn);
+        browseQRCodeBtn = findViewById(R.id.browseQRcodesBtn);
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -48,12 +60,26 @@ public class AdministratorMainActivity extends AppCompatActivity {
             finish(); // Close the MainActivity
         });
 
-        // Initialize the button to navigate to EventActivity
-        Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage); // Find the button by its ID
-        btnOpenEventPage.setOnClickListener(view -> {
-            Intent intent = new Intent(AdministratorMainActivity.this, EventActivity.class); // Create an intent to open EventActivity
-            startActivity(intent); // Start EventActivity
+        browseFacilitiesBtn.setOnClickListener(view -> {
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
         });
+
+        browseEventsBtn.setOnClickListener(view -> {
+            // TODO fill later
+        });
+
+        browseProfilesBtn.setOnClickListener(view -> {
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseUsers.class));
+        });
+
+        browseImagesBtn.setOnClickListener(view -> {
+            // TODO fill later
+        });
+
+        browseQRCodeBtn.setOnClickListener(view -> {
+            // TODO fill later
+        });
+
     }
 
     /**
