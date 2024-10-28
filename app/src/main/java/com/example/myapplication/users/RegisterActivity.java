@@ -30,7 +30,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -169,12 +171,15 @@ public class RegisterActivity extends AppCompatActivity {
      * @param profilePicUrl URL of the user's profile picture
      */
     private void uploadUserData(String firstname, String lastname, String email, String role, String device, String profilePicUrl) {
-        HashMap<String, String> data = new HashMap<>(); // Create a HashMap to store user data
+        HashMap<String, Object> data = new HashMap<>(); // Create a HashMap to store user data
         data.put("Email", email); // Add user's email to the map
         data.put("role", role);
         data.put("Firstname", firstname); // Add user's first name to the map
         data.put("Lastname", lastname); // Add user's last name to the map
         data.put("Profile Picture", profilePicUrl); // Add user's profile picture URL to the map
+
+        List<String> eventId = new ArrayList<>();
+        data.put("EventID", eventId); // **(2) Add waitlist to the event map**
 
         usersRef.document(device).set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {

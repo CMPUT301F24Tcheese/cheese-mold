@@ -2,9 +2,12 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +21,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +42,7 @@ public class EventDetailActivity extends AppCompatActivity {
         Button joinEvent = findViewById(R.id.eventDetailJoin);
         Button cancel = findViewById(R.id.eventDetailCancel);
         TextView textView = findViewById(R.id.eventDetail);
+        ImageView imageView = findViewById(R.id.imageView);
         db = FirebaseFirestore.getInstance();
 
         // Retrieve the event and user that were clicked/passed from the previous activity
@@ -45,16 +51,23 @@ public class EventDetailActivity extends AppCompatActivity {
         Event event = (Event) intent.getSerializableExtra("event");
         String eventDescription = event.getDescription();
 
+
         textView.setText(eventDescription); // set the event description on the detail activity
 
+        //Load image from poster URL
+        Picasso.get()
+                .load(event.getPosterUrl()) // Load the image URL
+                .into(imageView); // Set the image into your ImageView
 
-        checkIfUserInWaitingList(event.getId(), users, isInWaitingList -> {
-            if (isInWaitingList) {
+
+
+        if (event.getWaitingList() != null && event.getWaitingList().getList().contains(users)) {
                 // Logic for when the user is in the waiting list
                 joinEvent.setText("Unjoin Event"); // replace the text button with unjoin event
                 joinEvent.setOnClickListener(v -> {
                     event.removeWaitingList(users);
                     FirestoreRemoveWaitingList(event.getId(), users);
+                    FireStoreRemoveeventId(event.getId(), users);
                     finish();
                 });
             } else {
@@ -62,25 +75,10 @@ public class EventDetailActivity extends AppCompatActivity {
                 joinEvent.setOnClickListener(v -> {
                     event.addWaitingList(users);
                     FirestoreAddWaitingList(event.getId(),users);
+                    FireStoreAddeventId(event.getId(), users);
                     finish();
                 });
             }
-        });
-
-        // When join event button is clicked, the user is added to the waitingList
-//        if (event.getWaitingList() != null && event.getWaitingList().getList().contains(users)) {
-//            joinEvent.setText("Unjoin Event"); // replace the text button with unjoin event
-//            event.removeWaitingList(users);
-//            FirestoreRemoveWaitingList(event.getId(),users);
-//
-//
-//        } else {
-//            joinEvent.setOnClickListener(v -> {
-//                event.addWaitingList(users);
-//                FirestoreAddWaitingList(event.getId(),users);
-//            });
-//        }
-
 
 
         // Exit from this activity when cancel button is clicked
@@ -105,6 +103,18 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     /**
+     *Add the eventId to the user's array of EventID in firebase, to indicate they have joined this event
+     * @param eventId
+     * @param device
+     */
+    public void FireStoreAddeventId(String eventId,String device){
+        db.collection("users").document(device)
+                .update("EventID", FieldValue.arrayUnion(eventId))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
+    }
+
+    /**
      * Remove the device to the waiting list of an event on Firebase
      * @param eventId
      *      The id of the event
@@ -119,37 +129,18 @@ public class EventDetailActivity extends AppCompatActivity {
 
     }
 
-    public void checkIfUserInWaitingList(String eventId, String userId, Callback callback) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("events").document(eventId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    // Retrieve the waitingList array as an ArrayList
-                    ArrayList<String> waitingList = (ArrayList<String>) document.get("waitlist");
-
-                    if (waitingList != null && waitingList.contains(userId)) {
-                        // User is in the waiting list
-                        callback.onResult(true);
-                    } else {
-                        // User is not in the waiting list
-                        callback.onResult(false);
-                    }
-                } else {
-                    Log.d("Firestore", "No such document");
-                    callback.onResult(false);
-                }
-            } else {
-                Log.d("Firestore", "get failed with ", task.getException());
-                callback.onResult(false);
-            }
-        });
+    /**
+     *Remove the eventID from user on Firebase, to indicate they unjoin the event.
+     * @param eventId
+     * @param device
+     */
+    public void FireStoreRemoveeventId(String eventId,String device){
+        db.collection("users").document(device)
+                .update("EventID",FieldValue.arrayRemove(device))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
 
-    // Define a callback interface
-    public interface Callback {
-        void onResult(boolean isInWaitingList);
-    }
+
 
 }

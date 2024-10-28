@@ -19,6 +19,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.entrant.MyEventActivity;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
+import com.example.myapplication.objects.WaitingList;
 import com.example.myapplication.organizer.AddEventActivity;
 import com.example.myapplication.organizer.AddFacilityActivity;
 import com.example.myapplication.organizer.EventEditActivity;
@@ -76,8 +77,13 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
 
     }
 
-
+    /**
+     * It initializes the local event object and loads the the UI with data from Firebase
+     */
     private void loadEventsFromFirestore() {
+        Intent intentFromEM = getIntent();
+        String device = intentFromEM.getStringExtra("device");
+
         CollectionReference eventCollection = db.collection("events"); // Get reference to the Firestore collection named "events".
 
         eventCollection.addSnapshotListener(new EventListener<QuerySnapshot>() { // Set up a listener to watch for changes in the "events" collection.
@@ -92,7 +98,12 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
                     for (QueryDocumentSnapshot doc : value) { // Loop through each document in the Firestore query snapshot.
                         Event event = doc.toObject(Event.class); // Convert Firestore document to Event object.
                         event.setId(doc.getId()); // Assign the Firestore document ID to the event object.
-                        eventList.add(event); // Add the event object to the list.
+                        ArrayList<String> waitlist = (ArrayList<String>) doc.get("waitlist");
+                        event.setWaitingList(new WaitingList(waitlist)); // set the waitlist
+
+                        if (event.getWaitingList().getList().contains(device)) { // only add the eventlist when the user is in the event.
+                            eventList.add(event); // Add the event object to the list.
+                        }
                     }
                     eventAdapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView with new data.
                 }
@@ -101,7 +112,11 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
     }
 
 
-
+    /**
+     * This navigates to a new activity when an activity is clicked
+     * @param event
+     *          The event that is being clicked
+     */
     @Override
     public void onEventClick(Event event) {
         Intent intentFromEM = getIntent();

@@ -63,6 +63,9 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.9.0")
 
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
+
 
 
     // Retain original library references

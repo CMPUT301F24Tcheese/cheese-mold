@@ -10,9 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.entrant.MyEventActivity;
 import com.example.myapplication.objects.Event;
-import com.example.myapplication.objects.Users;
 import com.example.myapplication.organizer.AddEventActivity;
 import com.example.myapplication.organizer.AddFacilityActivity;
 import com.example.myapplication.organizer.EventEditActivity;
@@ -23,10 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class EventActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener {
 
@@ -34,9 +30,6 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
     private EventAdapter eventAdapter; // Adapter for handling and binding event data to the RecyclerView.
     private List<Event> eventList; // List to store event objects.
     private FirebaseFirestore db; // Firebase Firestore instance for database operations.
-    private Users user; // The user who is using the app
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,47 +44,27 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         eventAdapter = new EventAdapter(eventList, this); // Create an instance of the adapter and set the click listener.
         recyclerView.setAdapter(eventAdapter); // Attach the adapter to the RecyclerView.
 
+        loadEventsFromFirestore(); // Call method to load events from Firestore.
 
-        // Load Events from Firestore
-        loadEventsFromFirestore();
+        FloatingActionButton fab = findViewById(R.id.fab); // Find the FloatingActionButton from the layout.
+        fab.setOnClickListener(view -> showAddDialog()); // Set an onClick listener to open a dialog for adding events or facilities.
 
-        // Floating Action Button to add Event or Facility
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> showAddDialog());
-
-        Button myFacilityButton = findViewById(R.id.buttonMyFacility);
+        Button myFacilityButton = findViewById(R.id.buttonMyFacility); // Find the button for navigating to facilities.
         myFacilityButton.setOnClickListener(view -> {
-            Intent intent = new Intent(EventActivity.this, FacilityActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(EventActivity.this, FacilityActivity.class); // Create an intent to start FacilityActivity.
+            startActivity(intent); // Start the new activity.
         });
 
-        // Profile and Email ImageView Listeners
-        ImageView profileImage = findViewById(R.id.profileImage);
+        ImageView profileImage = findViewById(R.id.profileImage); // Find the ImageView for the profile icon.
         profileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(EventActivity.this, ProfileActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(EventActivity.this, ProfileActivity.class); // Create an intent to start ProfileActivity.
+            startActivity(intent); // Start the new activity.
         });
 
-        ImageView emailImage = findViewById(R.id.emailImage);
+        ImageView emailImage = findViewById(R.id.emailImage); // Find the ImageView for the email icon.
         emailImage.setOnClickListener(v -> {
-            Intent intent = new Intent(EventActivity.this, EmailActivity.class);
-            startActivity(intent);
-        });
-
-
-        // when click the event on the event list, it directs to EventDetailActivity that shows the details of the event.
-        // The EventDetail activity allow the user to join the activity.
-//        eventAdapter.setOnEventClickListener(event -> {
-//            Intent intent = new Intent(EventActivity.this, EventDetailActivity.class);
-//            intent.putExtra("event", event); // send the event to new activity
-//            intent.putExtra("user",user); // send user to new activity
-//            startActivity(intent);
-//        });
-
-        Button myEventButton = findViewById(R.id.myeventbutt);
-        myEventButton.setOnClickListener(v->{
-            Intent intent = new Intent(EventActivity.this, MyEventActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(EventActivity.this, EmailActivity.class); // Create an intent to start EmailActivity.
+            startActivity(intent); // Start the new activity.
         });
     }
 
@@ -134,22 +107,8 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
 
     @Override
     public void onEventClick(Event event) {
-
-        Intent intentFromEntrant = getIntent();
-        String device = intentFromEntrant.getStringExtra("device");
-        String role = intentFromEntrant.getStringExtra("role");
-
-        Intent intent;
-
-        if (Objects.equals(role, "Entrant")){
-            intent =  new Intent(EventActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
-        }
-        else {
-            intent =  new Intent(EventActivity.this, EventEditActivity.class);
-        }
+        Intent intent = new Intent(EventActivity.this, EventEditActivity.class); // Create an intent to open the EventEditActivity.
         intent.putExtra("event_id", event.getId()); // Attach the event ID as extra data to the intent.
         startActivity(intent); // Start the new activity to edit the event.
     }
-
-
 }

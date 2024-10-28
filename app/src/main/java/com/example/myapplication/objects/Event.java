@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 // The Event class represents an event with various attributes like ID, title, description, poster URL, date, and limit on entrants.
 public class Event implements Serializable {
@@ -13,7 +14,7 @@ public class Event implements Serializable {
     private String posterUrl; // URL pointing to the event's poster image stored in Firebase Storage.
     private String dateTime; // Date and time of the event.
     private Long limitEntrants; // Maximum number of entrants allowed for the event; stored as a Long to handle larger numbers.
-    private WaitingList waitingList = new WaitingList();
+    private WaitingList waitingList;
 
     // Default constructor required by Firestore to create instances of the Event class.
     public Event() {
@@ -27,6 +28,8 @@ public class Event implements Serializable {
         this.description = description; // Set the event description.
         this.posterUrl = posterUrl; // Set the URL for the event's poster image.
         this.limitEntrants = limitEntrants; // Set the maximum number of entrants allowed.
+        this.waitingList = new WaitingList(new ArrayList<String>());
+
 
     }
 
@@ -100,5 +103,9 @@ public class Event implements Serializable {
 
     public WaitingList getWaitingList(){
         return this.waitingList;
+    }
+
+    public void setWaitingList(WaitingList waitlist){
+        this.waitingList = waitlist;
     }
 }

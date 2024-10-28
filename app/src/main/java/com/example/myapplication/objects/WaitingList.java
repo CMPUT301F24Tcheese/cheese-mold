@@ -6,8 +6,8 @@ import java.util.Objects;
 public class WaitingList extends ArrayList {
     private ArrayList<String> waitingList;
 
-    public WaitingList(){
-        this.waitingList = new ArrayList<>();
+    public WaitingList(ArrayList<String> waitingList){
+        this.waitingList = waitingList;
     }
 
     public ArrayList<String> getList(){
