@@ -98,12 +98,14 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
                     for (QueryDocumentSnapshot doc : value) { // Loop through each document in the Firestore query snapshot.
                         Event event = doc.toObject(Event.class); // Convert Firestore document to Event object.
                         event.setId(doc.getId()); // Assign the Firestore document ID to the event object.
+                        Boolean geolocationEnabled = doc.getBoolean("geolocationEnabled");
+                        event.setGeo(geolocationEnabled);
                         ArrayList<String> waitlist = (ArrayList<String>) doc.get("waitlist");
                         event.setWaitingList(new WaitingList(waitlist)); // set the waitlist
 
-                        if (event.getWaitingList().getList().contains(device)) { // only add the eventlist when the user is in the event.
+//                        if (event.getWaitingList().getList().contains(device)) { // only add the eventlist when the user is in the event.
                             eventList.add(event); // Add the event object to the list.
-                        }
+//                        }
                     }
                     eventAdapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView with new data.
                 }

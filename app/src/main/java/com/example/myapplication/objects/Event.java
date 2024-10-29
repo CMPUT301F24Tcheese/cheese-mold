@@ -14,6 +14,7 @@ public class Event implements Serializable {
     private String posterUrl; // URL pointing to the event's poster image stored in Firebase Storage.
     private String dateTime; // Date and time of the event.
     private Long limitEntrants; // Maximum number of entrants allowed for the event; stored as a Long to handle larger numbers.
+    private boolean geolocationEnabled;
     private WaitingList waitingList;
 
     // Default constructor required by Firestore to create instances of the Event class.
@@ -91,6 +92,13 @@ public class Event implements Serializable {
     // Setter method to set the limit on the number of entrants for the event.
     public void setLimitEntrants(Long limitEntrants) {
         this.limitEntrants = limitEntrants; // Assign the provided limit value to the event instance.
+    }
+    public void setGeo(boolean geo){
+        this.geolocationEnabled = geo;
+    }
+
+    public boolean getGeo(){
+        return this.geolocationEnabled;
     }
 
     public void addWaitingList(String device){
