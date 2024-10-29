@@ -98,6 +98,8 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
                     for (QueryDocumentSnapshot doc : value) { // Loop through each document in the Firestore query snapshot.
                         Event event = doc.toObject(Event.class); // Convert Firestore document to Event object.
                         event.setId(doc.getId()); // Assign the Firestore document ID to the event object.
+                        Boolean geolocationEnabled = doc.getBoolean("geolocationEnabled");
+                        event.setGeo(geolocationEnabled);
                         ArrayList<String> waitlist = (ArrayList<String>) doc.get("waitlist");
                         event.setWaitingList(new WaitingList(waitlist)); // set the waitlist
 

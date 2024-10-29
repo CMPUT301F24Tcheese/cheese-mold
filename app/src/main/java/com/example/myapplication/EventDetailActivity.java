@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.entrant.GeoAlertDialogFragment;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventDetailActivity extends AppCompatActivity {
+public class EventDetailActivity extends AppCompatActivity implements GeoAlertDialogFragment.GeolocationDialogListener {
 
     private FirebaseFirestore db;
 
@@ -66,17 +67,24 @@ public class EventDetailActivity extends AppCompatActivity {
                 joinEvent.setText("Unjoin Event"); // replace the text button with unjoin event
                 joinEvent.setOnClickListener(v -> {
                     event.removeWaitingList(users);
-                    FirestoreRemoveWaitingList(event.getId(), users);
+                    FireStoreRemoveWaitingList(event.getId(), users);
                     FireStoreRemoveeventId(event.getId(), users);
                     finish();
                 });
             } else {
                 // Logic for when the user is not in the waiting list
                 joinEvent.setOnClickListener(v -> {
-                    event.addWaitingList(users);
-                    FirestoreAddWaitingList(event.getId(),users);
-                    FireStoreAddeventId(event.getId(), users);
-                    finish();
+                    if (event.getGeo()) {
+                        showGeolocationDialog(event, users);
+
+                    }
+                    else {
+                            event.addWaitingList(users);
+                            FirestoreAddWaitingList(event.getId(), users);
+                            FireStoreAddEventId(event.getId(), users);
+                            finish();
+                        }
+
                 });
             }
 
@@ -107,7 +115,7 @@ public class EventDetailActivity extends AppCompatActivity {
      * @param eventId
      * @param device
      */
-    public void FireStoreAddeventId(String eventId,String device){
+    public void FireStoreAddEventId(String eventId,String device){
         db.collection("users").document(device)
                 .update("EventID", FieldValue.arrayUnion(eventId))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
@@ -121,7 +129,7 @@ public class EventDetailActivity extends AppCompatActivity {
      * @param device
      *      The users who is going to jonin
      */
-    public void FirestoreRemoveWaitingList(String eventId,String device) {
+    public void FireStoreRemoveWaitingList(String eventId,String device) {
         db.collection("events").document(eventId)
                 .update("waitlist", FieldValue.arrayRemove(device))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
@@ -140,6 +148,25 @@ public class EventDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
                 .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
+
+    public void showGeolocationDialog(Event event, String userId) {
+        GeoAlertDialogFragment dialog = GeoAlertDialogFragment.newInstance(event, userId);
+        dialog.show(getSupportFragmentManager(), "GeoAlertDialog");
+    }
+
+    @Override
+    public void onJoinClicked(Event event, String userId) {
+        if (event != null) {
+            event.addWaitingList(userId);
+            FirestoreAddWaitingList(event.getId(), userId);
+            FireStoreAddEventId(event.getId(), userId);
+            finish();
+        } else {
+            Log.e("EventDetailActivity", "Event is null in onJoinClicked");
+        }
+    }
+
+
 
 
 
