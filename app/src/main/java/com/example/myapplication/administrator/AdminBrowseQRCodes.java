@@ -2,8 +2,7 @@ package com.example.myapplication.administrator;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -12,23 +11,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.objects.Facility;
-import com.example.myapplication.objects.FacilityArrayAdapter;
+import com.example.myapplication.objects.QRCode;
+import com.example.myapplication.objects.UserArrayAdapter;
+import com.example.myapplication.objects.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class AdminBrowseFacilities extends AppCompatActivity {
+public class AdminBrowseQRCodes extends AppCompatActivity {
     private FirebaseFirestore db;
     private Button back;
     private TextView header;
-    private ListView facilityList;
-    private FacilityArrayAdapter facilityAdapter;
-    private ArrayList<Facility> dataList;
+    private ListView qrCodesList;
+    private QRCodeArrayAdapter qrCodesAdapter;
+    private ArrayList<QRCode> dataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,28 +41,26 @@ public class AdminBrowseFacilities extends AppCompatActivity {
         back = findViewById(R.id.back_button);
 
         header = findViewById(R.id.browseHeader);
-        header.setText("FACILITIES");
+        header.setText("QR Codes");
 
-        dataList = new ArrayList<Facility>();
+        dataList = new ArrayList<QRCode>();
 
-        facilityList = findViewById(R.id.contentListView);
-        facilityAdapter = new FacilityArrayAdapter(this, dataList);
-        facilityList.setAdapter(facilityAdapter);
+        qrCodesList = findViewById(R.id.contentListView);
+        qrCodesAdapter = new QRCodeArrayAdapter(this, dataList);
+        qrCodesList.setAdapter(qrCodesAdapter);
 
-        db.collection("Facilities").get()
+        db.collection("events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String id = document.getString("id");
-                                String street = document.getString("street");
-                                String city = document.getString("city");
-                                String province = document.getString("province");
-                                String postalCode = document.getString("postalCode");
-                                Facility thing = new Facility(id, street, city, province, postalCode);
+                                String url = document.getString("qrCodeUrl");
+                                String name = document.getString("name");
+                                String id = document.getId();
+                                QRCode thing = new QRCode(url, id, name);
                                 dataList.add(thing);
-                                facilityAdapter.notifyDataSetChanged();
+                                qrCodesAdapter.notifyDataSetChanged();
                             }
                         } else {
                             Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
@@ -72,6 +72,4 @@ public class AdminBrowseFacilities extends AppCompatActivity {
             finish();
         });
     }
-
-
 }
