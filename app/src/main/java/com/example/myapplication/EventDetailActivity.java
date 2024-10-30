@@ -3,12 +3,14 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -52,6 +54,18 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         Event event = (Event) intent.getSerializableExtra("event");
         String eventDescription = event.getDescription();
 
+        Uri data = intent.getData(); // Get the intent data for qr code
+
+        if (data != null && "event".equals(data.getHost())) {
+            // Extract the event ID from the deep link URL
+            String eventId = data.getQueryParameter("id");
+
+            //if (eventId != null) {
+                //loadEventDetails(eventId); // Method to load event data based on ID
+            //} else {
+                //Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+            //}
+        }
 
         textView.setText(eventDescription); // set the event description on the detail activity
 
