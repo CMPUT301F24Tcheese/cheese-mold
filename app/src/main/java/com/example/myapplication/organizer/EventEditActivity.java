@@ -25,7 +25,7 @@ public class EventEditActivity extends AppCompatActivity {
     private StorageReference storageRef; // Storage reference for Firebase Storage
     private String eventId; // Variable to store the ID of the event being edited
     private EditText editTextTitle, editTextDate, editTextLimitEntrants; // EditTexts for user input
-    private Button buttonUpdateEvent, buttonUploadPoster; // Buttons for updating event and uploading poster
+    private Button buttonUpdateEvent, buttonUploadPoster, buttonNotification; // Buttons for updating event, uploading poster, and notifications; // Buttons for updating event and uploading poster
     private Uri posterUri; // URI to hold the selected poster image
 
     @Override
@@ -43,11 +43,13 @@ public class EventEditActivity extends AppCompatActivity {
         editTextLimitEntrants = findViewById(R.id.editTextLimitEntrants); // Connect EditText for limit entrants with layout
         buttonUpdateEvent = findViewById(R.id.buttonUpdateEvent); // Connect Button for updating event with layout
         buttonUploadPoster = findViewById(R.id.buttonUploadPoster); // Connect Button for uploading poster with layout
+        buttonNotification = findViewById(R.id.buttonNotification); // Connect Button for notifications with layout
 
         loadEventData(eventId); // Load existing event data from Firestore using the event ID
 
         buttonUpdateEvent.setOnClickListener(view -> updateEvent()); // Set click listener to update event information
         buttonUploadPoster.setOnClickListener(view -> openFileChooser()); // Set click listener to open file chooser for poster
+        buttonNotification.setOnClickListener(view -> openNotificationActivity()); // Set click listener to open Notification Activity
     }
 
     private void openFileChooser() {
@@ -113,4 +115,14 @@ public class EventEditActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> Toast.makeText(EventEditActivity.this, "Event updated successfully", Toast.LENGTH_SHORT).show()) // Show success message
                 .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to update event", Toast.LENGTH_SHORT).show()); // Show failure message if update fails
     }
+
+    /**
+     * Opens the OrganizerNotificationActivity when the Notification button is clicked
+     */
+    private void openNotificationActivity() {
+        Intent intent = new Intent(EventEditActivity.this, OrganizerNotificationActivity.class);
+        startActivity(intent);
+    }
+
+
 }

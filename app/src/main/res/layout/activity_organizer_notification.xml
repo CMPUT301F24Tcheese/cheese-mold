@@ -1,0 +1,74 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/buttonToChosenEntrants"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="To Chosen Entrants"
+            android:textSize="15sp"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/buttonToEntrantsOnWaitlist"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="To Entrants on Waitlist"
+            android:textSize="16sp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/buttonToCanceledEntrants"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="To Canceled Entrants"
+            android:textSize="16sp"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewMessageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editTextMessage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:hint="Enter your message here"
+        android:inputType="textMultiLine"
+        android:gravity="top"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:background="@android:drawable/edit_text"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="160dp"
+        android:layout_height="60dp"
+        android:text="Send"
+        android:textSize="20sp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="end" />
+
+</LinearLayout>

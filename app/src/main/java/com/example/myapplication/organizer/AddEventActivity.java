@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,6 +46,7 @@ public class AddEventActivity extends AppCompatActivity {
     private Uri posterUri; // URI to hold the selected image for the poster
     private FirebaseFirestore db; // Firestore database instance
     private StorageReference storageReference; // Firebase Storage reference for uploading images
+    private String device; // Device ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,6 @@ public class AddEventActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance(); // Initialize Firestore database instance
         storageReference = FirebaseStorage.getInstance().getReference("event_posters"); // Initialize Firebase Storage reference
-
         editTextEventName = findViewById(R.id.editTextEventName); // Connect EditText for event name to the layout
         editTextEventDescription = findViewById(R.id.editTextEventDescription); // Connect EditText for event description to the layout
         editTextEventDateTime = findViewById(R.id.editTextEventDateTime); // Connect EditText for event date and time to the layout
@@ -63,13 +64,13 @@ public class AddEventActivity extends AppCompatActivity {
         buttonUploadPoster = findViewById(R.id.buttonUploadPoster); // Connect Button for uploading poster to the layout
         imageViewPosterPreview = findViewById(R.id.imageViewPosterPreview); // Connect ImageView for poster preview to the layout
         buttonCancel = findViewById(R.id.buttonCancel); // Connect Button for cancel action to the layout
-
         buttonSaveEvent.setOnClickListener(view -> saveEvent()); // Set a click listener on the save event button to trigger the saveEvent method
         buttonUploadPoster.setOnClickListener(view -> openFileChooser()); // Set a click listener on the upload poster button to open the file chooser
         buttonCancel.setOnClickListener(view -> {
             startActivity(new Intent(AddEventActivity.this, EventActivity.class)); // Navigate back to EventActivity (list of events)
             finish(); // Close the AddEventActivity
         });
+        device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID); // get the current device id
     }
 
 
@@ -102,6 +103,7 @@ public class AddEventActivity extends AppCompatActivity {
         String limitEntrants = editTextLimitEntrants.getText().toString().trim(); // Retrieve limit entrants value from the input field
         boolean geolocationEnabled = switchGeolocation.isChecked(); // Get the state of the geolocation switch
 
+
         if (!eventName.isEmpty() && !eventDescription.isEmpty() && !eventDateTime.isEmpty()) {
             Map<String, Object> event = new HashMap<>(); // Create a map to hold the event details
             event.put("name", eventName); // Add event name to the map
@@ -109,6 +111,9 @@ public class AddEventActivity extends AppCompatActivity {
             event.put("dateTime", eventDateTime); // Add event date and time to the map
             event.put("limitEntrants", limitEntrants.isEmpty() ? null : Integer.parseInt(limitEntrants)); // Add limit entrants or null if not set
             event.put("geolocationEnabled", geolocationEnabled); // Add geolocation status to the map
+            event.put("creatorID", device);
+
+
 
             List<String> waitlist = new ArrayList<>();
             event.put("waitlist", waitlist); // **(2) Add waitlist to the event map**
@@ -149,7 +154,7 @@ public class AddEventActivity extends AppCompatActivity {
                 .add(event) // Add the event data to the collection
                 .addOnSuccessListener(documentReference -> {
                     String eventId = documentReference.getId(); // Get the unique ID of the created event
-                    Bitmap qrCode = generateQRCode(posterUrl); // Generate a QR code for the poster URL
+                    Bitmap qrCode = generateQRCode(); // Generate a QR code for the poster URL
                     if (qrCode != null) {
                         uploadQRCodeToStorage(eventId, qrCode); // Upload the generated QR code to Firebase Storage
                     }
@@ -162,10 +167,11 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
-    private Bitmap generateQRCode(String text) {
+    private Bitmap generateQRCode() {
         QRCodeWriter writer = new QRCodeWriter(); // Initialize QR code writer
+        String deepLinkUrl = "myapp://event"; // The deep link URL for the event page
         try {
-            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 500, 500); // Generate QR code as a BitMatrix
+            BitMatrix bitMatrix = writer.encode(deepLinkUrl, BarcodeFormat.QR_CODE, 500, 500); // Generate QR code as a BitMatrix
             int width = bitMatrix.getWidth(); // Get width of the QR code
             int height = bitMatrix.getHeight(); // Get height of the QR code
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565); // Create a bitmap for the QR code
@@ -177,7 +183,7 @@ public class AddEventActivity extends AppCompatActivity {
             return bmp; // Return the generated QR code bitmap
         } catch (WriterException e) {
             e.printStackTrace(); // Print error if QR code generation fails
-            return null; // Return null if an error occurs
+            return null;
         }
     }
 
