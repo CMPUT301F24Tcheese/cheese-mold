@@ -2,10 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="lavender">#8692f7</color>
+    <color name="lavender">#eaddff</color>
     <color name="toolbarBackground">#FDF7FE</color>
     <color name="purple">#673AB7</color>
     <color name="light_purple">#DDC3F8</color>
     <color name="red">#F10A0A</color>
     <color name="grey">#EAE2E2</color>
+    <color name="btn_color">#4f378a</color>
 </resources>
