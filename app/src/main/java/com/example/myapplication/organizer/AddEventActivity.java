@@ -154,7 +154,7 @@ public class AddEventActivity extends AppCompatActivity {
                 .add(event) // Add the event data to the collection
                 .addOnSuccessListener(documentReference -> {
                     String eventId = documentReference.getId(); // Get the unique ID of the created event
-                    Bitmap qrCode = generateQRCode(posterUrl); // Generate a QR code for the poster URL
+                    Bitmap qrCode = generateQRCode(); // Generate a QR code for the poster URL
                     if (qrCode != null) {
                         uploadQRCodeToStorage(eventId, qrCode); // Upload the generated QR code to Firebase Storage
                     }
@@ -167,10 +167,11 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
-    private Bitmap generateQRCode(String text) {
+    private Bitmap generateQRCode() {
         QRCodeWriter writer = new QRCodeWriter(); // Initialize QR code writer
+        String deepLinkUrl = "myapp://event"; // The deep link URL for the event page
         try {
-            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 500, 500); // Generate QR code as a BitMatrix
+            BitMatrix bitMatrix = writer.encode(deepLinkUrl, BarcodeFormat.QR_CODE, 500, 500); // Generate QR code as a BitMatrix
             int width = bitMatrix.getWidth(); // Get width of the QR code
             int height = bitMatrix.getHeight(); // Get height of the QR code
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565); // Create a bitmap for the QR code
@@ -182,7 +183,7 @@ public class AddEventActivity extends AppCompatActivity {
             return bmp; // Return the generated QR code bitmap
         } catch (WriterException e) {
             e.printStackTrace(); // Print error if QR code generation fails
-            return null; // Return null if an error occurs
+            return null;
         }
     }
 

@@ -37,6 +37,8 @@
         <activity android:name=".administrator.AdministratorMainActivity"/>
         <activity android:name=".administrator.AdminBrowseFacilities"/>
         <activity android:name=".administrator.AdminBrowseUsers"/>
+        <activity android:name=".administrator.AdminBrowseEvents"/>
+        <activity android:name=".administrator.AdminBrowseQRCodes"/>
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".organizer.OrganizerMainActivity"/>
@@ -67,7 +69,15 @@
 
         <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
 
-        <activity android:name=".EventDetailActivity" android:exported="true"/>
+        <activity android:name=".EventDetailActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="event" />
+            </intent-filter>
+        </activity>
+
 
         <activity android:name=".organizer.OrganizerNotificationActivity" />
 
