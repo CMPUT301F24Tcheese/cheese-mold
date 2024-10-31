@@ -55,12 +55,13 @@ public class AdminBrowseUsers extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
+                                String userId = document.getId();
                                 String firstname = document.getString("Firstname");
                                 String lastname = document.getString("Lastname");
                                 String email = document.getString("Email");
                                 String profilePicture = document.getString("Profile Picture");
                                 String role = document.getString("role");
-                                Users thing = new Users(firstname, lastname, email, profilePicture, role);
+                                Users thing = new Users(userId, firstname, lastname, email, profilePicture, role);
                                 dataList.add(thing);
                                 usersAdapter.notifyDataSetChanged();
                             }
