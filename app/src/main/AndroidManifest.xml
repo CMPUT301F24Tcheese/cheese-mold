@@ -77,7 +77,14 @@
 
         <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
 
-        <activity android:name=".EventDetailActivity" android:exported="true"/>
+        <activity android:name=".EventDetailActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="event" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".entrant.CaptureAct"
