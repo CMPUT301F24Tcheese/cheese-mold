@@ -1,3 +1,8 @@
+/**
+ * Activity for browsing facilities
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;
@@ -30,6 +35,10 @@ public class AdminBrowseFacilities extends AppCompatActivity {
     private FacilityArrayAdapter facilityAdapter;
     private ArrayList<Facility> dataList;
 
+    /**
+     * onCreate function for displaying Facility information
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +56,7 @@ public class AdminBrowseFacilities extends AppCompatActivity {
         facilityAdapter = new FacilityArrayAdapter(this, dataList);
         facilityList.setAdapter(facilityAdapter);
 
+        // searching firebase to get all existing facility information
         db.collection("Facilities").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

@@ -1,3 +1,8 @@
+/**
+ * Activity for browsing QRCodes
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
 import android.content.Intent;
@@ -32,6 +37,10 @@ public class AdminBrowseUsers extends AppCompatActivity {
     private UserArrayAdapter usersAdapter;
     private ArrayList<Users> dataList;
 
+    /**
+     * onCreate function for displaying User information
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,7 @@ public class AdminBrowseUsers extends AppCompatActivity {
         usersAdapter = new UserArrayAdapter(this, dataList);
         usersList.setAdapter(usersAdapter);
 
+        // searching firebase for all registered users
         db.collection("users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

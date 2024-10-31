@@ -47,6 +47,7 @@
         <activity android:name=".administrator.AdminBrowseUsers"/>
         <activity android:name=".administrator.AdminBrowseEvents"/>
         <activity android:name=".administrator.AdminBrowseQRCodes"/>
+        <activity android:name=".administrator.AdminBrowseImages"/>
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".organizer.OrganizerMainActivity"/>
