@@ -1,3 +1,7 @@
+/**
+ * ImageArrayAdapter for displaying images in the browsing functionality for Administrators
+ */
+
 package com.example.myapplication.administrator;
 
 import android.content.Context;
@@ -20,10 +24,23 @@ import java.util.ArrayList;
 
 public class QRCodeArrayAdapter extends ArrayAdapter<QRCode> {
 
+    /**
+     * constructor for the QRCodeArrayAdapter
+     * @param context context
+     * @param QRCodes ArrayList of QRCode objects for display
+     */
     public QRCodeArrayAdapter(Context context, ArrayList<QRCode> QRCodes) {
         super(context, 0, QRCodes);
     }
 
+    /**
+     * creates each element in the ListView for displaying the QRCodes and
+     * and their respective Events
+     * @param position position
+     * @param convertView view
+     * @param parent view parent
+     * @return view
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

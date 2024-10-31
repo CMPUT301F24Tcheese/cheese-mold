@@ -1,3 +1,8 @@
+/**
+ * Activity for browsing Events
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;

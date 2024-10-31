@@ -1,3 +1,7 @@
+/**
+ * FacilityArrayAdapter for displaying events in the browsing functionality for Administrators
+ */
+
 package com.example.myapplication.objects;
 
 import android.content.Context;
@@ -19,10 +23,20 @@ import java.util.ArrayList;
 
 public class FacilityArrayAdapter extends ArrayAdapter<Facility> {
 
+    /**
+     * constructor for the FacilityArrayAdapter
+     * @param context
+     * @param facilities
+     */
     public FacilityArrayAdapter(Context context, ArrayList<Facility> facilities) {
         super(context, 0, facilities);
     }
 
+    /**
+     * finds the user that is associated with the facility and inserts their name into the TextView
+     * @param user_id
+     * @param organizer
+     */
     private void setOrganizer(String user_id, TextView organizer) {
         FirebaseFirestore db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
         db.collection("users").document(user_id).get().addOnCompleteListener(task -> {
@@ -41,6 +55,14 @@ public class FacilityArrayAdapter extends ArrayAdapter<Facility> {
         });
     }
 
+    /**
+     * creates each element in the ListView for displaying the Facilities and
+     * and their respective Organizer
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return view
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

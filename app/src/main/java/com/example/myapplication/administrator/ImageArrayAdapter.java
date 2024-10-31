@@ -1,3 +1,7 @@
+/**
+ * ImageArrayAdapter for displaying images in the browsing functionality for Administrators
+ */
+
 package com.example.myapplication.administrator;
 
 import android.content.Context;
@@ -19,10 +23,23 @@ import java.util.ArrayList;
 
 public class ImageArrayAdapter extends ArrayAdapter<Image> {
 
+    /**
+     * constructor for the ImageArrayAdapter
+     * @param context context
+     * @param images array of image objects for display
+     */
     public ImageArrayAdapter(Context context, ArrayList<Image> images) {
         super(context, 0, images);
     }
 
+    /**
+     * creates each element in the ListView for displaying the images and
+     * and their respective type
+     * @param position position
+     * @param convertView view
+     * @param parent view parent
+     * @return view
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

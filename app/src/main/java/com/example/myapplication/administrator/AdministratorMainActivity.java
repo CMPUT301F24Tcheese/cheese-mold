@@ -1,3 +1,9 @@
+/**
+ * Main Activity for the administrators
+ * Used by the Administrator Only
+ * Functionality to act as the home page for administrators
+ */
+
 package com.example.myapplication.administrator;
 
 import android.content.Intent;
@@ -29,6 +35,10 @@ public class AdministratorMainActivity extends AppCompatActivity {
     private Button browseQRCodeBtn;
     private String device;
 
+    /**
+     * onCreate function for displaying home page information
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
@@ -60,22 +70,27 @@ public class AdministratorMainActivity extends AppCompatActivity {
             finish(); // Close the MainActivity
         });
 
+        // click listener to browse facilites
         browseFacilitiesBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
         });
 
+        // click listener to browse events
         browseEventsBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseEvents.class));
         });
 
+        // click listener to browse profiles
         browseProfilesBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseUsers.class));
         });
 
+        // click listener to browse images
         browseImagesBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseImages.class));
         });
 
+        // click listner to browse QRCodes
         browseQRCodeBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseQRCodes.class));
         });

@@ -1,3 +1,7 @@
+/**
+ * The activity for the Browsing images
+ * Used by Administrators only
+ */
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;
@@ -11,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.administrator.ImageArrayAdapter;
 import com.example.myapplication.objects.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +33,10 @@ public class AdminBrowseImages extends AppCompatActivity {
     private ImageArrayAdapter imageAdapter;
     private ArrayList<Image> dataList;
 
+    /**
+     * onCreate function for displaying Image information
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +54,7 @@ public class AdminBrowseImages extends AppCompatActivity {
         imageAdapter = new ImageArrayAdapter(this, dataList);
         imageList.setAdapter(imageAdapter);
 
+        // searching firebase for events to retrieve poster imags
         db.collection("events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -63,6 +73,7 @@ public class AdminBrowseImages extends AppCompatActivity {
                         }
                     }
                 });
+        // searching firebase for users to receive profile pictures
         db.collection("users").get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
