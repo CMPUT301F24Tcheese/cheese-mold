@@ -67,6 +67,23 @@
 
         <activity android:name=".organizer.EventEditActivity" />
 
+        <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
+
+        <activity android:name=".EventDetailActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="event" />
+            </intent-filter>
+        </activity>
+
+
+        <activity android:name=".organizer.OrganizerNotificationActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
 
     </application>

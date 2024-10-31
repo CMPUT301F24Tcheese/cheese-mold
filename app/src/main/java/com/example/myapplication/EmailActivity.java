@@ -2,20 +2,24 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EmailActivity extends AppCompatActivity {
 
     private ImageView userAvatar;
+    private FirebaseFirestore db; // Firestore instance for Firebase operations
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_email); // Ensure this layout is correctly set
+        setContentView(R.layout.activity_email); // Set the layout
+
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Initialize the user avatar ImageView
         userAvatar = findViewById(R.id.userAvatar); // Ensure this ID matches your XML
@@ -26,6 +30,6 @@ public class EmailActivity extends AppCompatActivity {
             startActivity(intent); // Start ProfileActivity
         });
 
-        // Implement other email-related features here
+        // Additional email-related features can be added here
     }
 }

@@ -22,6 +22,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         this.onEventClickListener = onEventClickListener;
     }
 
+
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

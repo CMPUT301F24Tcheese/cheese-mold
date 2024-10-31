@@ -37,6 +37,8 @@
         app:layout_constraintVertical_bias="0.263" />
 
 
+    <!-- Button to Navigate to Event Page -->
+
     <Button
         android:id="@+id/updateProfileBtn"
         android:layout_width="wrap_content"
@@ -45,12 +47,10 @@
         android:text="Update Profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.29"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcomeTextView"
         app:layout_constraintVertical_bias="0.642" />
 
-    <!-- Button to Navigate to Event Page -->
     <Button
         android:id="@+id/btnOpenEventPage"
         android:layout_width="wrap_content"
