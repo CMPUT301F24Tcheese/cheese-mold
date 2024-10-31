@@ -41,13 +41,15 @@ dependencies {
     //New firebase
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
 
     // Old firebase
     //implementation("com.google.firebase:firebase-firestore")
     //implementation("com.google.firebase:firebase-auth")
     //implementation("com.google.firebase:firebase-storage")
     //implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-analytics")
+
 
     // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
@@ -58,18 +60,19 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
 
+    implementation ("com.google.android.material:material:1.12.0") // Use the latest version available
+
+
     // AndroidX Libraries
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.9.0")
-
     implementation ("com.squareup.picasso:picasso:2.71828")
 
 
 
 
     // Retain original library references
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

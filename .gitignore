@@ -47,7 +47,4 @@ google-services.json
 
 # Android Profiling
 *.hprof
-google-services.json
 
-# Android Profiling
-*.hprof

@@ -22,10 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.administrator.AdministratorMainActivity;
 import com.example.myapplication.entrant.EntrantMainActivity;
+import com.example.myapplication.objects.Users;
 import com.example.myapplication.organizer.OrganizerMainActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -95,9 +97,9 @@ public class RegisterActivity extends AppCompatActivity {
                 } else {
                     if (imageUri == null) {
                         String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
-                        uploadUserData(firstname, lastname, email, role, device, defaultProfilePicUrl); // Upload user data with default profile picture
+                        uploadUserData(new Users(device, firstname, lastname, email, defaultProfilePicUrl, role)); // Upload user data with default profile picture
                     } else {
-                        uploadImageAndData(imageUri, firstname, lastname, email, device, role); // Upload selected image and user data
+                        uploadImageAndData(imageUri, new Users(device, firstname, lastname, email, "", role)); // Upload selected image and user data
                     }
                 }
             }
@@ -127,21 +129,18 @@ public class RegisterActivity extends AppCompatActivity {
      * If upload is successful, generates a URL for the image which is passed into
      * uploadUserData function which then goes on to upload all the data in firestore
      * @param image URI of the selected profile image
-     * @param firstname User's first name
-     * @param lastname User's last name
-     * @param email User's email
-     * @param device User's device id
-     * @param role user's selected role
+     * @param user User object to upload to firebase
      */
-    private void uploadImageAndData(Uri image, String firstname, String lastname, String email, String role, String device) {
+    private void uploadImageAndData(Uri image, Users user) {
         StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID() + ".jpg"); // Create a unique path for the profile image
         reference.putFile(image) // Upload the image to Firebase Storage
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString(); // Get the download URL of the uploaded image
-                            uploadUserData(firstname, lastname, email, role, device, downloadUrl); // Upload user data along with the image URL
+                            String downloadUrl = uri.toString();
+                            user.setProfilePicture(downloadUrl);// Get the download URL of the uploaded image
+                            uploadUserData(user); // Upload user data along with the image URL
                         });
                     }
                 })
@@ -163,35 +162,28 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * Function takes the user data and uploads them into firestore database
      * Redirects the user to login if storing is successful.
-     * @param firstname User's first name
-     * @param lastname User's last name
-     * @param email User's email
-     * @param role User's role
-     * @param device User's device id
-     * @param profilePicUrl URL of the user's profile picture
+     * @param user User object which will be uploaded to firebase
      */
-    private void uploadUserData(String firstname, String lastname, String email, String role, String device, String profilePicUrl) {
+    private void uploadUserData(Users user) {
         HashMap<String, Object> data = new HashMap<>(); // Create a HashMap to store user data
-        data.put("Email", email); // Add user's email to the map
-        data.put("role", role);
-        data.put("Firstname", firstname); // Add user's first name to the map
-        data.put("Lastname", lastname); // Add user's last name to the map
-        data.put("Profile Picture", profilePicUrl); // Add user's profile picture URL to the map
-
-        List<String> eventId = new ArrayList<>();
-        data.put("EventID", eventId); // **(2) Add waitlist to the event map**
+        data.put("Email", user.getEmail()); // Add user's email to the map
+        data.put("role", user.getRole());
+        data.put("Firstname", user.getFirstName()); // Add user's first name to the map
+        data.put("Lastname", user.getLastName()); // Add user's last name to the map
+        data.put("Profile Picture", user.getProfilePicture()); // Add user's profile picture URL to the map
+        data.put("Event List", user.getEventList()); // **(2) Add waitlist to the event map**
 
         usersRef.document(device).set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!"); // Log success message
                     resetFields(); // Reset input fields after successful registration
-                    if (role.equals("Entrant")) {
+                    if (user.getRole().equals("Entrant")) {
                         startActivity(new Intent(this, EntrantMainActivity.class)); // navigate to main screen
                         finish(); // Close the MainActivity
-                    } else if (role.equals("Organizer")) {
+                    } else if (user.getRole().equals("Organizer")) {
                         startActivity(new Intent(this, OrganizerMainActivity.class)); // navigate to main screen
                         finish(); // Close the MainActivity
-                    } else if (role.equals("Administrator")) {
+                    } else if (user.getRole().equals("Administrator")) {
                         startActivity(new Intent(this, AdministratorMainActivity.class)); // Navigate to main screen
                         finish(); // Close the MainActivity
                     }
