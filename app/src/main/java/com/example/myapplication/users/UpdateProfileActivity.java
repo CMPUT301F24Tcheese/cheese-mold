@@ -41,7 +41,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private TextView cancelText; // TextView that acts as a button to cancel and return to the main activity
     Uri imageUri; // URI for storing the selected image from the device
     private String currentProfilePicUrl; // String to hold the current profile picture URL
-    private Button updateEmailBtn; // Button to initiate the email update process
     private Button removeProfilePictureBtn; // Button to remove the user's profile picture
     private String device;
 
@@ -61,7 +60,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         confirmUpdateBtn = findViewById(R.id.updateBtn); // Get reference to the button to confirm profile update
         updateProfilePic = findViewById(R.id.updateProfilePicture); // Get reference to the ImageView for profile picture
         cancelText = findViewById(R.id.cancelUpdateText); // Get reference to the cancel button (TextView)
-        updateEmailBtn = findViewById(R.id.updateEmailBtn); // Get reference to the button to update email
         removeProfilePictureBtn = findViewById(R.id.removeProfileBtn); // Get reference to the button to remove profile picture
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -85,33 +83,19 @@ public class UpdateProfileActivity extends AppCompatActivity {
             removeProfilePicture(device); // Call method to remove the profile picture
         });
 
-        // Set a click listener on the update email button
-        updateEmailBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = updateEmail.getText().toString().trim(); // Get the updated email from EditText
-
-                // Check if both email and password fields are not empty
-                if (email.isEmpty()) {
-                    Toast.makeText(UpdateProfileActivity.this, "Please enter email", Toast.LENGTH_SHORT).show(); // Display error message
-                } else {
-                    db.collection("users").document(device).update("Email", email);
-                }
-            }
-        });
-
         // Set a click listener on the confirm update button to update the user profile
         confirmUpdateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String firstname = updateFirstname.getText().toString().trim(); // Get updated first name from EditText
                 String lastname = updateLastname.getText().toString().trim(); // Get updated last name from EditText
+                String email = updateEmail.getText().toString().trim();
 
                 // Check if both fields are not empty
                 if (firstname.isEmpty() || lastname.isEmpty()) {
                     Toast.makeText(UpdateProfileActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show(); // Display error message
                 } else {
-                    updateUserProfile(device, firstname, lastname); // Proceed to update user profile
+                    updateUserProfile(device, firstname, lastname, email); // Proceed to update user profile
                 }
             }
         });
@@ -138,8 +122,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     /**
      * Loads the user info from the database and then fills out the
      * edit texts for the user
-     * @param device
-     *      device Id of the user
+     * @param device device Id of the user
      */
     private void loadUserProfile(String device) {
         // Fetch the user data from Firestore using the userId
@@ -176,7 +159,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
      * Removes the profile picture of the user. Does not actually change in db,
      * just changes the frontend. But this changes the currentProfilePicUrl to the default name profile pic
      * which will later be used to update the db.
-     * @param device
+     * @param device Device Id of the user
      */
     private void removeProfilePicture(String device) {
         // Fetch the user's details from Firestore
@@ -205,26 +188,28 @@ public class UpdateProfileActivity extends AppCompatActivity {
     /**
      * Helper function which goes on to call updateImageAndData if the profile picture was updated
      * or calls updateUserDataInFirestore if picture was not updated.
-     * @param device
-     * @param firstname
-     * @param lastname
+     * @param device Device ID of the user
+     * @param firstname Firstname of the user
+     * @param lastname Lastname of the user
+     * @param email Email of the user
      */
-    private void updateUserProfile(String device, String firstname, String lastname) {
+    private void updateUserProfile(String device, String firstname, String lastname, String email) {
             if (imageUri != null) {
-                updateProfileImageAndData(device, firstname, lastname); // Upload new image and update data
+                updateProfileImageAndData(device, firstname, lastname, email); // Upload new image and update data
             } else {
-                updateUserDataInFirestore(device, firstname, lastname, currentProfilePicUrl); // Update Firestore without image change//
+                updateUserDataInFirestore(device, firstname, lastname, email, currentProfilePicUrl); // Update Firestore without image change//
             }
     }
 
     /**
      * Saves the new profile picture in the firebase storage, creates an URL for the image
      * which is then passed onto the updateUserDataInFirestore to change the total user data.
-     * @param device
-     * @param firstname
-     * @param lastname
+     * @param device Device ID of the user
+     * @param firstname Firstname of the user
+     * @param lastname Lastname of the user
+     * @param email Email of the user
      */
-    private void updateProfileImageAndData(String device, String firstname, String lastname) {
+    private void updateProfileImageAndData(String device, String firstname, String lastname, String email) {
         // Create a unique file path for the new profile image
         StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID().toString() + ".jpg");
         reference.putFile(imageUri) // Upload the image to Firebase Storage
@@ -233,7 +218,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
                             String downloadUrl = uri.toString(); // Get the URL of the uploaded image
-                            updateUserDataInFirestore(device, firstname, lastname, downloadUrl); // Update Firestore with new image URL
+                            updateUserDataInFirestore(device, firstname, lastname, email, downloadUrl); // Update Firestore with new image URL
                         });
                     }
                 })
@@ -244,15 +229,16 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     /**
      * Main function which updates all the user data other than the email.
-     * @param device
-     * @param firstname
-     * @param lastname
-     * @param profilePicUrl
+     * @param device Device ID of the user
+     * @param firstname Firstname of the user
+     * @param lastname Lastname of the user
+     * @param email Email of the user
+     * @param profilePicUrl ProfilePic of the user
      */
-    private void updateUserDataInFirestore(String device, String firstname, String lastname, String profilePicUrl) {
+    private void updateUserDataInFirestore(String device, String firstname, String lastname, String email, String profilePicUrl) {
         // Update the user's first name, last name, and profile picture in Firestore
         db.collection("users").document(device)
-                .update("Firstname", firstname, "Lastname", lastname, "Profile Picture", profilePicUrl)
+                .update("Firstname", firstname, "Lastname", lastname, "Email", email,  "Profile Picture", profilePicUrl)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(UpdateProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show(); // Show success message
                     startActivity(new Intent(UpdateProfileActivity.this, MainActivity.class)); // Navigate back to MainActivity
