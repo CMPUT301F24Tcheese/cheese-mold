@@ -73,7 +73,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
         });
 
         browseImagesBtn.setOnClickListener(view -> {
-            // TODO fill later
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseImages.class));
         });
 
         browseQRCodeBtn.setOnClickListener(view -> {
