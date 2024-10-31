@@ -54,7 +54,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         Event event = (Event) intent.getSerializableExtra("event");
         String eventDescription = event.getDescription();
 
-        Uri data = intent.getData(); // Get the intent data for qr code
+        Uri data = intent.getData(); // Get the intent data from qr code
 
         if (data != null && "event".equals(data.getHost())) {
             // Extract the event ID from the deep link URL
@@ -63,7 +63,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
             //if (eventId != null) {
                 //loadEventDetails(eventId); // Method to load event data based on ID
             //} else {
-                //Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+                //Toast.makeText("Event ID not found", Toast.LENGTH_SHORT).show();
             //}
         }
 
