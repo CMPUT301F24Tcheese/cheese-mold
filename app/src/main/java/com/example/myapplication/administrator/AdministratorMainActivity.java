@@ -65,7 +65,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
         });
 
         browseEventsBtn.setOnClickListener(view -> {
-            // TODO fill later
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseEvents.class));
         });
 
         browseProfilesBtn.setOnClickListener(view -> {
@@ -77,7 +77,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
         });
 
         browseQRCodeBtn.setOnClickListener(view -> {
-            // TODO fill later
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseQRCodes.class));
         });
 
     }

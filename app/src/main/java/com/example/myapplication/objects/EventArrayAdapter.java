@@ -15,12 +15,32 @@ import com.example.myapplication.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     public EventArrayAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
+    }
+
+    private void setFacility(String creatorID, TextView facility) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
+        db.collection("Facilities").document(creatorID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+
+                if(document.exists()) {
+                    String address = "Location: " + document.getString("name");
+                    facility.setText(address);
+                } else {
+                    Log.d("ArrayApadpter", "No such document"); // Log a message if the document does not exist
+                }
+            } else {
+                Log.w("ArrayAdapter", "Error getting documents.", task.getException()); // Log a warning if there was an error retrieving the document
+            }
+        });
     }
 
     @NonNull
@@ -39,7 +59,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         assert event != null;
         name.setText(event.getTitle());
-        // TODO get facility reference (wait until firebase has been changed)
+        if (event.getCreatorID() != null) {
+            setFacility(event.getCreatorID(), facility);
+        }
         return view;
     }
 
