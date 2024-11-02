@@ -1,7 +1,16 @@
+/**
+ * Activity for browsing Events
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -73,6 +82,17 @@ public class AdminBrowseEvents extends AppCompatActivity {
         back.setOnClickListener(view -> {
             finish();
         });
+
+        eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Event event = dataList.get(i);
+                Intent intent = new Intent(AdminBrowseEvents.this, AdminViewEvent.class);
+                intent.putExtra("event", (Parcelable) event);
+                startActivity(intent);
+            }
+        });
+
     }
 
 }

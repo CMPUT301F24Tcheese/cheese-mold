@@ -1,3 +1,7 @@
+/**
+ * EventArrayAdapter for displaying events in the browsing functionality for Administrators
+ */
+
 package com.example.myapplication.objects;
 
 import android.content.Context;
@@ -21,10 +25,20 @@ import java.util.ArrayList;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
+    /**
+     * constructor for the eventArrayAdapter
+     * @param context
+     * @param events
+     */
     public EventArrayAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
     }
 
+    /**
+     * searches Firebase for the facility hosting the event and inputs it into the TextView
+     * @param creatorID
+     * @param facility
+     */
     private void setFacility(String creatorID, TextView facility) {
         FirebaseFirestore db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
         db.collection("Facilities").document(creatorID).get().addOnCompleteListener(task -> {
@@ -43,6 +57,14 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         });
     }
 
+    /**
+     * creates each element in the ListView for displaying the QRCodes and
+     * and their respective Events
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return view
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
