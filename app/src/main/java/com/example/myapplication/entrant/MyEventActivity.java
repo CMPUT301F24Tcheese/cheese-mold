@@ -2,6 +2,7 @@ package com.example.myapplication.entrant;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -126,7 +127,7 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
 
         Intent intent =  new Intent(MyEventActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
         intent.putExtra("device",device);
-        intent.putExtra("event",event);
+        intent.putExtra("event", (Parcelable) event);
         startActivity(intent); // Start the new activity to edit the event.
     }
 
