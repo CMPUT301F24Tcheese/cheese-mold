@@ -21,12 +21,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+
+/**
+ * This class is a custom array adapter for facility
+ * which is used to fill in each facility in user screen
+ *
+ */
 public class FacilityArrayAdapter extends ArrayAdapter<Facility> {
 
     /**
      * constructor for the FacilityArrayAdapter
-     * @param context
-     * @param facilities
+     * @param context context of the adapter
+     * @param facilities  Array of facility object
      */
     public FacilityArrayAdapter(Context context, ArrayList<Facility> facilities) {
         super(context, 0, facilities);

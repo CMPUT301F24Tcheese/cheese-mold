@@ -22,6 +22,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+/**
+ * This class is a custom array adapter for users
+ * which is used to fill in each user on screen
+ *
+ */
 public class UserArrayAdapter extends ArrayAdapter<Users> {
 
     /**

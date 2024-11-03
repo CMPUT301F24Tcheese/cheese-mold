@@ -24,7 +24,6 @@ public class GeoAlertDialogFragment extends DialogFragment {
 
     public interface GeolocationDialogListener {
         void onJoinClicked(Event event, String userId);
-
     }
 
     public static GeoAlertDialogFragment newInstance(Event event, String userId) {

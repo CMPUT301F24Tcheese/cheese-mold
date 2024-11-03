@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.EventActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.objects.Event;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -114,9 +115,12 @@ public class AddEventActivity extends AppCompatActivity {
             event.put("creatorID", device);
 
 
-
-            List<String> waitlist = new ArrayList<>();
+            ArrayList<String> waitlist = new ArrayList<>();
+            ArrayList<String> cancelledList = new ArrayList<>();
+            ArrayList<String> confirmedList = new ArrayList<>();
             event.put("waitlist", waitlist); // **(2) Add waitlist to the event map**
+            event.put("cancelledList", cancelledList);
+            event.put("confirmedList", confirmedList);
 
             if (posterUri != null) {
                 uploadPosterAndSaveEvent(event); // Upload poster image and save the event
@@ -154,7 +158,7 @@ public class AddEventActivity extends AppCompatActivity {
                 .add(event) // Add the event data to the collection
                 .addOnSuccessListener(documentReference -> {
                     String eventId = documentReference.getId(); // Get the unique ID of the created event
-                    Bitmap qrCode = generateQRCode(); // Generate a QR code for the poster URL
+                    Bitmap qrCode = generateQRCode(eventId); // Generate a QR code for the poster URL
                     if (qrCode != null) {
                         uploadQRCodeToStorage(eventId, qrCode); // Upload the generated QR code to Firebase Storage
                     }
@@ -167,9 +171,9 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
-    private Bitmap generateQRCode() {
+    private Bitmap generateQRCode(String eventId) {
         QRCodeWriter writer = new QRCodeWriter(); // Initialize QR code writer
-        String deepLinkUrl = "myapp://event"; // The deep link URL for the event page
+        String deepLinkUrl = "myapp://event?id=" + eventId; // The deep link URL for the event page
         try {
             BitMatrix bitMatrix = writer.encode(deepLinkUrl, BarcodeFormat.QR_CODE, 500, 500); // Generate QR code as a BitMatrix
             int width = bitMatrix.getWidth(); // Get width of the QR code

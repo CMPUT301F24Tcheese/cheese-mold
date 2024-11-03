@@ -29,6 +29,10 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.UUID;
 
+
+/**
+ * Update Activity that handles the user profile update process
+ */
 public class UpdateProfileActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // FirebaseFirestore instance for accessing Firestore database

@@ -23,12 +23,17 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * This class is a custom array adapter for events
+ * which is used to fill in each event in user screen
+ *
+ */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     /**
      * constructor for the eventArrayAdapter
-     * @param context
-     * @param events
+     * @param context context of the adapter
+     * @param events Array of event object
      */
     public EventArrayAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);

@@ -1,6 +1,7 @@
 package com.example.myapplication.entrant;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -29,6 +30,11 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+
+/**
+ * This is the main activity of entrants. The entrant will
+ * navigate the entire app starting from this point
+ */
 public class EntrantMainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
@@ -119,6 +125,12 @@ public class EntrantMainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This method uses Glide to load image into ImageView
+     * directly using a link
+     * @param view the ImageView to load into
+     * @param picUrl the link of the image
+     */
     private void setImageInView(ImageView view, String picUrl) {
         // Load the user's profile picture using Glide, a third-party image loading library
         Glide.with(EntrantMainActivity.this)
@@ -128,11 +140,18 @@ public class EntrantMainActivity extends AppCompatActivity {
                 .into(view); // Set the loaded image into the ImageView
     }
 
+
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() == null) {
             Toast.makeText(EntrantMainActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(EntrantMainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_SHORT).show();
+            String scannedUrl = result.getContents();
+            Toast.makeText(EntrantMainActivity.this, "Scanned: " + scannedUrl, Toast.LENGTH_SHORT).show();
+
+            if (scannedUrl.startsWith("myapp://event")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scannedUrl));
+                startActivity(intent);
+            }
         }
     });
 

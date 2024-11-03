@@ -4,6 +4,9 @@
 
 package com.example.myapplication.objects;
 
+/**
+ * The class represents a QR code object
+ */
 public class QRCode {
     private String url;
     private String eventID;

@@ -20,7 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
-// MainActivity handles the main screen of the app where user details are displayed after login
+/**
+ * MainActivity handles the main screen of the app where user details are displayed after login
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
