@@ -35,7 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
+/**
+ * Activity for adding new events. This activity allows the user to enter event details,
+ * upload a poster image, and create a QR code for the event.
+ */
 public class AddEventActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1; // Constant for identifying the image picker request
@@ -68,13 +71,15 @@ public class AddEventActivity extends AppCompatActivity {
         buttonSaveEvent.setOnClickListener(view -> saveEvent()); // Set a click listener on the save event button to trigger the saveEvent method
         buttonUploadPoster.setOnClickListener(view -> openFileChooser()); // Set a click listener on the upload poster button to open the file chooser
         buttonCancel.setOnClickListener(view -> {
-            startActivity(new Intent(AddEventActivity.this, EventActivity.class)); // Navigate back to EventActivity (list of events)
             finish(); // Close the AddEventActivity
         });
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID); // get the current device id
     }
 
 
+    /**
+     * Opens a file chooser to select an image for the event poster.
+     */
     private void openFileChooser() {
         Intent intent = new Intent(); // Create an intent for file selection
         intent.setType("image/*"); // Set the intent to select images
@@ -97,6 +102,10 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Saves the event details to Firestore and uploads the poster if selected.
+     */
     private void saveEvent() {
         String eventName = editTextEventName.getText().toString().trim(); // Retrieve event name from the input field
         String eventDescription = editTextEventDescription.getText().toString().trim(); // Retrieve event description from the input field
@@ -132,6 +141,12 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Uploads the selected poster image to Firebase Storage and saves the event details in Firestore.
+     *
+     * @param event A map containing the event details.
+     */
     private void uploadPosterAndSaveEvent(Map<String, Object> event) {
         StorageReference reference = storageReference.child("poster_images/" + UUID.randomUUID() + ".jpg"); // Create a reference for the poster image in Firebase Storage
         reference.putFile(posterUri) // Upload the poster image file to Firebase Storage
@@ -149,6 +164,13 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * Saves the event details to Firestore, including the poster URL if provided.
+     *
+     * @param event A map containing the event details.
+     * @param posterUrl The URL of the poster image, if available.
+     */
     private void saveEventToFirestore(Map<String, Object> event, String posterUrl) {
         if (posterUrl != null) {
             event.put("posterUrl", posterUrl); // Add the poster URL to the event data
@@ -163,7 +185,7 @@ public class AddEventActivity extends AppCompatActivity {
                         uploadQRCodeToStorage(eventId, qrCode); // Upload the generated QR code to Firebase Storage
                     }
                     Toast.makeText(AddEventActivity.this, "Event Created", Toast.LENGTH_SHORT).show(); // Show a success message
-                    startActivity(new Intent(AddEventActivity.this, EventActivity.class)); // Navigate back to EventActivity
+                    startActivity(new Intent(AddEventActivity.this, OrganizerMainActivity.class)); // Navigate back to EventActivity
                     finish(); // Close the AddEventActivity
                 })
                 .addOnFailureListener(e -> {
@@ -171,6 +193,13 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * Generates a QR code for the event ID.
+     *
+     * @param eventId The unique ID of the event.
+     * @return A Bitmap representing the generated QR code, or null if generation fails.
+     */
     private Bitmap generateQRCode(String eventId) {
         QRCodeWriter writer = new QRCodeWriter(); // Initialize QR code writer
         String deepLinkUrl = "myapp://event?id=" + eventId; // The deep link URL for the event page
@@ -191,6 +220,13 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Uploads the generated QR code to Firebase Storage.
+     *
+     * @param eventId The unique ID of the event.
+     * @param qrCodeBitmap The Bitmap of the QR code to upload.
+     */
     private void uploadQRCodeToStorage(String eventId, Bitmap qrCodeBitmap) {
         ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream(); // Initialize a byte array output stream
         qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOut); // Compress the QR code bitmap to JPEG format
@@ -207,6 +243,13 @@ public class AddEventActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Saves the QR code URL to Firestore associated with the event.
+     *
+     * @param eventId The unique ID of the event.
+     * @param qrCodeUrl The URL of the uploaded QR code.
+     */
     private void saveQRCodeUrlToFirestore(String eventId, String qrCodeUrl) {
         db.collection("events").document(eventId) // Access the specific event document by ID
                 .update("qrCodeUrl", qrCodeUrl) // Update the document with the QR code URL

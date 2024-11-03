@@ -64,11 +64,12 @@ public class AdminBrowseFacilities extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String id = document.getString("id");
+                                String name = document.getString("name");
+                                String description = document.getString("description");
                                 String street = document.getString("street");
                                 String city = document.getString("city");
                                 String province = document.getString("province");
-                                String postalCode = document.getString("postalCode");
-                                Facility thing = new Facility(id, street, city, province, postalCode);
+                                Facility thing = new Facility(id, name, description, street, city, province);
                                 dataList.add(thing);
                                 facilityAdapter.notifyDataSetChanged();
                             }

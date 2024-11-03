@@ -48,7 +48,6 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
             intent.putExtra("street", facility.getStreet()); // Pass the street address
             intent.putExtra("city", facility.getCity()); // Pass the city
             intent.putExtra("province", facility.getProvince()); // Pass the province
-            intent.putExtra("postalCode", facility.getPostalCode()); // Pass the postal code
             view.getContext().startActivity(intent); // Start the EditFacilityActivity
         });
     }

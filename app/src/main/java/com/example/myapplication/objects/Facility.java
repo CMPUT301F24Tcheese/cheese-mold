@@ -1,16 +1,20 @@
 package com.example.myapplication.objects;
 
 
+import com.google.type.DateTime;
+
 /**
  * The Facility class represents a facility
  */
 public class Facility {
     private String creatorId;
+    private String name;
     private String id;
     private String street;
     private String city;
     private String province;
-    private String postalCode;
+    private String description;
+
 
 
     /**
@@ -26,35 +30,32 @@ public class Facility {
      * @param street street address
      * @param city city of the facility
      * @param province province of the facility
-     * @param postalCode postalCode of the facility
      */
-    public Facility(String id, String street, String city, String province, String postalCode) {
+    public Facility(String id, String name, String description, String street, String city, String province) {
         this.id = id;
+        this.name = name;
+        this.description = description;
         this.street = street;
         this.city = city;
         this.province = province;
-        this.postalCode = postalCode;
     }
 
 
-    /**
-     * Getter method to get the Id of the creator
-     * @return
-     *      Creator Id
-     */
     public String getCreatorId() {
         return creatorId;
     }
 
-
-    /**
-     * Setter method to set the Id of the creator
-     * @param creatorId id of the creator
-     */
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Getter method to get the id of the facility
@@ -65,6 +66,9 @@ public class Facility {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Getter method to get the id of the facility
@@ -76,6 +80,10 @@ public class Facility {
     }
 
 
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
     /**
      * Getter method to get the city of the facility
      * @return
@@ -86,6 +94,10 @@ public class Facility {
     }
 
 
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     /**
      * Getter method to get the province of the facility
      * @return
@@ -95,16 +107,17 @@ public class Facility {
         return province;
     }
 
-
-    /**
-     * Getter method to get the post code of the facility
-     * @return
-     *      Post Code of the facility
-     */
-    public String getPostalCode() {
-        return postalCode;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     /**
      * Method to get the street and city address of the facility
@@ -112,17 +125,7 @@ public class Facility {
      * @return
      *      Street and city combined in a string
      */
-    public String getName() {
-        return street + ", " + city;
-    }
-
-
-    /**
-     * Method to get the province and post code of the facility
-     * @return
-     *      province and post code combined in a string
-     */
-    public String getDescription() {
-        return province + " - " + postalCode;
+    public String getAdress() {
+        return street + ", " + city + ", " + province;
     }
 }
