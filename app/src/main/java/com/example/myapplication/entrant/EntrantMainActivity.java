@@ -1,7 +1,9 @@
 package com.example.myapplication.entrant;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
@@ -11,13 +13,19 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.EventActivity;
+import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.objects.Event;
 import com.example.myapplication.users.UpdateProfileActivity;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,18 +34,27 @@ import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class EntrantMainActivity extends AppCompatActivity {
+
+/**
+ * This is the main activity of entrants. The entrant will
+ * navigate the entire app starting from this point
+ */
+public class EntrantMainActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener{
 
     private FirebaseFirestore db; // Firebase Firestore database object for retrieving user data
     private TextView welcomeText; // TextView to display the welcome message with the user's name
-    private ImageView profilePic; // ImageView to display the user's profile picture
     private Button notificationBtn;
     private Button qrCodeBtn;
     private ImageView updateProfile;
+    private RecyclerView eventsView;
+    private EventAdapter eventAdapter;
+    private ArrayList<Event> eventList;
     private String device;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
@@ -51,14 +68,25 @@ public class EntrantMainActivity extends AppCompatActivity {
 
         // Initialize the UI elements
         welcomeText = findViewById(R.id.welcomeTextView); // Find the TextView by its ID to display the welcome message
-        profilePic = findViewById(R.id.welcomeProfilePictureMain); // Find the ImageView by its ID for profile picture display
         notificationBtn = findViewById(R.id.notificationBtn);
         qrCodeBtn = findViewById(R.id.qrCodeBtn);
         updateProfile = findViewById(R.id.updateProfileImg);
+        eventsView = findViewById(R.id.entrantMainEventView);
+        swipeRefreshLayout = findViewById(R.id.entrantMainswipeRefreshLayout);
+        eventsView.setLayoutManager(new LinearLayoutManager(this));
+        eventList = new ArrayList<>();
+        eventAdapter = new EventAdapter(eventList, this);
+        eventsView.setAdapter(eventAdapter);
+
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         getData(device);
+        getEventsFromFirestore();
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshData();
+        });
 
         // Set a click listener on the update profile button
         updateProfile.setOnClickListener(view -> {
@@ -81,13 +109,6 @@ public class EntrantMainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Initialize the button to navigate to MyEventActivity
-        Button btnOpenEventPage = findViewById(R.id.btnOpenEventPage); // Find the button by its ID
-        btnOpenEventPage.setOnClickListener(view -> {
-            Intent intent = new Intent(EntrantMainActivity.this, MyEventActivity.class); // Create an intent to open EventActivity
-            intent.putExtra("device",device);
-            startActivity(intent); // Start EventActivity
-        });
     }
 
     /**
@@ -107,7 +128,6 @@ public class EntrantMainActivity extends AppCompatActivity {
                             String profilePicUrl = document.getString("Profile Picture"); // Retrieve the URL of the user's profile picture
                             welcomeText.setText("Welcome " + firstname + " " + lastname); // Set the welcome text with the user's full name
 
-                            setImageInView(profilePic, profilePicUrl);
                             setImageInView(updateProfile, profilePicUrl);
 
                         } else {
@@ -119,6 +139,12 @@ public class EntrantMainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This method uses Glide to load image into ImageView
+     * directly using a link
+     * @param view the ImageView to load into
+     * @param picUrl the link of the image
+     */
     private void setImageInView(ImageView view, String picUrl) {
         // Load the user's profile picture using Glide, a third-party image loading library
         Glide.with(EntrantMainActivity.this)
@@ -128,12 +154,85 @@ public class EntrantMainActivity extends AppCompatActivity {
                 .into(view); // Set the loaded image into the ImageView
     }
 
+
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() == null) {
             Toast.makeText(EntrantMainActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(EntrantMainActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_SHORT).show();
+            String scannedUrl = result.getContents();
+            if (scannedUrl.startsWith("myapp://event")) {
+                Toast.makeText(EntrantMainActivity.this, "Scan Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scannedUrl));
+                startActivity(intent);
+            }
         }
     });
 
+
+    /**
+     * Retrieves the list of events associated with the user from Firestore.
+     */
+    private void getEventsFromFirestore() {
+        db.collection("users").document(device).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> eventListFromDb = (ArrayList<String>) documentSnapshot.get("Event List");
+                        if (eventListFromDb != null && !eventListFromDb.isEmpty()) {
+                            for (String event : eventListFromDb) {
+                                Log.d("getEventsFromFirestore", event);
+                                loadEvents(event);
+                            }
+                        } else {
+                            Log.d("getEventsFromFirestore", "No events found in the user's event list.");
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("getEventsFromFirestore", "Error fetching user event list: " + e.getMessage());
+                });
+    }
+
+
+    /**
+     * Loads the event details for a specific event ID from Firestore and adds it to the event list.
+     * @param eventId The ID of the event to be loaded.
+     */
+    private void loadEvents(String eventId) {
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Event event = documentSnapshot.toObject(Event.class);
+                    if (event != null) {
+                        event.setId(documentSnapshot.getId());
+                        eventList.add(event);
+                        eventAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+
+    /**
+     * Handles click events on individual event items in the RecyclerView.
+     * @param event The event that was clicked.
+     */
+    @Override
+    public void onEventClick(Event event) {
+        Intent intentFromEM = getIntent();
+        String device = intentFromEM.getStringExtra("device");
+
+        Intent intent =  new Intent(EntrantMainActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
+        intent.putExtra("device",device);
+        intent.putExtra("event", (Parcelable) event);
+        startActivity(intent);
+    }
+
+    /**
+     * Refreshes the eventList when the user swipes down
+     */
+    private void refreshData() {
+        eventList.clear();
+        eventAdapter.notifyDataSetChanged();
+        getEventsFromFirestore();
+        swipeRefreshLayout.setRefreshing(false);
+    }
 }

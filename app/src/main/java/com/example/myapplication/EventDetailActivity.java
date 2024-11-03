@@ -6,14 +6,17 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.administrator.Image;
 import com.example.myapplication.entrant.GeoAlertDialogFragment;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
@@ -33,6 +36,11 @@ import java.util.List;
 public class EventDetailActivity extends AppCompatActivity implements GeoAlertDialogFragment.GeolocationDialogListener {
 
     private FirebaseFirestore db;
+    private Button joinEvent, cancel;
+    private TextView eventName, eventDescription;
+    private ImageView imageView;
+    private String user;
+    private Event eventToLoad;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -42,66 +50,28 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         setContentView(R.layout.activity_detail_event);
 
         // Initialization
-        Button joinEvent = findViewById(R.id.eventDetailJoin);
-        Button cancel = findViewById(R.id.eventDetailCancel);
-        TextView textView = findViewById(R.id.eventDetail);
-        ImageView imageView = findViewById(R.id.imageView);
+        joinEvent = findViewById(R.id.eventDetailJoin);
+        cancel = findViewById(R.id.eventDetailCancel);
+        eventName = findViewById(R.id.eventDetailName);
+        eventDescription = findViewById(R.id.eventDetailDescription);
+        imageView = findViewById(R.id.imageView);
         db = FirebaseFirestore.getInstance();
 
         // Retrieve the event and user that were clicked/passed from the previous activity
         Intent intent = getIntent();
-        String users = intent.getStringExtra("device");
-        Event event = (Event) intent.getSerializableExtra("event");
-        String eventDescription = event.getDescription();
-
+        user = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Uri data = intent.getData(); // Get the intent data from qr code
 
         if (data != null && "event".equals(data.getHost())) {
             // Extract the event ID from the deep link URL
             String eventId = data.getQueryParameter("id");
 
-            //if (eventId != null) {
-                //loadEventDetails(eventId); // Method to load event data based on ID
-            //} else {
-                //Toast.makeText("Event ID not found", Toast.LENGTH_SHORT).show();
-            //}
-        }
-
-        textView.setText(eventDescription); // set the event description on the detail activity
-
-        //Load image from poster URL
-        Picasso.get()
-                .load(event.getPosterUrl()) // Load the image URL
-                .into(imageView); // Set the image into your ImageView
-
-
-
-        if (event.getWaitingList() != null && event.getWaitingList().getList().contains(users)) {
-                // Logic for when the user is in the waiting list
-                joinEvent.setText("Unjoin Event"); // replace the text button with unjoin event
-                joinEvent.setOnClickListener(v -> {
-                    event.removeWaitingList(users);
-                    FireStoreRemoveWaitingList(event.getId(), users);
-                    FireStoreRemoveeventId(event.getId(), users);
-                    finish();
-                });
+            if (eventId != null) {
+                loadEventDetailsFromFirestore(eventId); // Method to load event data based on ID
             } else {
-                // Logic for when the user is not in the waiting list
-                joinEvent.setOnClickListener(v -> {
-                    if (event.getGeo()) {
-                        showGeolocationDialog(event, users);
-
-                    }
-                    else {
-                            event.addWaitingList(users);
-                            FirestoreAddWaitingList(event.getId(), users);
-                            FireStoreAddEventId(event.getId(), users);
-                            finish();
-                        }
-
-                });
+                Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
             }
-
+        }
 
         // Exit from this activity when cancel button is clicked
         cancel.setOnClickListener(v -> {
@@ -131,7 +101,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
      */
     public void FireStoreAddEventId(String eventId,String device){
         db.collection("users").document(device)
-                .update("EventID", FieldValue.arrayUnion(eventId))
+                .update("Event List", FieldValue.arrayUnion(eventId))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
     }
@@ -158,7 +128,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
      */
     public void FireStoreRemoveeventId(String eventId,String device){
         db.collection("users").document(device)
-                .update("EventID",FieldValue.arrayRemove(device))
+                .update("Event List",FieldValue.arrayRemove(eventId))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
                 .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
@@ -180,7 +150,58 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         }
     }
 
+    public void loadEventDetailsFromFirestore(String eventId) {
+        db.collection("events").document(eventId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            if (doc.exists()) {
+                                eventToLoad = doc.toObject(Event.class);
+                                if (eventToLoad != null) {
+                                    // Set UI elements only after the event data is loaded
+                                    eventToLoad.setId(doc.getId());
+//                                    eventToLoad.setTitle((String) doc.get("name"));
+                                    eventName.setText(eventToLoad.getTitle());
+                                    eventDescription.setText(eventToLoad.getDescription());
+                                    Picasso.get()
+                                            .load(eventToLoad.getPosterUrl())
+                                            .into(imageView);
 
+
+                                    Log.d("QR Code Firestore", eventToLoad.getWaitingList().toString());
+                                    // Setup the join/unjoin logic
+                                    if (eventToLoad.getWaitingList() != null && eventToLoad.getWaitingList().contains(user)) {
+                                        joinEvent.setText("Unjoin Event");
+                                        joinEvent.setOnClickListener(v -> {
+                                            eventToLoad.removeWaitingList(user);
+                                            FireStoreRemoveWaitingList(eventToLoad.getId(), user);
+                                            FireStoreRemoveeventId(eventToLoad.getId(), user);
+                                            finish();
+                                        });
+                                    } else {
+                                        joinEvent.setOnClickListener(v -> {
+                                            if (eventToLoad.getGeo()) {
+                                                showGeolocationDialog(eventToLoad, user);
+                                            } else {
+                                                eventToLoad.addWaitingList(user);
+                                                FirestoreAddWaitingList(eventToLoad.getId(), user);
+                                                FireStoreAddEventId(eventToLoad.getId(), user);
+                                                finish();
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(EventDetailActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.w("Firestore", "Error getting document", task.getException());
+                        }
+                    }
+                });
+    }
 
 
 

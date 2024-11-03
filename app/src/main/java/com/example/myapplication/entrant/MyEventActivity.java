@@ -102,11 +102,11 @@ public class MyEventActivity extends AppCompatActivity implements EventAdapter.O
                         Boolean geolocationEnabled = doc.getBoolean("geolocationEnabled");
                         event.setGeo(geolocationEnabled);
                         ArrayList<String> waitlist = (ArrayList<String>) doc.get("waitlist");
-                        event.setWaitingList(new WaitingList(waitlist)); // set the waitlist
+                        event.setWaitingList(waitlist); // set the waitlist
 
-                        if (event.getWaitingList().getList().contains(device)) { // only add the eventlist when the user is in the event.
+                        //if (event.getWaitingList().getList().contains(device)) { // only add the eventlist when the user is in the event.
                             eventList.add(event); // Add the event object to the list.
-                        }
+//                        }
                     }
                     eventAdapter.notifyDataSetChanged(); // Notify the adapter to refresh the RecyclerView with new data.
                 }

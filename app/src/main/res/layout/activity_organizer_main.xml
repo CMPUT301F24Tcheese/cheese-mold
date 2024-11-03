@@ -1,66 +1,233 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/organizerMainLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp">
 
-
-    <TextView
-        android:id="@+id/welcomeTextView"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Organizer View"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeProfilePictureMain"
-        app:layout_constraintVertical_bias="0.078" />
+        android:paddingVertical="10dp">
 
-    <ImageView
-        android:id="@+id/welcomeProfilePictureMain"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:background="@drawable/circular_image_background"
-        android:clickable="true"
-        android:contentDescription="Profile Picture"
-        android:focusable="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/baseline_person_outline_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.263" />
+        <Button
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/baseline_mail_outline_24"
+            android:id="@+id/notificationBtn"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true">
+        </Button>
+
+        <Button
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/qrCodeBtn"
+            android:background="@drawable/baseline_qr_code_scanner_24"
+            android:layout_gravity="start"
+            android:layout_marginStart="45dp"
+            android:layout_centerVertical="true"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/custom_multi_textview"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="20dp">
+
+            <TextView
+                android:id="@+id/facilityTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Events"
+                android:background="@drawable/left_section_selector"
+                android:textColor="@color/black"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/btn_color" />
+
+            <TextView
+                android:id="@+id/eventsTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Events"
+                android:background="@drawable/right_section_selector"
+                android:textColor="@color/black"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
 
 
-    <!-- Button to Navigate to Event Page -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/updateProfileImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:background="@drawable/circular_image_background"
+            android:focusable="true"
+            android:src="@drawable/baseline_person_outline_24"
+            android:clickable="true"
+            android:scaleType="centerCrop"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:shapeAppearanceOverlay="@style/CircularImageView"/>
 
-    <Button
-        android:id="@+id/updateProfileBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="252dp"
-        android:text="Update Profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeTextView"
-        app:layout_constraintVertical_bias="0.69" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/btnOpenEventPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to Events"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+    <FrameLayout
+        android:id="@+id/organizerContentFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+
+        <!-- Layout for "Events" -->
+        <LinearLayout
+            android:id="@+id/viewFacilityLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- Add views for Events here -->
+
+            <LinearLayout
+                android:id="@+id/facilityNotExistView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/createFacilityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Create a facility to host events"
+                    android:textStyle="bold"
+                    android:textSize="22sp"/>
+
+                <Button
+                    android:id="@+id/createFacilityBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create Facility"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/btn_color"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/facilityExistView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:id="@+id/organizerMainFacilityLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:padding="10dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/organizerMainFacilityName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Facility Name"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/organizerMainFacilityAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Facility Address"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/facilityEventText"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Facility Events"
+                    android:textStyle="bold"
+                    android:textSize="20sp"/>
+
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/organizerMainFacilitySwipeRefreshLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/organizerMainFacilityEventView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+        <!-- Layout for "My Events" -->
+        <LinearLayout
+            android:id="@+id/viewEventsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/organizerMainEventSwipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/organizerMainEventView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/organizerMainAddEventFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_input_add"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+
+</LinearLayout>
 

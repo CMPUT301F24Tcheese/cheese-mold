@@ -6,16 +6,40 @@
     android:background="@android:color/white">
 
     <EditText
-        android:id="@+id/editTextStreet"
+        android:id="@+id/editTextFacilityName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Street"
+        android:hint="Name"
         android:background="#E5E0E8"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
+    <EditText
+        android:id="@+id/editTextFacilityDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextFacilityName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- Street EditText -->
+    <EditText
+        android:id="@+id/editTextStreet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Street"
+        android:background="#E5E0E8"
+        app:layout_constraintTop_toBottomOf="@id/editTextFacilityDescription"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="16dp"/>
+
+    <!-- City EditText -->
     <EditText
         android:id="@+id/editTextCity"
         android:layout_width="0dp"
@@ -27,6 +51,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
+    <!-- Province EditText -->
     <EditText
         android:id="@+id/editTextProvince"
         android:layout_width="0dp"
@@ -38,23 +63,12 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <EditText
-        android:id="@+id/editTextPostalCode"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Postal Code"
-        android:background="#E5E0E8"
-        app:layout_constraintTop_toBottomOf="@id/editTextProvince"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="16dp"/>
-
     <Button
         android:id="@+id/buttonUpdateFacility"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Update Facility"
-        app:layout_constraintTop_toBottomOf="@id/editTextPostalCode"
+        app:layout_constraintTop_toBottomOf="@id/editTextProvince"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="32dp"/>
