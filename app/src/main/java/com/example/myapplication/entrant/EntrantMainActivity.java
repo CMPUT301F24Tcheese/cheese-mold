@@ -13,21 +13,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.EventActivity;
-import com.example.myapplication.EventDetailActivity;
-import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.users.UpdateProfileActivity;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class EntrantMainActivity extends AppCompatActivity {
 
@@ -54,7 +45,7 @@ public class EntrantMainActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.welcomeProfilePictureMain); // Find the ImageView by its ID for profile picture display
         notificationBtn = findViewById(R.id.notificationBtn);
         qrCodeBtn = findViewById(R.id.qrCodeBtn);
-        updateProfile = findViewById(R.id.updateProfileImg);
+        updateProfile = findViewById(R.id.updateProfileImg2);
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 

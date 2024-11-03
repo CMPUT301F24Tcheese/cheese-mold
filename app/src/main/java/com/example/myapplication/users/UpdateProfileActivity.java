@@ -74,7 +74,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         // Set a click listener on the cancel button to return to the main activity
         cancelText.setOnClickListener(view -> {
-            startActivity(new Intent(UpdateProfileActivity.this, MainActivity.class)); // Navigate to MainActivity
             finish(); // Close the current activity
         });
 

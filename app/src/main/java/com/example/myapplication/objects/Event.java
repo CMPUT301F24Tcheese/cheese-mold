@@ -19,6 +19,7 @@ public class Event implements Serializable {
     private Long limitEntrants; // Maximum number of entrants allowed for the event; stored as a Long to handle larger numbers.
     private boolean geolocationEnabled;
     private WaitingList waitingList;
+    private ArrayList<String> confirmList, cancelList;
 
     // Default constructor required by Firestore to create instances of the Event class.
     public Event() {
@@ -33,7 +34,8 @@ public class Event implements Serializable {
         this.posterUrl = posterUrl; // Set the URL for the event's poster image.
         this.limitEntrants = limitEntrants; // Set the maximum number of entrants allowed.
         this.waitingList = new WaitingList(new ArrayList<String>());
-
+        this.confirmList = new ArrayList<String>();
+        this.cancelList = new ArrayList<String>();
 
     }
 
