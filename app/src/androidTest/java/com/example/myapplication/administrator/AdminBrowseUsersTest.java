@@ -36,13 +36,21 @@ public class AdminBrowseUsersTest {
     public void testBackButton() {
         onView(withId(R.id.browseProfilesBtn)).perform(click());
         // verify we've entered the appropriate view before going back
-        onView(withText("USER PROFILES")).check(matches(isDisplayed()));
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
         onView(withId(R.id.back_button)).perform(click());
         // confirms we have left the events view
-        onView(withText("USER PROFILES")).check(doesNotExist());
+        onView(withId(R.id.browseHeader)).check(doesNotExist());
         onView(withId(R.id.browseHeader)).check(doesNotExist());
         //confirms we have arrived back at the administrator main activity
         onView(withId(R.id.welcomeTextView)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Testing that selecting a user will open a new page that displays the user information
+     */
+    @Test
+    public void testSelectUser() {
+
     }
 
 }
