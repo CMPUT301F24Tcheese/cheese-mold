@@ -1,11 +1,14 @@
 package com.example.myapplication.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * The class represents the Users objects
  */
-public class Users {
+public class Users implements Parcelable {
     private String userId;
     private String firstName;
     private String lastName;
@@ -32,6 +35,58 @@ public class Users {
         this.profilePicture = profilePicture;
         this.role = role;
     }
+
+    /**
+     * describe contents is required for implementing parcelable
+     * @return 0
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * writing the object to a parcel
+     * @param dest destination parcel
+     * @param flags flags
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userId);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(email);
+        dest.writeString(profilePicture);
+        dest.writeString(role);
+    }
+
+    /**
+     * implementing parcelable interface
+     * @param in the parcel from which to read the data
+     */
+    protected Users(Parcel in) {
+        userId = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        email = in.readString();
+        profilePicture = in.readString();
+        role = in.readString();
+    }
+
+    /**
+     * methods to create an user class from a parcel
+     */
+    public static final Creator<Users> CREATOR = new Creator<Users>() {
+        @Override
+        public Users createFromParcel(Parcel in) {
+            return new Users(in);
+        }
+
+        @Override
+        public Users[] newArray(int size) {
+            return new Users[size];
+        }
+    };
 
 
     /**
