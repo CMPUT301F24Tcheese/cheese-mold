@@ -23,12 +23,6 @@
         app:layout_constraintTop_toBottomOf="@id/browseHeader"
         tools:layout_editor_absoluteX="16dp" />
 
-    <ListView
-        android:id="@+id/contentListViewTwo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/contentListView"/>
-
     <Button
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
