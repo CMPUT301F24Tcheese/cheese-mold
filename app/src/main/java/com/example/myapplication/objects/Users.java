@@ -186,4 +186,5 @@ public class Users {
     public void removeEvent (String eventId) {
         this.eventList.remove(eventId);
     }
+
 }

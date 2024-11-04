@@ -119,8 +119,10 @@ public class EventEditActivity extends AppCompatActivity {
     /**
      * Opens the OrganizerNotificationActivity when the Notification button is clicked
      */
+    // EventEditActivity.java
     private void openNotificationActivity() {
         Intent intent = new Intent(EventEditActivity.this, OrganizerNotificationActivity.class);
+        intent.putExtra("event_id", eventId); // Pass the event ID
         startActivity(intent);
     }
 
