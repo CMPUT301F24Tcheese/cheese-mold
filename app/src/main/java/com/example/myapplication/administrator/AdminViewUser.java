@@ -45,7 +45,11 @@ public class AdminViewUser extends AppCompatActivity {
         ArrayList<String> orgEventsList;
         ArrayList<String> eventsList;
 
-        @Override
+    /**
+     * on create for viewing an individual event from the Administrator view
+     * @param savedInstanceState
+     */
+    @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_admin_user);

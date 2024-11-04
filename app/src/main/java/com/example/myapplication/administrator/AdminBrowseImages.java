@@ -29,9 +29,12 @@ public class AdminBrowseImages extends AppCompatActivity {
     private FirebaseFirestore db;
     private Button back;
     private TextView header;
-    private ListView imageList;
-    private ImageArrayAdapter imageAdapter;
+    private ListView profileList;
+    private ListView posterList;
+    private ImageArrayAdapter profileAdapter;
+    private PosterArrayAdapter posterAdapter;
     private ArrayList<Image> dataList;
+    private ArrayList<Image> dataListTwo;
 
     /**
      * onCreate function for displaying Image information
@@ -49,12 +52,17 @@ public class AdminBrowseImages extends AppCompatActivity {
         header.setText("Images");
 
         dataList = new ArrayList<Image>();
+        dataListTwo = new ArrayList<Image>();
 
-        imageList = findViewById(R.id.contentListView);
-        imageAdapter = new ImageArrayAdapter(this, dataList);
-        imageList.setAdapter(imageAdapter);
+        profileList = findViewById(R.id.contentListView);
+        profileAdapter = new ImageArrayAdapter(this, dataList);
+        profileList.setAdapter(profileAdapter);
 
-        // searching firebase for events to retrieve poster imags
+        posterList = findViewById(R.id.contentListViewTwo);
+        posterAdapter = new PosterArrayAdapter(this, dataListTwo);
+        posterList.setAdapter(posterAdapter);
+
+        // searching firebase for events to retrieve poster images
         db.collection("events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -64,9 +72,11 @@ public class AdminBrowseImages extends AppCompatActivity {
                                 String url = document.getString("posterUrl");
                                 String type = "Event Poster";
                                 String id = document.getId();
-                                Image thing = new Image(url, type, id);
-                                dataList.add(thing);
-                                imageAdapter.notifyDataSetChanged();
+                                if (url != null) {
+                                    Image thing = new Image(url, type, id);
+                                    dataListTwo.add(thing);
+                                    posterAdapter.notifyDataSetChanged();
+                                }
                             }
                         } else {
                             Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
@@ -85,7 +95,7 @@ public class AdminBrowseImages extends AppCompatActivity {
                                         String id = document.getId();
                                         Image thing = new Image(url, type, id);
                                         dataList.add(thing);
-                                        imageAdapter.notifyDataSetChanged();
+                                        profileAdapter.notifyDataSetChanged();
                                     }
                                 } else {
                                     Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
