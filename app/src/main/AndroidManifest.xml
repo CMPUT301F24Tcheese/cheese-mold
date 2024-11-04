@@ -80,6 +80,11 @@
 
         <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
 
+        <activity android:name=".organizer.OrganizerNotificationActivity"/>
+
+        <activity android:name=".organizer.EntrantNotificationListActivity" />
+
+
         <activity android:name=".EventDetailActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

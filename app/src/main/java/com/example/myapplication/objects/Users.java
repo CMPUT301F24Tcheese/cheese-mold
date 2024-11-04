@@ -241,4 +241,5 @@ public class Users implements Parcelable {
     public void removeEvent (String eventId) {
         this.eventList.remove(eventId);
     }
+
 }

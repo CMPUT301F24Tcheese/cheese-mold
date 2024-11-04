@@ -27,7 +27,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:text="To Entrants on Waitlist"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp" />
 
@@ -37,7 +37,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:text="To Canceled Entrants"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:layout_marginStart="4dp" />
     </LinearLayout>
 

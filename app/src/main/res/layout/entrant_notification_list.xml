@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentTop="true" />
+
+    <!-- Delete Button with Text -->
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp" />
+
+    <!-- RecyclerView for Entrants List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewEntrants"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/titleTextView"
+        android:layout_above="@id/saveButton"
+        android:layout_marginTop="16dp" />
+
+    <!-- Save Button at the Bottom -->
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        android:layout_marginTop="20dp" />
+
+</RelativeLayout>
+
+
