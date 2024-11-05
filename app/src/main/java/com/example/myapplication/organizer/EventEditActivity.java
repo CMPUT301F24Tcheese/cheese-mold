@@ -45,10 +45,10 @@ public class EventEditActivity extends AppCompatActivity {
         }
 
         buttonUpdateEvent = findViewById(R.id.buttonUpdateEvent);
-        buttonCancel = findViewById(R.id.buttonCancel);
+//        buttonCancel = findViewById(R.id.buttonCancel);
 
         buttonUpdateEvent.setOnClickListener(view -> updateEvent());
-        buttonCancel.setOnClickListener(view -> finish());
+//        buttonCancel.setOnClickListener(view -> finish());
     }
 
     private void updateEvent() {

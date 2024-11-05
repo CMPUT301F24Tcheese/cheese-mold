@@ -79,6 +79,9 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         db.collection("events").document(eventId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Long limitEntrants = documentSnapshot.getLong("limitEntrants");
+                if (limitEntrants == null) {
+                    limitEntrants = Long.MAX_VALUE;
+                }
                 ArrayList<String> waitingList = (ArrayList<String>) documentSnapshot.get("waitlist");
 
                 if (waitingList != null && limitEntrants != null) {
@@ -93,6 +96,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                                     Log.d("Firestore", "User added to waiting list.");
                                     Toast.makeText(this, "You have been added to the waiting list.", Toast.LENGTH_SHORT).show();
                                     FireStoreAddEventId(eventId, device); // Add the event ID to the user's event list
+                                    finish();
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.w("Firestore", "Error adding user to waiting list", e);
@@ -151,6 +155,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                                             eventToLoad.removeWaitingList(user);
                                             FireStoreRemoveWaitingList(eventToLoad.getId(), user);
                                             FireStoreRemoveeventId(eventToLoad.getId(), user);
+                                            Toast.makeText(EventDetailActivity.this, "Unjoined " + eventToLoad.getTitle(), Toast.LENGTH_SHORT).show();
                                             finish();
                                         });
                                     } else {
