@@ -379,6 +379,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
                 new Intent(OrganizerMainActivity.this, EntrantEventDetailActivity.class);
 
         intent.putExtra("event_id", event.getId());
+        intent.putExtra("event", (Parcelable) event);
         startActivity(intent);
     }
     @Override
