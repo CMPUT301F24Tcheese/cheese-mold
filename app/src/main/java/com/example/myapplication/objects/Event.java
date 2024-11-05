@@ -171,7 +171,7 @@ public class Event implements Serializable, Parcelable {
      *      Return the date and time of the event as a String.
      */
     @PropertyName("dateTime")
-    public String getDate() {
+    public String getDateTime() {
         return dateTime;
     }
 

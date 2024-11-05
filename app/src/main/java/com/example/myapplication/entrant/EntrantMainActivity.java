@@ -18,25 +18,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.EventActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
-import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 /**

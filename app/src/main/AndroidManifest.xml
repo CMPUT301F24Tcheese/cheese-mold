@@ -72,7 +72,7 @@
         <!-- Register AddFacilityActivity (for adding facilities) -->
         <activity android:name=".organizer.AddFacilityActivity" android:exported="true"/>
 
-        <activity android:name=".FacilityActivity" android:exported="true"/>
+        <activity android:name=".organizer.FacilityActivity" android:exported="true"/>
 
         <activity android:name=".organizer.EditFacilityActivity" />
 
