@@ -17,25 +17,24 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
-import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.QRCode;
 
 import java.util.ArrayList;
 
-public class QRCodeArrayAdapter extends ArrayAdapter<QRCode> {
+public class ImageArrayAdapter extends ArrayAdapter<Image> {
 
     /**
-     * constructor for the QRCodeArrayAdapter
+     * constructor for the ImageArrayAdapter
      * @param context context
-     * @param QRCodes ArrayList of QRCode objects for display
+     * @param images array of image objects for display
      */
-    public QRCodeArrayAdapter(Context context, ArrayList<QRCode> QRCodes) {
-        super(context, 0, QRCodes);
+    public ImageArrayAdapter(Context context, ArrayList<Image> images) {
+        super(context, 0, images);
     }
 
     /**
-     * creates each element in the ListView for displaying the QRCodes and
-     * and their respective Events
+     * creates each element in the ListView for displaying the images and
+     * and their respective type
      * @param position position
      * @param convertView view
      * @param parent view parent
@@ -51,13 +50,14 @@ public class QRCodeArrayAdapter extends ArrayAdapter<QRCode> {
             view = convertView;
         }
 
-        QRCode qr = getItem(position);
-        ImageView code = view.findViewById(R.id.qrcode_display);
-        TextView event = view.findViewById(R.id.qrcode_event);
+        Image image = getItem(position);
+        ImageView picture = view.findViewById(R.id.qrcode_display);
+        TextView type = view.findViewById(R.id.qrcode_event);
 
-        assert qr != null;
-        Glide.with(QRCodeArrayAdapter.this.getContext()).load(qr.getUrl()).into(code);
-        event.setText(qr.getEventName());
+        assert image != null;
+        Glide.with(ImageArrayAdapter.this.getContext()).load(image.getUrl()).into(picture);
+        type.setText(image.getType());
         return view;
     }
+
 }

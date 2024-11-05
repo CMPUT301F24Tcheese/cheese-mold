@@ -1,3 +1,8 @@
+/**
+ * Activity for browsing QRCodes
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;
@@ -11,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.administrator.QRCodeArrayAdapter;
 import com.example.myapplication.objects.QRCode;
 import com.example.myapplication.objects.UserArrayAdapter;
 import com.example.myapplication.objects.Users;
@@ -32,6 +38,10 @@ public class AdminBrowseQRCodes extends AppCompatActivity {
     private QRCodeArrayAdapter qrCodesAdapter;
     private ArrayList<QRCode> dataList;
 
+    /**
+     * onCreate function for displaying QRCode information
+     * @param savedInstanceState saved Instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +59,7 @@ public class AdminBrowseQRCodes extends AppCompatActivity {
         qrCodesAdapter = new QRCodeArrayAdapter(this, dataList);
         qrCodesList.setAdapter(qrCodesAdapter);
 
+        // searching firebase events for all existing QRCodes
         db.collection("events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

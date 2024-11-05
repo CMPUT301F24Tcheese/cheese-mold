@@ -1,3 +1,8 @@
+/**
+ * Activity for browsing facilities
+ * Used by the Administrator Only
+ */
+
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;
@@ -30,6 +35,10 @@ public class AdminBrowseFacilities extends AppCompatActivity {
     private FacilityArrayAdapter facilityAdapter;
     private ArrayList<Facility> dataList;
 
+    /**
+     * onCreate function for displaying Facility information
+     * @param savedInstanceState saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +56,7 @@ public class AdminBrowseFacilities extends AppCompatActivity {
         facilityAdapter = new FacilityArrayAdapter(this, dataList);
         facilityList.setAdapter(facilityAdapter);
 
+        // searching firebase to get all existing facility information
         db.collection("Facilities").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -54,11 +64,12 @@ public class AdminBrowseFacilities extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String id = document.getString("id");
+                                String name = document.getString("name");
+                                String description = document.getString("description");
                                 String street = document.getString("street");
                                 String city = document.getString("city");
                                 String province = document.getString("province");
-                                String postalCode = document.getString("postalCode");
-                                Facility thing = new Facility(id, street, city, province, postalCode);
+                                Facility thing = new Facility(id, name, description, street, city, province);
                                 dataList.add(thing);
                                 facilityAdapter.notifyDataSetChanged();
                             }

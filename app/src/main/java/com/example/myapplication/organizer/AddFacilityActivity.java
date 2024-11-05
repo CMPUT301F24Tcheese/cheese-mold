@@ -16,9 +16,16 @@ import com.example.myapplication.objects.Facility;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+
+/**
+ * Activity for adding a new facility. This activity allows the user to input details
+ * for a facility and save it to Firebase Firestore, ensuring no duplicate facilities
+ * are created for the same organizer.
+ */
 public class AddFacilityActivity extends AppCompatActivity {
 
-    private EditText editTextStreet, editTextCity, editTextProvince, editTextPostalCode; // Input fields for facility address
+    private EditText editTextStreet, editTextCity, editTextProvince, editTextName, editTextDescription; // Input fields for facility address
     private Button buttonCreateFacility, buttonBackToFacility; // Buttons for creating facility and going back
     private FirebaseFirestore db; // Firebase Firestore instance
     private String organizerId; // Device ID used as organizer ID
@@ -35,10 +42,12 @@ public class AddFacilityActivity extends AppCompatActivity {
         Log.d("AddFacilityActivity", "Organizer Device ID: " + organizerId);
 
         // Initialize UI elements
+
         editTextStreet = findViewById(R.id.editTextStreet);
         editTextCity = findViewById(R.id.editTextCity);
         editTextProvince = findViewById(R.id.editTextProvince);
-        editTextPostalCode = findViewById(R.id.editTextPostalCode);
+        editTextName = findViewById(R.id.editTextFacilityName);
+        editTextDescription = findViewById(R.id.editTextFacilityDescription);
         buttonCreateFacility = findViewById(R.id.buttonCreateFacility);
         buttonBackToFacility = findViewById(R.id.buttonBackToFacility);
 
@@ -49,7 +58,11 @@ public class AddFacilityActivity extends AppCompatActivity {
         buttonBackToFacility.setOnClickListener(view -> finish()); // Set click listener to close the current activity
     }
 
-    // Method to check if a facility already exists to prevent duplicate creation
+
+    /**
+     * Checks if a facility already exists for the current organizer. If a facility exists,
+     * it navigates back to the main activity and displays a message.
+     */
     private void checkIfFacilityExists() {
         db.collection("Facilities").document(organizerId).get()
                 .addOnCompleteListener(task -> {
@@ -57,7 +70,7 @@ public class AddFacilityActivity extends AppCompatActivity {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) { // If a facility already exists, prevent creation and navigate back
                             Toast.makeText(this, "You have already added a facility.", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(AddFacilityActivity.this, FacilityActivity.class));
+                            startActivity(new Intent(AddFacilityActivity.this, OrganizerMainActivity.class));
                             finish(); // Close the current activity
                         }
                     } else {
@@ -66,22 +79,26 @@ public class AddFacilityActivity extends AppCompatActivity {
                 });
     }
 
-    // Method to create a new facility
+    /**
+     * Creates a new facility using the information provided in the input fields.
+     * It saves the facility to Firestore and navigates to the main activity upon success.
+     */
     private void createFacility() {
+        String name = editTextName.getText().toString().trim();
+        String description = editTextDescription.getText().toString().trim();
         String street = editTextStreet.getText().toString().trim(); // Get street input
         String city = editTextCity.getText().toString().trim(); // Get city input
-        String province = editTextProvince.getText().toString().trim(); // Get province input
-        String postalCode = editTextPostalCode.getText().toString().trim(); // Get postal code input
+        String province = editTextProvince.getText().toString().trim(); // Get province input// Get postal code input
 
         // Check if all input fields are filled
-        if (!street.isEmpty() && !city.isEmpty() && !province.isEmpty() && !postalCode.isEmpty()) {
+        if (!name.isEmpty() && !description.isEmpty() && !street.isEmpty() && !city.isEmpty() && !province.isEmpty()) {
             // Use organizerId as facility ID
-            Facility facility = new Facility(organizerId, street, city, province, postalCode);
+            Facility facility = new Facility(organizerId, name, description, street, city, province);
 
             db.collection("Facilities").document(organizerId).set(facility) // Use organizerId as document ID
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(AddFacilityActivity.this, "Facility built", Toast.LENGTH_SHORT).show(); // Show success message
-                        startActivity(new Intent(AddFacilityActivity.this, FacilityActivity.class)); // Navigate to FacilityActivity
+                        startActivity(new Intent(AddFacilityActivity.this, OrganizerMainActivity.class)); // Navigate to FacilityActivity
                         finish(); // Close the current activity after successful creation
                     })
                     .addOnFailureListener(e -> {

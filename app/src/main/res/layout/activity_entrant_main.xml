@@ -46,7 +46,7 @@
         </TextView>
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/updateProfileImg2"
+            android:id="@+id/updateProfileImg"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
@@ -77,27 +77,19 @@
             android:textSize="36sp"
             android:textStyle="bold"/>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/welcomeProfilePictureMain"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:background="@drawable/circular_image_background"
-            android:src="@drawable/baseline_person_outline_24"
-            android:clickable="true"
-            android:contentDescription="Profile Picture"
-            android:focusable="true"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/CircularImageView"/>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/entrantMainswipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
 
-        <!-- Button to Navigate to Event Page -->
-        <Button
-            android:id="@+id/btnOpenEventPage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Go to Events"
-            android:backgroundTint="@color/btn_color"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/entrantMainEventView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 </LinearLayout>

@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Register Activity that handles the user registration process
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firestore database object

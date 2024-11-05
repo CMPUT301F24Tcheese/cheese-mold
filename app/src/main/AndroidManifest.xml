@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyApplication"
+        android:theme="@style/Theme.Material3.Light.NoActionBar"
         tools:targetApi="31">
         <activity
             android:name=".entrant.NotificationActivity"
@@ -47,6 +47,8 @@
         <activity android:name=".administrator.AdminBrowseUsers"/>
         <activity android:name=".administrator.AdminBrowseEvents"/>
         <activity android:name=".administrator.AdminBrowseQRCodes"/>
+        <activity android:name=".administrator.AdminBrowseImages"/>
+        <activity android:name=".administrator.AdminViewEvent"/>
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".organizer.OrganizerMainActivity"/>
@@ -77,7 +79,14 @@
 
         <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
 
-        <activity android:name=".EventDetailActivity" android:exported="true"/>
+        <activity android:name=".EventDetailActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="event" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".entrant.CaptureAct"

@@ -21,7 +21,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is a custom array adapter for notification
+ * which is used to fill in each notification in user screen
+ *
+ */
 public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
+
+    /**
+     * Constructor for the NotificationArrayAdapter
+     * @param context the context of the adapter
+     * @param notifications Array of notification objects
+     */
     public NotificationArrayAdapter(Context context, ArrayList<Notification> notifications) {
         super(context, 0, notifications);
     }
@@ -73,6 +84,12 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     }
 
 
+    /**
+     * This method uses Glide to load image into ImageView
+     * directly using a link
+     * @param view the ImageView to load into
+     * @param picUrl the link of the image
+     */
     private void setImageInView(ImageView view, String picUrl) {
         // Load the user's profile picture using Glide, a third-party image loading library
         Glide.with(getContext())
