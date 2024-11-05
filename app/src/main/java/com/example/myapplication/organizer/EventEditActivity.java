@@ -132,7 +132,7 @@ public class EventEditActivity extends AppCompatActivity {
         }
 
         DocumentReference eventRef = db.collection("events").document(eventId);
-        eventRef.update("title", updatedTitle, "dateTime", updatedDateTime, "limitEntrants", updatedLimitEntrants, "description", updatedDescription)
+        eventRef.update("name", updatedTitle, "dateTime", updatedDateTime, "limitEntrants", updatedLimitEntrants, "description", updatedDescription)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(EventEditActivity.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
 

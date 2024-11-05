@@ -113,5 +113,24 @@ public class FacilityTest {
         String expectedAddress = "789 Local Rd, Hometown, Homestate";
         assertEquals(expectedAddress, facility.getAdress());
     }
+
+    @Test
+    public void testIsValidFacility() {
+        Facility facility = new Facility("1", "Sample Facility", "A description", "123 Main St", "SampleCity", "SampleProvince");
+        // Valid facility
+        assertTrue(facility.isValidFacility());
+
+        // Invalid cases
+        facility.setName("");
+        assertFalse(facility.isValidFacility());
+
+        facility.setName("Sample Facility");
+        facility.setCity("");
+        assertFalse(facility.isValidFacility());
+
+        facility.setCity("SampleCity");
+        facility.setProvince("");
+        assertFalse(facility.isValidFacility());
+    }
 }
 
