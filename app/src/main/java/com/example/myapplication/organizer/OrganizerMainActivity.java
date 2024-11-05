@@ -20,16 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.EventActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.entrant.CaptureAct;
-import com.example.myapplication.entrant.EntrantMainActivity;
 import com.example.myapplication.entrant.NotificationActivity;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Facility;
-import com.example.myapplication.users.MainActivity;
 import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

@@ -36,13 +36,37 @@ public class AdminBrowseImagesTest {
     public void testBackButton() {
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // verify we've entered the appropriate view before going back
-        onView(withText("IMAGES")).check(matches(isDisplayed()));
+        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
         onView(withId(R.id.back_button)).perform(click());
         // confirms we have left the events view
-        onView(withText("IMAGES")).check(doesNotExist());
+        onView(withId(R.id.posterListView)).check(doesNotExist());
+        onView(withId(R.id.profileListView)).check(doesNotExist());
         onView(withId(R.id.browseHeader)).check(doesNotExist());
         //confirms we have arrived back at the administrator main activity
         onView(withId(R.id.welcomeTextView)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Testing if the tab switching buttons successfully switch the tabs back and forth
+     * between posters and profile pictures
+     */
+    @Test
+    public void testProfileAndPosterTabs() {
+        onView(withId(R.id.browseImagesBtn)).perform(click());
+        // verify we've entered the appropriate view before going back
+        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+
+        // click on the profiles tab
+        onView(withId(R.id.profilesTextView)).perform(click());
+
+        // verify tab has switched correctly
+        onView(withId(R.id.profileListView)).check(matches(isDisplayed()));
+
+        // switch back to the poster tab
+        onView(withId(R.id.postersTextView)).perform(click());
+
+        // verify tab has switched back
+        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
     }
 
 }

@@ -6,8 +6,10 @@ package com.example.myapplication.administrator;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,10 +30,16 @@ import java.util.ArrayList;
 public class AdminBrowseImages extends AppCompatActivity {
     private FirebaseFirestore db;
     private Button back;
-    private TextView header;
-    private ListView imageList;
-    private ImageArrayAdapter imageAdapter;
-    private ArrayList<Image> dataList;
+    private TextView posterTextView;
+    private TextView profileTextView;
+    private LinearLayout posters;
+    private LinearLayout profiles;
+    private ListView profileList;
+    private ListView posterList;
+    private ImageArrayAdapter profileAdapter;
+    private PosterArrayAdapter posterAdapter;
+    private ArrayList<Image> dataListProfiles;
+    private ArrayList<Image> dataListPosters;
 
     /**
      * onCreate function for displaying Image information
@@ -40,21 +48,52 @@ public class AdminBrowseImages extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_browse);
+        setContentView(R.layout.activity_admin_browse_images);
         db = FirebaseFirestore.getInstance();
 
         back = findViewById(R.id.back_button);
 
-        header = findViewById(R.id.browseHeader);
-        header.setText("Images");
+        dataListProfiles = new ArrayList<Image>();
+        dataListPosters = new ArrayList<Image>();
 
-        dataList = new ArrayList<Image>();
+        profileList = findViewById(R.id.profileListView);
+        profileAdapter = new ImageArrayAdapter(this, dataListProfiles);
+        profileList.setAdapter(profileAdapter);
 
-        imageList = findViewById(R.id.contentListView);
-        imageAdapter = new ImageArrayAdapter(this, dataList);
-        imageList.setAdapter(imageAdapter);
+        posterList = findViewById(R.id.posterListView);
+        posterAdapter = new PosterArrayAdapter(this, dataListPosters);
+        posterList.setAdapter(posterAdapter);
 
-        // searching firebase for events to retrieve poster imags
+        posterTextView = findViewById(R.id.postersTextView);
+        profileTextView = findViewById(R.id.profilesTextView);
+
+        posters = findViewById(R.id.viewPostersLayout);
+        profiles = findViewById(R.id.viewProfilesLayout);
+
+        showPosters();
+
+        posterTextView.setOnClickListener(view -> {
+            showPosters();
+        });
+
+        profileTextView.setOnClickListener(view -> {
+            showProfiles();
+        });
+
+        back.setOnClickListener(view -> {
+            finish();
+        });
+    }
+
+    /**
+     * set posters to visible and profiles to invisible
+     */
+    private void showPosters() {
+        posters.setVisibility(View.VISIBLE);
+        profiles.setVisibility(View.GONE);
+
+        dataListPosters.clear();
+        // searching firebase for events to retrieve poster images
         db.collection("events").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -62,40 +101,49 @@ public class AdminBrowseImages extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String url = document.getString("posterUrl");
-                                String type = "Event Poster";
+                                String type = document.getString("name");
                                 String id = document.getId();
-                                Image thing = new Image(url, type, id);
-                                dataList.add(thing);
-                                imageAdapter.notifyDataSetChanged();
+                                if (url != null) {
+                                    Image thing = new Image(url, type, id);
+                                    dataListPosters.add(thing);
+                                    posterAdapter.notifyDataSetChanged();
+                                }
                             }
                         } else {
                             Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
                         }
                     }
                 });
+    }
+
+    /**
+     * set profiles to visible and posters to invisible
+     */
+    private void showProfiles() {
+        posters.setVisibility(View.GONE);
+        profiles.setVisibility(View.VISIBLE);
+
+        dataListProfiles.clear();
         // searching firebase for users to receive profile pictures
         db.collection("users").get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String url = document.getString("Profile Picture");
-                                        String type = "Profile Picture";
-                                        String id = document.getId();
-                                        Image thing = new Image(url, type, id);
-                                        dataList.add(thing);
-                                        imageAdapter.notifyDataSetChanged();
-                                    }
-                                } else {
-                                    Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
-                                }
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String url = document.getString("Profile Picture");
+                                String type = document.getString("Firstname") + " " + document.getString("Lastname");
+                                String id = document.getId();
+                                Image thing = new Image(url, type, id);
+                                dataListProfiles.add(thing);
+                                profileAdapter.notifyDataSetChanged();
                             }
-                        });
-
-        back.setOnClickListener(view -> {
-            finish();
-        });
+                        } else {
+                            Log.d("AdminBrowseFacilities", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
+
 
 }

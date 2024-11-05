@@ -20,7 +20,8 @@
         android:id="@+id/contentListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/browseHeader"/>
+        app:layout_constraintTop_toBottomOf="@id/browseHeader"
+        tools:layout_editor_absoluteX="16dp" />
 
     <Button
         android:id="@+id/back_button"
@@ -31,4 +32,3 @@
         android:text="Back" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

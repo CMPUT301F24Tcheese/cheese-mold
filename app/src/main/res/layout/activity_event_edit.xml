@@ -5,48 +5,71 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Event Title Input -->
     <EditText
         android:id="@+id/editTextTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Event Name" />
+        android:hint="Event Name"
+        android:inputType="text" />
 
+    <!-- Event Description Input -->
+    <EditText
+        android:id="@+id/editTextDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Description"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:maxLines="5"
+        android:gravity="top" />
+
+    <!-- Event Date and Time Input -->
     <EditText
         android:id="@+id/editTextDateTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Date and Time" />
+        android:hint="Date and Time"
+        android:inputType="datetime" />
 
+    <!-- Limit Entrants Input -->
     <EditText
         android:id="@+id/editTextLimitEntrants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Limit Entrants (Optional)" />
+        android:hint="Limit Entrants (Optional)"
+        android:inputType="number" />
 
+    <!-- Update Event Button -->
     <Button
         android:id="@+id/buttonUpdateEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Event" />
+        android:text="Update Event"
+        android:layout_marginTop="16dp" />
 
+    <!-- Horizontal layout for Upload Poster and Notification buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
+        <!-- Upload Poster Button -->
         <Button
             android:id="@+id/buttonUploadPoster"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Upload Poster" />
 
+        <!-- Notification Button -->
         <Button
             android:id="@+id/buttonNotification"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Notification"
-            android:layout_marginLeft="25dp"/>
+            android:layout_marginStart="8dp" />
     </LinearLayout>
-
 </LinearLayout>
-

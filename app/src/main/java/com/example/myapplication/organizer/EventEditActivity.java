@@ -1,128 +1,77 @@
 package com.example.myapplication.organizer;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.UUID;
+import com.google.firebase.firestore.SetOptions;
 
 public class EventEditActivity extends AppCompatActivity {
-    private static final int PICK_IMAGE_REQUEST = 1; // Constant for identifying image picker intent request
-    private FirebaseFirestore db; // Firestore database instance
-    private StorageReference storageRef; // Storage reference for Firebase Storage
-    private String eventId; // Variable to store the ID of the event being edited
-    private EditText editTextTitle, editTextDate, editTextLimitEntrants; // EditTexts for user input
-    private Button buttonUpdateEvent, buttonUploadPoster, buttonNotification; // Buttons for updating event, uploading poster, and notifications; // Buttons for updating event and uploading poster
-    private Uri posterUri; // URI to hold the selected poster image
+
+    private EditText editTextTitle, editTextDescription, editTextDateTime, editTextLimitEntrants;
+    private Button buttonUpdateEvent, buttonCancel;
+    private FirebaseFirestore db;
+    private String eventId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); // Call to parent class method to set up the activity
-        setContentView(R.layout.activity_event_edit); // Set the layout for this activity
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_event_edit);
 
-        db = FirebaseFirestore.getInstance(); // Initialize Firestore database instance
-        storageRef = FirebaseStorage.getInstance().getReference("event_posters"); // Initialize Firebase Storage reference
+        db = FirebaseFirestore.getInstance();
 
-        eventId = getIntent().getStringExtra("event_id"); // Retrieve event ID passed from previous activity
+        editTextTitle = findViewById(R.id.editTextTitle);
+        editTextDescription = findViewById(R.id.editTextDescription);
+        editTextDateTime = findViewById(R.id.editTextDateTime);
+        editTextLimitEntrants = findViewById(R.id.editTextLimitEntrants);
 
-        editTextTitle = findViewById(R.id.editTextTitle); // Connect EditText for event title with layout
-        editTextDate = findViewById(R.id.editTextDateTime); // Connect EditText for event date with layout
-        editTextLimitEntrants = findViewById(R.id.editTextLimitEntrants); // Connect EditText for limit entrants with layout
-        buttonUpdateEvent = findViewById(R.id.buttonUpdateEvent); // Connect Button for updating event with layout
-        buttonUploadPoster = findViewById(R.id.buttonUploadPoster); // Connect Button for uploading poster with layout
-        buttonNotification = findViewById(R.id.buttonNotification); // Connect Button for notifications with layout
+        Intent intent = getIntent();
+        if (intent != null) {
+            eventId = intent.getStringExtra("event_id");
+            String title = intent.getStringExtra("title");
+            String description = intent.getStringExtra("description");
+            String dateTime = intent.getStringExtra("dateTime");
+            Long limitEntrants = intent.getLongExtra("limitEntrants", 0);
 
-        loadEventData(eventId); // Load existing event data from Firestore using the event ID
-
-        buttonUpdateEvent.setOnClickListener(view -> updateEvent()); // Set click listener to update event information
-        buttonUploadPoster.setOnClickListener(view -> openFileChooser()); // Set click listener to open file chooser for poster
-        buttonNotification.setOnClickListener(view -> openNotificationActivity()); // Set click listener to open Notification Activity
-    }
-
-    private void openFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // Create an intent to pick an image from gallery
-        startActivityForResult(intent, PICK_IMAGE_REQUEST); // Start the activity to choose an image
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data); // Call the parent method for handling result
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            posterUri = data.getData(); // Get the URI of the selected image
-            uploadPosterToFirebase(); // Call method to upload the poster image to Firebase Storage
+            editTextTitle.setText(title);
+            editTextDescription.setText(description);
+            editTextDateTime.setText(dateTime);
+            editTextLimitEntrants.setText(String.valueOf(limitEntrants));
         }
-    }
 
-    private void uploadPosterToFirebase() {
-        if (posterUri != null) { // Check if a poster image has been selected
-            String fileName = UUID.randomUUID().toString(); // Generate a unique file name for the poster
-            StorageReference fileReference = storageRef.child(fileName); // Create a reference in Firebase Storage for the poster
+        buttonUpdateEvent = findViewById(R.id.buttonUpdateEvent);
+        buttonCancel = findViewById(R.id.buttonCancel);
 
-            fileReference.putFile(posterUri) // Upload the selected poster image to Firebase Storage
-                    .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String posterUrl = uri.toString(); // Get the URL of the uploaded poster
-                        savePosterUrlToFirestore(posterUrl); // Save the poster URL to Firestore
-                    }))
-                    .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to upload poster", Toast.LENGTH_SHORT).show()); // Show failure message if upload fails
-        }
-    }
-
-    private void savePosterUrlToFirestore(String posterUrl) {
-        DocumentReference eventRef = db.collection("events").document(eventId); // Create a reference to the specific event document in Firestore
-        eventRef.update("posterUrl", posterUrl) // Update the event document with the new poster URL
-                .addOnSuccessListener(aVoid -> Toast.makeText(EventEditActivity.this, "Poster updated successfully", Toast.LENGTH_SHORT).show()) // Show success message
-                .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to update poster", Toast.LENGTH_SHORT).show()); // Show failure message if update fails
-    }
-
-    private void loadEventData(String eventId) {
-        DocumentReference eventRef = db.collection("events").document(eventId); // Create a reference to the event document in Firestore
-        eventRef.get().addOnCompleteListener(task -> { // Fetch the event data from Firestore
-            if (task.isSuccessful()) { // Check if the data retrieval was successful
-                Event event = task.getResult().toObject(Event.class); // Convert Firestore document data to Event object
-                if (event != null) { // Check if the event object is not null
-                    editTextTitle.setText(event.getTitle()); // Populate EditText with the event title
-                    editTextDate.setText(event.getDate()); // Populate EditText with the event date
-                    editTextLimitEntrants.setText(event.getLimitEntrants() != null ? event.getLimitEntrants().toString() : ""); // Populate EditText with limit entrants, if available
-                } else {
-                    Toast.makeText(EventEditActivity.this, "Event not found", Toast.LENGTH_SHORT).show(); // Show message if event is not found
-                }
-            } else {
-                Toast.makeText(EventEditActivity.this, "Failed to load event", Toast.LENGTH_SHORT).show(); // Show failure message if data retrieval fails
-            }
-        });
+        buttonUpdateEvent.setOnClickListener(view -> updateEvent());
+        buttonCancel.setOnClickListener(view -> finish());
     }
 
     private void updateEvent() {
-        String updatedTitle = editTextTitle.getText().toString(); // Get the updated title from EditText
-        String updatedDateTime = editTextDate.getText().toString(); // Get the updated date and time from EditText
-        Long updatedLimitEntrants = editTextLimitEntrants.getText().toString().isEmpty() ? null : Long.valueOf(editTextLimitEntrants.getText().toString()); // Get the updated limit entrants as Long or null if not provided
+        String title = editTextTitle.getText().toString().trim();
+        String description = editTextDescription.getText().toString().trim();
+        String dateTime = editTextDateTime.getText().toString().trim();
+        Long limitEntrants = Long.parseLong(editTextLimitEntrants.getText().toString().trim());
 
-        DocumentReference eventRef = db.collection("events").document(eventId); // Create a reference to the event document in Firestore
-        eventRef.update("title", updatedTitle, "dateTime", updatedDateTime, "limitEntrants", updatedLimitEntrants) // Update the event document with the new values
-                .addOnSuccessListener(aVoid -> Toast.makeText(EventEditActivity.this, "Event updated successfully", Toast.LENGTH_SHORT).show()) // Show success message
-                .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to update event", Toast.LENGTH_SHORT).show()); // Show failure message if update fails
+        if (!title.isEmpty() && !description.isEmpty() && !dateTime.isEmpty()) {
+            Event updatedEvent = new Event(eventId, title, description, null, limitEntrants);
+            updatedEvent.setDate(dateTime);
+
+            db.collection("events").document(eventId)
+                    .set(updatedEvent, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(EventEditActivity.this, "Event updated", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(EventEditActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+        }
     }
-
-    /**
-     * Opens the OrganizerNotificationActivity when the Notification button is clicked
-     */
-    private void openNotificationActivity() {
-        Intent intent = new Intent(EventEditActivity.this, OrganizerNotificationActivity.class);
-        startActivity(intent);
-    }
-
-
 }

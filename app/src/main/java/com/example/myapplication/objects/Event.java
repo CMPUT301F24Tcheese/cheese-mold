@@ -85,7 +85,6 @@ public class Event implements Serializable, Parcelable {
      * @param in the parcel from which to read the data
      */
     protected Event(Parcel in) {
-        id = in.readString();
         title = in.readString();
         description = in.readString();
         posterUrl = in.readString();
@@ -172,7 +171,7 @@ public class Event implements Serializable, Parcelable {
      *      Return the date and time of the event as a String.
      */
     @PropertyName("dateTime")
-    public String getDate() {
+    public String getDateTime() {
         return dateTime;
     }
 

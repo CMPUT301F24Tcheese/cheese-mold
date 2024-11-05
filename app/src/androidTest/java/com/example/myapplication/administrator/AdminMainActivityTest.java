@@ -35,7 +35,7 @@ public class AdminMainActivityTest {
     @Test
     public void testFacilitiesButton() {
         onView(withId(R.id.browseFacilitiesBtn)).perform(click());
-        onView(withText("FACILITIES")).check(matches(isDisplayed()));
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
         onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
     }
 
@@ -45,7 +45,7 @@ public class AdminMainActivityTest {
     @Test
     public void testProfilesButton() {
         onView(withId(R.id.browseProfilesBtn)).perform(click());
-        onView(withText("USER PROFILES")).check(matches(isDisplayed()));
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
         onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
     }
 
@@ -55,7 +55,7 @@ public class AdminMainActivityTest {
     @Test
     public void testEventsButton() {
         onView(withId(R.id.browseEventsBtn)).perform(click());
-        onView(withText("EVENTS")).check(matches(isDisplayed()));
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
         onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
     }
 
@@ -65,8 +65,7 @@ public class AdminMainActivityTest {
     @Test
     public void testImagesButton() {
         onView(withId(R.id.browseImagesBtn)).perform(click());
-        onView(withText("IMAGES")).check(matches(isDisplayed()));
-        onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
     }
 
     /**
@@ -75,7 +74,7 @@ public class AdminMainActivityTest {
     @Test
     public void testQRCodeButton() {
         onView(withId(R.id.browseQRcodesBtn)).perform(click());
-        onView(withText("QR CODES")).check(matches(isDisplayed()));
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
         onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
     }
 

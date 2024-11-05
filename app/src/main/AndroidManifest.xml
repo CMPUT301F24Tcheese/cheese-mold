@@ -49,6 +49,7 @@
         <activity android:name=".administrator.AdminBrowseQRCodes"/>
         <activity android:name=".administrator.AdminBrowseImages"/>
         <activity android:name=".administrator.AdminViewEvent"/>
+        <activity android:name=".administrator.AdminViewUser"/>
 
         <!-- Register EntrantMainActivity -->
         <activity android:name=".organizer.OrganizerMainActivity"/>
@@ -71,13 +72,18 @@
         <!-- Register AddFacilityActivity (for adding facilities) -->
         <activity android:name=".organizer.AddFacilityActivity" android:exported="true"/>
 
-        <activity android:name=".FacilityActivity" android:exported="true"/>
+        <activity android:name=".organizer.FacilityActivity" android:exported="true"/>
 
         <activity android:name=".organizer.EditFacilityActivity" />
 
         <activity android:name=".organizer.EventEditActivity" />
 
         <activity android:name=".entrant.MyEventActivity" android:exported="true"/>
+
+        <activity android:name=".organizer.OrganizerNotificationActivity"/>
+
+        <activity android:name=".organizer.EntrantNotificationListActivity" />
+
 
         <activity android:name=".EventDetailActivity" android:exported="true">
             <intent-filter>

@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.objects.Event;
-
 import java.util.List;
 
+// EventAdapter.java
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
@@ -21,7 +21,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         this.eventList = eventList;
         this.onEventClickListener = onEventClickListener;
     }
-
 
     @NonNull
     @Override
@@ -43,13 +42,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     .into(holder.posterImageView);
             holder.posterImageView.setVisibility(View.VISIBLE);
         } else {
-            holder.posterImageView.setVisibility(View.GONE); // Hide the image view if no poster is available
+            holder.posterImageView.setVisibility(View.GONE);
         }
 
         // Set click listener
         holder.itemView.setOnClickListener(v -> {
             if (onEventClickListener != null) {
-                onEventClickListener.onEventClick(event);
+                onEventClickListener.onEventClick(event); // Trigger click callback with the event
             }
         });
     }
@@ -72,6 +71,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     public interface OnEventClickListener {
-        void onEventClick(Event event);
+        void onEventClick(Event event); // Interface to handle event click
     }
 }

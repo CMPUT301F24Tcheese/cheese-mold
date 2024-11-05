@@ -7,6 +7,7 @@ package com.example.myapplication.administrator;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Facility;
 import com.example.myapplication.objects.UserArrayAdapter;
 import com.example.myapplication.objects.Users;
@@ -83,6 +85,16 @@ public class AdminBrowseUsers extends AppCompatActivity {
 
         back.setOnClickListener(view -> {
             finish();
+        });
+
+        usersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Users user = dataList.get(i);
+                Intent intent = new Intent(AdminBrowseUsers.this, AdminViewUser.class);
+                intent.putExtra("user", (Parcelable) user);
+                startActivity(intent);
+            }
         });
 
     }

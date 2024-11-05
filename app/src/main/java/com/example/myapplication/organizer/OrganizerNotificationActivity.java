@@ -1,28 +1,56 @@
 package com.example.myapplication.organizer;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.notifications.Notification;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firestore instance for sending notifications
     private Button buttonToChosenEntrants, buttonToEntrantsOnWaitlist, buttonToCanceledEntrants, buttonSend;
     private EditText editTextMessage;
+    private String eventId;
+    private String senderId; // Assume this is the organizer's ID
+    private ArrayList<String> selectedEntrants = new ArrayList<>(); // Store selected entrants
+
+    // Activity Result Launcher for EntrantNotificationListActivity
+    private final ActivityResultLauncher<Intent> entrantListLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    ArrayList<String> selectedEntrants = result.getData().getStringArrayListExtra("selectedEntrants");
+                    if (selectedEntrants != null && !selectedEntrants.isEmpty()) {
+                        this.selectedEntrants = selectedEntrants;
+                        Toast.makeText(this, "Selected Entrants: " + selectedEntrants, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "No entrants selected", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_organizer_notification); // Set the layout for this activity
+        setContentView(R.layout.activity_organizer_notification);
 
-        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
+
+        // Assume senderId is retrieved from logged-in user info
+        senderId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initialize UI elements
         buttonToChosenEntrants = findViewById(R.id.buttonToChosenEntrants);
@@ -31,21 +59,30 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         buttonSend = findViewById(R.id.buttonSend);
         editTextMessage = findViewById(R.id.editTextMessage);
 
-        // Set click listeners for the notification target buttons
-        buttonToChosenEntrants.setOnClickListener(view -> sendNotification("chosen"));
-        buttonToEntrantsOnWaitlist.setOnClickListener(view -> sendNotification("waitlist"));
-        buttonToCanceledEntrants.setOnClickListener(view -> sendNotification("canceled"));
+        // Retrieve Event ID from Intent
+        eventId = getIntent().getStringExtra("event_id");
+        if (eventId == null) {
+            Toast.makeText(this, "Event ID not provided", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Set click listener for the "To Chosen Entrants" button
+        buttonToEntrantsOnWaitlist.setOnClickListener(view -> {
+            Intent intent = new Intent(OrganizerNotificationActivity.this, EntrantNotificationListActivity.class);
+            intent.putExtra("event_id", eventId);
+            intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
+            entrantListLauncher.launch(intent); // Launch with ActivityResultLauncher
+        });
 
         // Set click listener for the Send button
         buttonSend.setOnClickListener(view -> {
             String message = editTextMessage.getText().toString().trim();
-            if (!message.isEmpty()) {
-                // Implement sending the message based on selected target
-                // For example, you might need to track which button was last clicked
-                // This requires additional logic based on your app's requirements
-                Toast.makeText(this, "Message sent: " + message, Toast.LENGTH_SHORT).show();
-                // Clear the message after sending
+            if (!message.isEmpty() && !selectedEntrants.isEmpty()) {
+                sendNotificationsToSelectedUsers(message);
                 editTextMessage.setText("");
+            } else if (selectedEntrants.isEmpty()) {
+                Toast.makeText(this, "No users selected", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show();
             }
@@ -53,17 +90,20 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     }
 
     /**
-     * Sends a notification to the specified target group
-     * @param targetGroup The group to which the notification should be sent ("chosen", "waitlist", "canceled")
+     * Sends a notification message to each selected user by creating a new Notification instance.
+     * @param message The message to send to selected users.
      */
-    private void sendNotification(String targetGroup) {
-        // Implement the logic to fetch the target group entrants from Firestore
-        // and send the notification message
-        // This is a placeholder for demonstration purposes
+    private void sendNotificationsToSelectedUsers(String message) {
+        for (String receiverId : selectedEntrants) {
+            // Create a new Notification instance for each selected entrant
+            Notification notification = new Notification(senderId, eventId, receiverId, message);
 
-        Toast.makeText(this, "Selected target: " + targetGroup, Toast.LENGTH_SHORT).show();
+            // Use the sendNotification method to send the notification to Firestore
+            notification.sendNotification();
+        }
 
-        // You can implement further logic here to handle the notification sending
+        // Provide feedback to the user
+        Toast.makeText(this, "Notifications sent to selected entrants.", Toast.LENGTH_SHORT).show();
     }
 }
 
