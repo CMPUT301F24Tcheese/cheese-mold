@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Facility;
 
+import com.example.myapplication.organizer.EditFacilityActivity;
+
+
 import java.util.List;
 
 // Adapter class for managing and displaying a list of facilities in a RecyclerView
