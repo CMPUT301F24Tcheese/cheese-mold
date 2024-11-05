@@ -57,6 +57,9 @@ dependencies {
 
     // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.core)
+    testImplementation(libs.ext.junit)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
     //ZXing libraries for QR code

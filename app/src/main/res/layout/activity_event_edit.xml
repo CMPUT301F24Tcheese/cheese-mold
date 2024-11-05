@@ -1,75 +1,122 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F5F5F5">
 
-    <!-- Event Title Input -->
-    <EditText
-        android:id="@+id/editTextTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Event Name"
-        android:inputType="text" />
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp">
 
-    <!-- Event Description Input -->
-    <EditText
-        android:id="@+id/editTextDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Event Description"
-        android:inputType="textMultiLine"
-        android:minLines="3"
-        android:maxLines="5"
-        android:gravity="top" />
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Name"
+            android:backgroundTint="#6200EE"
+            android:padding="10dp" />
 
-    <!-- Event Date and Time Input -->
-    <EditText
-        android:id="@+id/editTextDateTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Date and Time"
-        android:inputType="datetime" />
+        <EditText
+            android:id="@+id/editTextDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date and Time"
+            android:backgroundTint="#6200EE"
+            android:padding="10dp"
+            android:layout_marginTop="8dp"/>
 
-    <!-- Limit Entrants Input -->
-    <EditText
-        android:id="@+id/editTextLimitEntrants"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Limit Entrants (Optional)"
-        android:inputType="number" />
+        <EditText
+            android:id="@+id/editTextLimitEntrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Limit Entrants (Optional)"
+            android:backgroundTint="#6200EE"
+            android:padding="10dp"
+            android:layout_marginTop="8dp"/>
 
-    <!-- Update Event Button -->
-    <Button
-        android:id="@+id/buttonUpdateEvent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Update Event"
-        android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:backgroundTint="#6200EE"
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:inputType="textMultiLine" />
 
-    <!-- Horizontal layout for Upload Poster and Notification buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/buttonUploadPoster"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Update Poster"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/buttonNotification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Notification"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/buttonDeleteEvent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete Event"
+                android:backgroundTint="#F44336"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp">
 
-        <!-- Upload Poster Button -->
         <Button
-            android:id="@+id/buttonUploadPoster"
+            android:id="@+id/buttonCancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Upload Poster" />
+            android:text="Cancel"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFFFFF"
+            android:layout_marginEnd="8dp"/>
 
-        <!-- Notification Button -->
         <Button
-            android:id="@+id/buttonNotification"
+            android:id="@+id/buttonUpdateEvent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Notification"
-            android:layout_marginStart="8dp" />
+            android:text="Update Event"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>
