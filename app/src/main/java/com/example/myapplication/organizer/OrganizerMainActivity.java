@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.EntrantEventDetailActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
@@ -56,6 +57,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
     private ArrayList<Event> facilityEventList, joinedEventList;
     private boolean facilityExist;
     private LinearLayout viewFacilityLayout, viewEventLayout, facilityDetailLayout, facilityExistLayout, facilityNotExistLayout;
+    private boolean isFacilityView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +106,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         getData(device);
-        showFacilityView();
+        isFacilityView = true;
 
         // Refreshes the facility view on swipe
         facilitySwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -140,11 +142,13 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
 
         // Option to view facility
         facilityTextView.setOnClickListener(view -> {
+            isFacilityView = true;
             showFacilityView();
         });
 
         // Option to view joined events
         eventsTextView.setOnClickListener(view -> {
+            isFacilityView = false;
             showEventsView();
         });
 
@@ -270,6 +274,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
      */
     private void loadFacilityEvents() {
         facilityEventList.clear();
+        facilityEventAdapter.notifyDataSetChanged();
         db.collection("events").whereEqualTo("creatorID", device).get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
@@ -292,6 +297,8 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
      * Loads events that the user has joined.
      */
     private void loadJoinedEvents() {
+        joinedEventList.clear();
+        joinedEventAdapter.notifyDataSetChanged();
         db.collection("users").document(device).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -319,7 +326,6 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
      * @param eventId The ID of the event to load.
      */
     private void loadEvents(String eventId) {
-        joinedEventList.clear();
         db.collection("events").document(eventId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Event event = documentSnapshot.toObject(Event.class);
@@ -368,12 +374,31 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
 
     @Override
     public void onEventClick(Event event) {
+
+
         Intent intentFromEM = getIntent();
         String device = intentFromEM.getStringExtra("device");
+        Intent intent;
+        if (isFacilityView) {
+            intent = new Intent(OrganizerMainActivity.this, EventEditActivity.class);
+        } else {
+            intent =  new Intent(OrganizerMainActivity.this, EntrantEventDetailActivity.class); // Create an intent to open the EventEditActivity.
+        }
 
-        Intent intent =  new Intent(OrganizerMainActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
         intent.putExtra("device",device);
         intent.putExtra("event", (Parcelable) event);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData(device);
+        if (isFacilityView) {
+            showFacilityView();
+        } else {
+            loadJoinedEvents();
+        }
+
     }
 }

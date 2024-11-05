@@ -97,6 +97,8 @@ public class RegisterActivity extends AppCompatActivity {
                 // Check if any of the fields are empty
                 if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show(); // Show error message
+                } else if (!isValidEmail(email)){
+                    Toast.makeText(RegisterActivity.this, "Enter valid email", Toast.LENGTH_SHORT).show(); // Display error message
                 } else {
                     if (imageUri == null) {
                         String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
@@ -160,6 +162,11 @@ public class RegisterActivity extends AppCompatActivity {
         registerFirstname.setText(""); // Clear the first name field
         registerLastname.setText(""); // Clear the last name field
         profilePicture.setImageResource(R.drawable.baseline_person_outline_24); // Reset the profile picture to default icon
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailPattern);
     }
 
     /**
