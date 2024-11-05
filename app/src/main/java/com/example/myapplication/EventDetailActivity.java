@@ -40,97 +40,31 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_event);
 
-        // Initialization
+        // 初始化
+        db = FirebaseFirestore.getInstance();
         joinEvent = findViewById(R.id.eventDetailJoin);
         cancel = findViewById(R.id.eventDetailCancel);
         eventName = findViewById(R.id.eventDetailName);
         eventDescription = findViewById(R.id.eventDetailDescription);
         imageView = findViewById(R.id.imageView);
-        db = FirebaseFirestore.getInstance();
 
-        // Retrieve the event and user that were clicked/passed from the previous activity
-        Intent intent = getIntent();
+        // 获取设备ID
         user = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Uri data = intent.getData(); // Get the intent data from QR code
 
-        if (data != null && "event".equals(data.getHost())) {
-            // Extract the event ID from the deep link URL
-            String eventId = data.getQueryParameter("id");
+        // 从Intent获取 eventId
+        String eventId = getIntent().getStringExtra("event_id");
 
-            if (eventId != null) {
-                loadEventDetailsFromFirestore(eventId); // Method to load event data based on ID
-            } else {
-                Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
-            }
+        if (eventId != null && !eventId.isEmpty()) {
+            loadEventDetailsFromFirestore(eventId);
+        } else {
+            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
-        // Exit from this activity when cancel button is clicked
         cancel.setOnClickListener(v -> finish());
     }
 
-    /**
-     * Attempts to add the device to the waiting list of an event on Firebase,
-     * but only if the waiting list has not reached the limit.
-     *
-     * @param eventId The id of the event
-     * @param device The user's device ID who is attempting to join
-     */
-    public void attemptToJoinWaitingList(String eventId, String device) {
-        db.collection("events").document(eventId).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                Long limitEntrants = documentSnapshot.getLong("limitEntrants");
-                if (limitEntrants == null) {
-                    limitEntrants = Long.MAX_VALUE;
-                }
-                ArrayList<String> waitingList = (ArrayList<String>) documentSnapshot.get("waitlist");
-
-                if (waitingList != null && limitEntrants != null) {
-                    if (waitingList.size() >= limitEntrants) {
-                        // Show a message if the waiting list is full
-                        Toast.makeText(this, "The waiting list is full. You cannot join.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Add the user to the waiting list
-                        db.collection("events").document(eventId)
-                                .update("waitlist", FieldValue.arrayUnion(device))
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("Firestore", "User added to waiting list.");
-                                    Toast.makeText(this, "You have been added to the waiting list.", Toast.LENGTH_SHORT).show();
-                                    FireStoreAddEventId(eventId, device); // Add the event ID to the user's event list
-                                    finish();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.w("Firestore", "Error adding user to waiting list", e);
-                                    Toast.makeText(this, "Failed to join waiting list. Please try again.", Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                } else {
-                    Toast.makeText(this, "Error loading event data.", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Error accessing event data. Please try again.", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    /**
-     * Add the eventId to the user's array of EventID in Firebase, to indicate they have joined this event
-     * @param eventId
-     * @param device
-     */
-    public void FireStoreAddEventId(String eventId, String device) {
-        db.collection("users").document(device)
-                .update("Event List", FieldValue.arrayUnion(eventId))
-                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
-                .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
-    }
-
-    /**
-     * Load event details from Firestore based on the event ID.
-     * @param eventId The ID of the event to load
-     */
-    public void loadEventDetailsFromFirestore(String eventId) {
+    private void loadEventDetailsFromFirestore(String eventId) {
         db.collection("events").document(eventId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -140,33 +74,12 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                             if (doc.exists()) {
                                 eventToLoad = doc.toObject(Event.class);
                                 if (eventToLoad != null) {
-                                    // Set UI elements only after the event data is loaded
                                     eventToLoad.setId(doc.getId());
                                     eventName.setText(eventToLoad.getTitle());
                                     eventDescription.setText(eventToLoad.getDescription());
-                                    Picasso.get()
-                                            .load(eventToLoad.getPosterUrl())
-                                            .into(imageView);
+                                    Picasso.get().load(eventToLoad.getPosterUrl()).into(imageView);
 
-                                    // Setup the join/unjoin logic
-                                    if (eventToLoad.getWaitingList() != null && eventToLoad.getWaitingList().contains(user)) {
-                                        joinEvent.setText("Unjoin Event");
-                                        joinEvent.setOnClickListener(v -> {
-                                            eventToLoad.removeWaitingList(user);
-                                            FireStoreRemoveWaitingList(eventToLoad.getId(), user);
-                                            FireStoreRemoveeventId(eventToLoad.getId(), user);
-                                            Toast.makeText(EventDetailActivity.this, "Unjoined " + eventToLoad.getTitle(), Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        });
-                                    } else {
-                                        joinEvent.setOnClickListener(v -> {
-                                            if (eventToLoad.getGeo()) {
-                                                showGeolocationDialog(eventToLoad, user);
-                                            } else {
-                                                attemptToJoinWaitingList(eventToLoad.getId(), user); // Use the new method with limit check
-                                            }
-                                        });
-                                    }
+                                    setupJoinButton();
                                 }
                             } else {
                                 Toast.makeText(EventDetailActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
@@ -178,24 +91,75 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 });
     }
 
-    /**
-     * Remove the device from the waiting list of an event on Firebase
-     * @param eventId The id of the event
-     * @param device The user's device ID who is removing themselves from the list
-     */
-    public void FireStoreRemoveWaitingList(String eventId, String device) {
+    private void setupJoinButton() {
+        if (eventToLoad.getWaitingList() != null && eventToLoad.getWaitingList().contains(user)) {
+            joinEvent.setText("Unjoin Event");
+            joinEvent.setOnClickListener(v -> {
+                eventToLoad.removeWaitingList(user);
+                FireStoreRemoveWaitingList(eventToLoad.getId(), user);
+                FireStoreRemoveEventId(eventToLoad.getId(), user);
+                Toast.makeText(EventDetailActivity.this, "Unjoined " + eventToLoad.getTitle(), Toast.LENGTH_SHORT).show();
+                finish();
+            });
+        } else {
+            joinEvent.setOnClickListener(v -> {
+                if (eventToLoad.getGeo()) {
+                    showGeolocationDialog(eventToLoad, user);
+                } else {
+                    attemptToJoinWaitingList(eventToLoad.getId(), user);
+                }
+            });
+        }
+    }
+
+    private void attemptToJoinWaitingList(String eventId, String device) {
+        db.collection("events").document(eventId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Long limitEntrants = documentSnapshot.getLong("limitEntrants");
+                if (limitEntrants == null) {
+                    limitEntrants = Long.MAX_VALUE;
+                }
+                ArrayList<String> waitingList = (ArrayList<String>) documentSnapshot.get("waitlist");
+
+                if (waitingList != null && waitingList.size() >= limitEntrants) {
+                    Toast.makeText(this, "The waiting list is full. You cannot join.", Toast.LENGTH_SHORT).show();
+                } else {
+                    db.collection("events").document(eventId)
+                            .update("waitlist", FieldValue.arrayUnion(device))
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("Firestore", "User added to waiting list.");
+                                Toast.makeText(this, "You have been added to the waiting list.", Toast.LENGTH_SHORT).show();
+                                FireStoreAddEventId(eventId, device);
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w("Firestore", "Error adding user to waiting list", e);
+                                Toast.makeText(this, "Failed to join waiting list. Please try again.", Toast.LENGTH_SHORT).show();
+                            });
+                }
+            } else {
+                Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error accessing event data. Please try again.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void FireStoreAddEventId(String eventId, String device) {
+        db.collection("users").document(device)
+                .update("Event List", FieldValue.arrayUnion(eventId))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
+    }
+
+    private void FireStoreRemoveWaitingList(String eventId, String device) {
         db.collection("events").document(eventId)
                 .update("waitlist", FieldValue.arrayRemove(device))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
                 .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
 
-    /**
-     * Remove the eventID from user on Firebase, to indicate they unjoined the event.
-     * @param eventId
-     * @param device
-     */
-    public void FireStoreRemoveeventId(String eventId, String device) {
+    private void FireStoreRemoveEventId(String eventId, String device) {
         db.collection("users").document(device)
                 .update("Event List", FieldValue.arrayRemove(eventId))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element removed from array"))
@@ -210,7 +174,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
     @Override
     public void onJoinClicked(Event event, String userId) {
         if (event != null) {
-            attemptToJoinWaitingList(event.getId(), userId); // Use the new method with limit check
+            attemptToJoinWaitingList(event.getId(), userId);
         } else {
             Log.e("EventDetailActivity", "Event is null in onJoinClicked");
         }

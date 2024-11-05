@@ -128,4 +128,10 @@ public class Facility {
     public String getAdress() {
         return street + ", " + city + ", " + province;
     }
+
+    public boolean isValidFacility() {
+        return name != null && !name.isEmpty()
+                && city != null && !city.isEmpty()
+                && province != null && !province.isEmpty();
+    }
 }

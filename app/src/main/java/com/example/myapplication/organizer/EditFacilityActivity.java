@@ -16,9 +16,12 @@ import com.google.firebase.firestore.SetOptions;
 
 public class EditFacilityActivity extends AppCompatActivity {
 
-    private EditText editTextName, editTextDescription, editTextStreet, editTextCity, editTextProvince; // Input fields for facility details
-    private Button buttonUpdateFacility, buttonCancel; // Buttons for updating facility and canceling the operation
-    private FirebaseFirestore db; // Firestore database instance
+    // UI elements for facility details input
+    private EditText editTextName, editTextDescription, editTextStreet, editTextCity, editTextProvince;
+    private Button buttonUpdateFacility, buttonCancel;
+
+    // Firestore database instance
+    private FirebaseFirestore db;
     private String facilityId; // Facility ID based on device ID
 
     @Override
@@ -40,8 +43,10 @@ public class EditFacilityActivity extends AppCompatActivity {
         // Use device ID as the facility ID
         facilityId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        loadFacilityData(); // Load facility data using the facilityId
+        // Load existing facility data
+        loadFacilityData();
 
+        // Set up button listeners
         buttonUpdateFacility.setOnClickListener(view -> updateFacility());
         buttonCancel.setOnClickListener(view -> finish());
     }
@@ -62,7 +67,9 @@ public class EditFacilityActivity extends AppCompatActivity {
                         Toast.makeText(this, "No facility found for this device.", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load facility data.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to load facility data.", Toast.LENGTH_SHORT).show()
+                );
     }
 
     private void updateFacility() {
@@ -72,7 +79,10 @@ public class EditFacilityActivity extends AppCompatActivity {
         String city = editTextCity.getText().toString().trim();
         String province = editTextProvince.getText().toString().trim();
 
-        if (!name.isEmpty() && !description.isEmpty() && !street.isEmpty() && !city.isEmpty() && !province.isEmpty()) {
+        // Regex to check if input is alphabetic only
+        String alphabeticPattern = "^[a-zA-Z]+$";
+
+        if (validateInput(name, description, street, city, province, alphabeticPattern)) {
             Facility updatedFacility = new Facility(facilityId, name, description, street, city, province);
 
             db.collection("Facilities").document(facilityId)
@@ -81,9 +91,29 @@ public class EditFacilityActivity extends AppCompatActivity {
                         Toast.makeText(EditFacilityActivity.this, "Facility updated", Toast.LENGTH_SHORT).show();
                         finish();
                     })
-                    .addOnFailureListener(e -> Toast.makeText(EditFacilityActivity.this, "Update failed", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e ->
+                            Toast.makeText(EditFacilityActivity.this, "Update failed", Toast.LENGTH_SHORT).show()
+                    );
         } else {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean validateInput(String name, String description, String street, String city, String province, String alphabeticPattern) {
+        if (name.isEmpty() || description.isEmpty() || street.isEmpty() || city.isEmpty() || province.isEmpty()) {
+            return false;
+        }
+
+        if (!city.matches(alphabeticPattern)) {
+            Toast.makeText(this, "City should contain only letters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!province.matches(alphabeticPattern)) {
+            Toast.makeText(this, "Province should contain only letters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 }
