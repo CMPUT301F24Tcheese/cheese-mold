@@ -6,7 +6,6 @@
     android:background="@android:color/white"
     android:layout_marginTop="20dp">
 
-
     <EditText
         android:id="@+id/editTextFacilityName"
         android:layout_width="0dp"
@@ -29,7 +28,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Street EditText -->
     <EditText
         android:id="@+id/editTextStreet"
         android:layout_width="0dp"
@@ -41,7 +39,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- City EditText -->
     <EditText
         android:id="@+id/editTextCity"
         android:layout_width="0dp"
@@ -53,7 +50,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Province EditText -->
     <EditText
         android:id="@+id/editTextProvince"
         android:layout_width="0dp"
@@ -65,8 +61,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"/>
 
-
-    <!-- Create Facility Button -->
     <Button
         android:id="@+id/buttonCreateFacility"
         android:layout_width="0dp"
@@ -77,7 +71,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="32dp"/>
 
-    <!-- Back Button -->
     <Button
         android:id="@+id/buttonBackToFacility"
         android:layout_width="0dp"

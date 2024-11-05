@@ -3,28 +3,18 @@ package com.example.myapplication.entrant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.EmailActivity;
-import com.example.myapplication.EventActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.ProfileActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.entrant.MyEventActivity;
 import com.example.myapplication.objects.Event;
-import com.example.myapplication.objects.Users;
-import com.example.myapplication.objects.WaitingList;
-import com.example.myapplication.organizer.AddEventActivity;
-import com.example.myapplication.organizer.AddFacilityActivity;
-import com.example.myapplication.organizer.EventEditActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,7 +24,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MyEventActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener {
 
