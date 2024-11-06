@@ -17,6 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firestore instance for sending notifications
@@ -73,6 +76,15 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             intent.putExtra("event_id", eventId);
             intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
             entrantListLauncher.launch(intent); // Launch with ActivityResultLauncher
+        });
+
+        // Set click listener for "To Chosen Entrants" button
+        buttonToChosenEntrants.setOnClickListener(view -> {
+            Intent intent = new Intent(OrganizerNotificationActivity.this, EntrantNotificationListActivity.class);
+            intent.putExtra("event_id", eventId);
+            intent.putExtra("isChosenEntrantsMode", true); // True to indicate chosen entrants mode
+            intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
+            entrantListLauncher.launch(intent);
         });
 
         // Set click listener for the Send button

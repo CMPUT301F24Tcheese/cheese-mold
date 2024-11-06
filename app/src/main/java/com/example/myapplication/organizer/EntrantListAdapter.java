@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,13 +20,12 @@ import java.util.Set;
 public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.EntrantViewHolder> {
 
     private List<String> entrantList;
-    private Set<String> selectedEntrants = new HashSet<>(); // Track selected entrants
+    private Set<String> selectedEntrants;
 
-    public EntrantListAdapter(List<String> entrantList, List<String> preSelectedEntrants) {
+    // Constructor that takes in the list of entrants and the previously selected entrants
+    public EntrantListAdapter(List<String> entrantList, ArrayList<String> selectedEntrants) {
         this.entrantList = entrantList;
-        if (preSelectedEntrants != null) {
-            this.selectedEntrants.addAll(preSelectedEntrants); // Pre-select these entrants
-        }
+        this.selectedEntrants = new HashSet<>(selectedEntrants); // Use a Set for efficient lookups
     }
 
     @NonNull
@@ -39,8 +39,11 @@ public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.
     public void onBindViewHolder(@NonNull EntrantViewHolder holder, int position) {
         String fullName = entrantList.get(position);
         holder.entrantNameTextView.setText(fullName);
-        holder.checkboxSelect.setChecked(selectedEntrants.contains(fullName)); // Pre-select if previously selected
 
+        // Set the checkbox state based on whether the entrant is in the selectedEntrants set
+        holder.checkboxSelect.setChecked(selectedEntrants.contains(fullName));
+
+        // Update the selectedEntrants set when the checkbox state changes
         holder.checkboxSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 selectedEntrants.add(fullName);
@@ -55,19 +58,19 @@ public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.
         return entrantList.size();
     }
 
+    // Method to retrieve the selected entrants
     public Set<String> getSelectedEntrants() {
         return selectedEntrants;
     }
 
+    // Inner ViewHolder class for EntrantListAdapter
     public static class EntrantViewHolder extends RecyclerView.ViewHolder {
         TextView entrantNameTextView;
-        ImageView profileImageView;
         CheckBox checkboxSelect;
 
         public EntrantViewHolder(@NonNull View itemView) {
             super(itemView);
             entrantNameTextView = itemView.findViewById(R.id.entrantName);
-            profileImageView = itemView.findViewById(R.id.profileImage);
             checkboxSelect = itemView.findViewById(R.id.checkboxSelect);
         }
     }
