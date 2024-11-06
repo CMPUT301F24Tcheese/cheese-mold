@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OrganizerNotificationActivity extends AppCompatActivity {
@@ -99,32 +100,48 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @param message The message to send to selected users.
      */
     private void sendNotificationsToSelectedUsers(String message) {
-        for (String selectedEntrant : selectedEntrants) {
-            db.collection("users")
-                    .whereEqualTo("Firstname", selectedEntrant.split(" ")[0])  // Assuming selectedEntrant format is "First Last"
-                    .whereEqualTo("Lastname", selectedEntrant.split(" ")[1])
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        if (!querySnapshot.isEmpty()) {
-                            String receiverDeviceId = querySnapshot.getDocuments().get(0).getId(); // Get document ID as device ID
-                            Notification notification = new Notification(senderId, eventId, receiverDeviceId, message);
-                            notification.sendNotification();
-                            Log.d("NotificationProcess", "Notification sent to " + receiverDeviceId);
-                        } else {
-                            Log.w("NotificationError", "No user found with the name " + selectedEntrant);
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(eventSnapshot -> {
+                    if (eventSnapshot.exists()) {
+                        List<String> waitlist = (List<String>) eventSnapshot.get("waitlist");
+
+                        for (String selectedEntrant : selectedEntrants) {
+                            if (waitlist != null && waitlist.contains(selectedEntrant)) {
+                                // Entrant is on the waitlist, use the device ID directly
+                                Notification notification = new Notification(senderId, eventId, selectedEntrant, message);
+                                notification.sendNotification();
+                                Log.d("NotificationProcess", "Notification sent to waitlisted entrant: " + selectedEntrant);
+                            } else {
+                                // For ToChosenEntrants, retrieve the document ID (device ID) based on the name
+                                db.collection("users")
+                                        .whereEqualTo("Firstname", selectedEntrant.split(" ")[0])
+                                        .whereEqualTo("Lastname", selectedEntrant.split(" ")[1])
+                                        .get()
+                                        .addOnSuccessListener(querySnapshot -> {
+                                            if (!querySnapshot.isEmpty()) {
+                                                String receiverDeviceId = querySnapshot.getDocuments().get(0).getId();
+                                                Notification notification = new Notification(senderId, eventId, receiverDeviceId, message);
+                                                notification.sendNotification();
+                                                Log.d("NotificationProcess", "Notification sent to chosen entrant: " + receiverDeviceId);
+                                            } else {
+                                                Log.w("NotificationError", "No user found with the name " + selectedEntrant);
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> Log.e("NotificationError", "Failed to fetch user document", e));
+                            }
                         }
-                    })
-                    .addOnFailureListener(e -> Log.e("NotificationError", "Failed to fetch user document", e));
-        }
 
-        Toast.makeText(this, "Notifications sent to selected entrants.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Notifications sent to selected entrants.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("NotificationError", "Event document not found for eventId: " + eventId);
+                        Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("NotificationError", "Error fetching event document for eventId: " + eventId, e);
+                    Toast.makeText(this, "Failed to send notifications.", Toast.LENGTH_SHORT).show();
+                });
     }
-
-
-
-    private void sendNotification(String receiverId, String message) {
-        Notification notification = new Notification(senderId, eventId, receiverId, message);
-        notification.sendNotification();
-    }
+    
 }
 
