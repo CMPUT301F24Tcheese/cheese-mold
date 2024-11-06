@@ -1,3 +1,7 @@
+/**
+ * Activity for creating new events
+ * Only organizer with a facility can create new events
+ */
 package com.example.myapplication.organizer;
 
 import android.app.DatePickerDialog;
@@ -21,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
+import com.example.myapplication.organizer.OrganizerMainActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -81,6 +86,9 @@ public class AddEventActivity extends AppCompatActivity {
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * This method activates when the user wants to select date for the event and get the calendar
+     */
     private void showDatePickerDialog() {
         int year = selectedDateTime.get(Calendar.YEAR);
         int month = selectedDateTime.get(Calendar.MONTH);
@@ -97,6 +105,9 @@ public class AddEventActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    /**
+     * This method set the time for the event
+     */
     private void showTimePickerDialog() {
         int hour = selectedDateTime.get(Calendar.HOUR_OF_DAY);
         int minute = selectedDateTime.get(Calendar.MINUTE);
@@ -115,6 +126,9 @@ public class AddEventActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    /**
+     * This method allows the user to select an image from their device
+     */
     private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -122,6 +136,14 @@ public class AddEventActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Poster Image"), PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Handles the result of the image selection activity.
+     * It is activated when the user select an image from their device
+     * it retrieves the selected image URI, converts it to a bitmap, and displays the image
+     * @param requestCode request the code of the activity
+     * @param resultCode see if the code matches
+     * @param data the result data from image selection
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -136,6 +158,9 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method check if the event name created is unique, preventing same event name
+     */
     private void checkEventNameUnique() {
         String eventName = editTextEventName.getText().toString().trim();
 
@@ -166,6 +191,9 @@ public class AddEventActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This method saves the event and upload it to database
+     */
     private void saveEvent() {
         String eventName = editTextEventName.getText().toString().trim();
         String eventDescription = editTextEventDescription.getText().toString().trim();
@@ -206,6 +234,11 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check if the input is a positive int
+     * @param str the user input for entrants limit of a event
+     * @return check the result
+     */
     private boolean isPositiveInteger(String str) {
         try {
             int num = Integer.parseInt(str);
@@ -215,6 +248,10 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method save and upload the event poster
+     * @param event the current event to be created
+     */
     private void uploadPosterAndSaveEvent(Map<String, Object> event) {
         StorageReference reference = storageReference.child("poster_images/" + UUID.randomUUID() + ".jpg");
         reference.putFile(posterUri)
@@ -225,6 +262,11 @@ public class AddEventActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(AddEventActivity.this, "Failed to upload poster", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * This method upload event to database
+     * @param event the event to be saved
+     * @param posterUrl the poster info
+     */
     private void saveEventToFirestore(Map<String, Object> event, String posterUrl) {
         if (posterUrl != null) {
             event.put("posterUrl", posterUrl);
@@ -245,6 +287,11 @@ public class AddEventActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(AddEventActivity.this, "Failed to create event", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * This method generate the QR code for the event and link it to the event detail page
+     * @param eventId the eventID relating to the QR code
+     * @return QR code
+     */
     private Bitmap generateQRCode(String eventId) {
         QRCodeWriter writer = new QRCodeWriter();
         String deepLinkUrl = "myapp://event?id=" + eventId;
@@ -265,6 +312,11 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method upload the generated qr code to database
+     * @param eventId the eventID relating to the QR code
+     * @param qrCodeBitmap the QR code
+     */
     private void uploadQRCodeToStorage(String eventId, Bitmap qrCodeBitmap) {
         ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
         qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOut);
