@@ -1,5 +1,7 @@
 package com.example.myapplication.organizer;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 public class EventEditActivity extends AppCompatActivity {
@@ -27,6 +30,7 @@ public class EventEditActivity extends AppCompatActivity {
     private EditText editTextTitle, editTextDate, editTextLimitEntrants, editTextDescription;
     private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification; ;
     private Uri posterUri;
+    private Calendar selectedDateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,11 @@ public class EventEditActivity extends AppCompatActivity {
         buttonCancel = findViewById(R.id.buttonCancel);
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
+        selectedDateTime = Calendar.getInstance();
 
         loadEventData(eventId);
 
+        editTextDate.setOnClickListener(view -> showDatePickerDialog());
         buttonUpdateEvent.setOnClickListener(view -> updateEvent());
         buttonUploadPoster.setOnClickListener(view -> openFileChooser());
         buttonCancel.setOnClickListener(view -> finish());
@@ -64,6 +70,40 @@ public class EventEditActivity extends AppCompatActivity {
             intent.putExtra("event_id", eventId); // Pass event ID to OrganizerNotificationActivity
             startActivity(intent);
         });
+    }
+
+    private void showDatePickerDialog() {
+        int year = selectedDateTime.get(Calendar.YEAR);
+        int month = selectedDateTime.get(Calendar.MONTH);
+        int day = selectedDateTime.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, yearSelected, monthSelected, dayOfMonthSelected) -> {
+                    selectedDateTime.set(yearSelected, monthSelected, dayOfMonthSelected);
+                    showTimePickerDialog();
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
+    }
+
+    private void showTimePickerDialog() {
+        int hour = selectedDateTime.get(Calendar.HOUR_OF_DAY);
+        int minute = selectedDateTime.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, hourOfDaySelected, minuteSelected) -> {
+                    selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDaySelected);
+                    selectedDateTime.set(Calendar.MINUTE, minuteSelected);
+
+                    String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
+                    editTextDate.setText(formattedDateTime);
+                },
+                hour, minute, true // Use 24-hour format, change to false for AM/PM format
+        );
+        timePickerDialog.show();
     }
 
     private void openFileChooser() {
