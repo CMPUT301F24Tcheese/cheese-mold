@@ -4,26 +4,35 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.notifications.Notification;
 import com.example.myapplication.objects.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class EventEditActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private FirebaseFirestore db;
     private StorageReference storageRef;
-    private String eventId;
+    private String eventId, device;
     private EditText editTextTitle, editTextDate, editTextLimitEntrants, editTextDescription;
     private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification; ;
     private Uri posterUri;
@@ -42,6 +51,8 @@ public class EventEditActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+
 
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextDate = findViewById(R.id.editTextDateTime);
@@ -164,4 +175,8 @@ public class EventEditActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to delete event", Toast.LENGTH_SHORT).show());
     }
+
+
+
+
 }

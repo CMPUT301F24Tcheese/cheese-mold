@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.notifications.Notification;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -25,12 +26,14 @@ import java.util.Map;
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firestore instance
-    private Button buttonToChosenEntrants, buttonToEntrantsOnWaitlist, buttonSend;
+    private Button buttonToChosenEntrants, buttonToEntrantsOnWaitlist, buttonSend,buttCancel;
     private EditText editTextMessage;
     private String eventId;
     private String senderId; // Organizer's device ID
     private ArrayList<String> selectedEntrants = new ArrayList<>();
     private boolean isChosenEntrantsMode;
+
+    private String list_to_send;
 
     // Activity Result Launcher for EntrantNotificationListActivity
     private final ActivityResultLauncher<Intent> entrantListLauncher = registerForActivityResult(
@@ -56,6 +59,9 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         senderId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         buttonToChosenEntrants = findViewById(R.id.buttonToChosenEntrants);
         buttonToEntrantsOnWaitlist = findViewById(R.id.buttonToEntrantsOnWaitlist);
+        ///
+        buttCancel = findViewById(R.id.buttonToCanceledEntrants);
+        ///
         buttonSend = findViewById(R.id.buttonSend);
         editTextMessage = findViewById(R.id.editTextMessage);
 
@@ -71,6 +77,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             intent.putExtra("event_id", eventId);
             intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
             intent.putExtra("isChosenEntrantsMode", false);
+            this.list_to_send = "waitlist";
             entrantListLauncher.launch(intent);
         });
 
@@ -79,13 +86,22 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             intent.putExtra("event_id", eventId);
             intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
             intent.putExtra("isChosenEntrantsMode", true);
+            this.list_to_send = "confirmedList";
             entrantListLauncher.launch(intent);
         });
+
+        ///
+        buttCancel.setOnClickListener(view -> {
+            get_cancel_list();
+            this.list_to_send = "cancelledList";
+        });
+
+        ///
 
         buttonSend.setOnClickListener(view -> {
             String message = editTextMessage.getText().toString().trim();
             if (!message.isEmpty() && !selectedEntrants.isEmpty()) {
-                sendNotificationsToSelectedUsers(message);
+                sendNotificationsToSelectedUsers(message,list_to_send);
                 editTextMessage.setText("");
             } else if (selectedEntrants.isEmpty()) {
                 Toast.makeText(this, "No users selected", Toast.LENGTH_SHORT).show();
@@ -99,14 +115,14 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * Sends a notification message to each selected user by creating a new Notification instance.
      * @param message The message to send to selected users.
      */
-    private void sendNotificationsToSelectedUsers(String message) {
+    private void sendNotificationsToSelectedUsers(String message, String list_to_send) {
         db.collection("events").document(eventId).get()
                 .addOnSuccessListener(eventSnapshot -> {
                     if (eventSnapshot.exists()) {
-                        List<String> waitlist = (List<String>) eventSnapshot.get("waitlist");
+                        List<String> list = (List<String>) eventSnapshot.get(list_to_send);
 
                         for (String selectedEntrant : selectedEntrants) {
-                            if (waitlist != null && waitlist.contains(selectedEntrant)) {
+                            if (list != null && list.contains(selectedEntrant)) {
                                 // Entrant is on the waitlist, use the device ID directly
                                 Notification notification = new Notification(senderId, eventId, selectedEntrant, message);
                                 notification.sendNotification();
@@ -142,6 +158,43 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                     Toast.makeText(this, "Failed to send notifications.", Toast.LENGTH_SHORT).show();
                 });
     }
+
+    /// Kevin's implementation
+
+    /**
+     * This method get the cancel list.
+     * @return
+     *      the cancel list
+     */
+    public void get_cancel_list() {
+
+        DocumentReference eventRef = db.collection("events").document(eventId);
+        eventRef.get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot doc = task.getResult();
+                        if (doc.exists()) {
+                            ArrayList<String> cancelledList = (ArrayList<String>) doc.get("cancelledList");
+                            if (cancelledList != null && !cancelledList.isEmpty()) {
+                                this.selectedEntrants.clear();
+                                for (String userId : cancelledList) {
+                                    this.selectedEntrants.add(userId);
+                                }
+                            } else {
+                                Log.d("Notification", "No users in the waitlist.");
+                            }
+                        } else {
+                            Toast.makeText(OrganizerNotificationActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.w("Firestore", "Error getting document", task.getException());
+                    }
+                });
+
+    }
+
+    ///
+
     
 }
 
