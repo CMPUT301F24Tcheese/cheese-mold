@@ -1,5 +1,10 @@
+/**
+ * Activity for editing existing event
+ */
 package com.example.myapplication.organizer;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,11 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
+import com.example.myapplication.organizer.OrganizerMainActivity;
+import com.example.myapplication.organizer.OrganizerNotificationActivity;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 public class EventEditActivity extends AppCompatActivity {
@@ -27,7 +35,12 @@ public class EventEditActivity extends AppCompatActivity {
     private EditText editTextTitle, editTextDate, editTextLimitEntrants, editTextDescription;
     private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification; ;
     private Uri posterUri;
+    private Calendar selectedDateTime;
 
+    /**
+     * onCreate function for the edit event activity
+     * @param savedInstanceState saved instances
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +65,11 @@ public class EventEditActivity extends AppCompatActivity {
         buttonCancel = findViewById(R.id.buttonCancel);
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
+        selectedDateTime = Calendar.getInstance();
 
         loadEventData(eventId);
 
+        editTextDate.setOnClickListener(view -> showDatePickerDialog());
         buttonUpdateEvent.setOnClickListener(view -> updateEvent());
         buttonUploadPoster.setOnClickListener(view -> openFileChooser());
         buttonCancel.setOnClickListener(view -> finish());
@@ -66,13 +81,62 @@ public class EventEditActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method activates when the user wants to edit date for the event and get the calendar
+     */
+    private void showDatePickerDialog() {
+        int year = selectedDateTime.get(Calendar.YEAR);
+        int month = selectedDateTime.get(Calendar.MONTH);
+        int day = selectedDateTime.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, yearSelected, monthSelected, dayOfMonthSelected) -> {
+                    selectedDateTime.set(yearSelected, monthSelected, dayOfMonthSelected);
+                    showTimePickerDialog();
+                },
+                year, month, day
+        );
+        datePickerDialog.show();
+    }
+
+    /**
+     * This method set the time for the event
+     */
+    private void showTimePickerDialog() {
+        int hour = selectedDateTime.get(Calendar.HOUR_OF_DAY);
+        int minute = selectedDateTime.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, hourOfDaySelected, minuteSelected) -> {
+                    selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDaySelected);
+                    selectedDateTime.set(Calendar.MINUTE, minuteSelected);
+
+                    String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
+                    editTextDate.setText(formattedDateTime);
+                },
+                hour, minute, true // Use 24-hour format, change to false for AM/PM format
+        );
+        timePickerDialog.show();
+    }
+
+    /**
+     * This method allows the user to select an image from their device
+     */
     private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-
-
+    /**
+     * Handles the result of the image selection activity.
+     * It is activated when the user select an image from their device
+     * it retrieves the selected image URI, converts it to a bitmap, and displays the image
+     * @param requestCode request the code of the activity
+     * @param resultCode see if the code matches
+     * @param data the result data from image selection
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -82,6 +146,9 @@ public class EventEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method update the event poster
+     */
     private void uploadPosterToFirebase() {
         if (posterUri != null) {
             String fileName = UUID.randomUUID().toString();
@@ -96,6 +163,10 @@ public class EventEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method upload the new poster to database
+     * @param posterUrl the poster info
+     */
     private void savePosterUrlToFirestore(String posterUrl) {
         DocumentReference eventRef = db.collection("events").document(eventId);
         eventRef.update("posterUrl", posterUrl)
@@ -103,6 +174,10 @@ public class EventEditActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to update poster", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * This method get the event data from database
+     * @param eventId the current eventID
+     */
     private void loadEventData(String eventId) {
         DocumentReference eventRef = db.collection("events").document(eventId);
         eventRef.get().addOnCompleteListener(task -> {
@@ -122,6 +197,9 @@ public class EventEditActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method updates the event
+     */
     private void updateEvent() {
         String updatedTitle = editTextTitle.getText().toString();
         String updatedDateTime = editTextDate.getText().toString();
@@ -152,6 +230,9 @@ public class EventEditActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to update event", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * This method deletes the event from the database
+     */
     private void deleteEvent() {
         DocumentReference eventRef = db.collection("events").document(eventId);
         eventRef.delete()
