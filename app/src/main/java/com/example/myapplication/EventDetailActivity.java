@@ -48,17 +48,23 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         eventDescription = findViewById(R.id.eventDetailDescription);
         imageView = findViewById(R.id.imageView);
 
-        // 获取设备ID
+        Intent intent = getIntent();
         user = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Uri data = intent.getData();
 
-        // 从Intent获取 eventId
-        String eventId = getIntent().getStringExtra("event_id");
 
-        if (eventId != null && !eventId.isEmpty()) {
-            loadEventDetailsFromFirestore(eventId);
-        } else {
-            Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
-            finish();
+
+        if (data != null && "event".equals(data.getHost())) {
+            // Extract the event ID from the deep link URL
+            String eventId = data.getQueryParameter("id");
+
+            if (eventId != null) {
+                loadEventDetailsFromFirestore(eventId); // Method to load event data based on ID
+            } else {
+                Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
         }
 
         cancel.setOnClickListener(v -> finish());
