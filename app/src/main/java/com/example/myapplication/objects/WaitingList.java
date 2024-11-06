@@ -1,5 +1,7 @@
 package com.example.myapplication.objects;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -41,7 +43,11 @@ public class WaitingList {
      * @param device the device ID of the user to add.
      */
     public void addUsers(String device){
-        this.waitingList.add(device);
+        if (!waitingList.contains(device)) {
+            this.waitingList.add(device);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 
@@ -50,7 +56,12 @@ public class WaitingList {
      * @param device the device ID of the user to remove.
      */
     public void removeUsers(String device){
-        this.waitingList.remove(device);
+        if (waitingList.contains(device)) {
+            this.waitingList.remove(device);
+        } else {
+            throw new IllegalArgumentException();
+        }
+
     }
 
 
@@ -63,6 +74,9 @@ public class WaitingList {
         return this.waitingList.get(position);
     }
 
+    public int getCount() {
+        return this.waitingList.size();
+    }
 
     /**
      * Checks if this WaitingList is equal to another WaitingList.

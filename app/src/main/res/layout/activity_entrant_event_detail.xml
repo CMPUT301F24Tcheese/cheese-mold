@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="409dp"
+    android:layout_height="729dp"
+    tools:layout_editor_absoluteX="1dp"
+    tools:layout_editor_absoluteY="1dp"
+    android:fillViewport="true"
+    android:layout_marginTop="20dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/entrantEventDetailUnjoin"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="48dp"
+            android:text="Unjoin Event"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailName"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <Button
+            android:id="@+id/entrantEventDetailCancel"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="48dp"
+            android:text="Cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailName"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/entrantEventDetailName"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Event Name"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventPoster" />
+
+        <TextView
+            android:id="@+id/entrantEventDetailDescription"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Description"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailName" />
+
+        <ImageView
+            android:id="@+id/entrantEventPoster"
+            android:layout_width="match_parent"
+            android:layout_height="232dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/common_full_open_on_phone" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

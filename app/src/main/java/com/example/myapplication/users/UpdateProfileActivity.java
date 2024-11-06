@@ -95,8 +95,10 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 String email = updateEmail.getText().toString().trim();
 
                 // Check if both fields are not empty
-                if (firstname.isEmpty() || lastname.isEmpty()) {
+                if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty()) {
                     Toast.makeText(UpdateProfileActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show(); // Display error message
+                } else if (!isValidEmail(email)){
+                    Toast.makeText(UpdateProfileActivity.this, "Enter valid email", Toast.LENGTH_SHORT).show(); // Display error message
                 } else {
                     updateUserProfile(device, firstname, lastname, email); // Proceed to update user profile
                 }
@@ -244,9 +246,13 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 .update("Firstname", firstname, "Lastname", lastname, "Email", email,  "Profile Picture", profilePicUrl)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(UpdateProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show(); // Show success message
-                    startActivity(new Intent(UpdateProfileActivity.this, MainActivity.class)); // Navigate back to MainActivity
                     finish(); // Close the current activity
                 })
                 .addOnFailureListener(e -> Toast.makeText(UpdateProfileActivity.this, "Failed to update profile", Toast.LENGTH_SHORT).show()); // Show error if update fails
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailPattern);
     }
 }

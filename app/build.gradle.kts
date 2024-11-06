@@ -57,6 +57,9 @@ dependencies {
 
     // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.core)
+    testImplementation(libs.ext.junit)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
     //ZXing libraries for QR code
@@ -75,6 +78,8 @@ dependencies {
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
 
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.0.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
 
 
     // Retain original library references

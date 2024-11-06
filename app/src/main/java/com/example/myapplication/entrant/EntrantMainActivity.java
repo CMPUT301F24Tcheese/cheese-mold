@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.EntrantEventDetailActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
@@ -75,7 +76,7 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         getData(device);
-        getEventsFromFirestore();
+
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             refreshData();
@@ -84,13 +85,11 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         // Set a click listener on the update profile button
         updateProfile.setOnClickListener(view -> {
             startActivity(new Intent(EntrantMainActivity.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
-            finish(); // Close the MainActivity
         });
 
         qrCodeBtn.setOnClickListener(view -> {
             ScanOptions options = new ScanOptions();
             options.setPrompt("Scan QR code");
-            options.setBeepEnabled(true);
             options.setOrientationLocked(true);
             options.setCaptureActivity(CaptureAct.class);
 
@@ -99,7 +98,6 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
 
         notificationBtn.setOnClickListener(view -> {
             startActivity(new Intent(EntrantMainActivity.this, NotificationActivity.class));
-            finish();
         });
 
     }
@@ -166,6 +164,8 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
      * Retrieves the list of events associated with the user from Firestore.
      */
     private void getEventsFromFirestore() {
+        eventList.clear();
+        eventAdapter.notifyDataSetChanged();
         db.collection("users").document(device).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -213,7 +213,7 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         Intent intentFromEM = getIntent();
         String device = intentFromEM.getStringExtra("device");
 
-        Intent intent =  new Intent(EntrantMainActivity.this, EventDetailActivity.class); // Create an intent to open the EventEditActivity.
+        Intent intent =  new Intent(EntrantMainActivity.this, EntrantEventDetailActivity.class); // Create an intent to open the EventEditActivity.
         intent.putExtra("device",device);
         intent.putExtra("event", (Parcelable) event);
         startActivity(intent);
@@ -227,5 +227,12 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         eventAdapter.notifyDataSetChanged();
         getEventsFromFirestore();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData(device);
+        getEventsFromFirestore();
     }
 }

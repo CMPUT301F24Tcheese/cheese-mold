@@ -85,6 +85,7 @@ public class Event implements Serializable, Parcelable {
      * @param in the parcel from which to read the data
      */
     protected Event(Parcel in) {
+        id = in.readString();
         title = in.readString();
         description = in.readString();
         posterUrl = in.readString();
@@ -100,6 +101,7 @@ public class Event implements Serializable, Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(posterUrl);
