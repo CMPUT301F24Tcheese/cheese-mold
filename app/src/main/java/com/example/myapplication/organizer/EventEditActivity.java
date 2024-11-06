@@ -25,7 +25,7 @@ public class EventEditActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private String eventId;
     private EditText editTextTitle, editTextDate, editTextLimitEntrants, editTextDescription;
-    private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent;
+    private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification; ;
     private Uri posterUri;
 
     @Override
@@ -51,6 +51,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonUploadPoster = findViewById(R.id.buttonUploadPoster);
         buttonCancel = findViewById(R.id.buttonCancel);
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
+        buttonNotification = findViewById(R.id.buttonNotification);
 
         loadEventData(eventId);
 
@@ -58,12 +59,19 @@ public class EventEditActivity extends AppCompatActivity {
         buttonUploadPoster.setOnClickListener(view -> openFileChooser());
         buttonCancel.setOnClickListener(view -> finish());
         buttonDeleteEvent.setOnClickListener(view -> deleteEvent());
+        buttonNotification.setOnClickListener(view -> {
+            Intent intent = new Intent(EventEditActivity.this, OrganizerNotificationActivity.class);
+            intent.putExtra("event_id", eventId); // Pass event ID to OrganizerNotificationActivity
+            startActivity(intent);
+        });
     }
 
     private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
