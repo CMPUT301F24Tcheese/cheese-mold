@@ -19,9 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
@@ -73,27 +71,26 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         }
 
         buttonToEntrantsOnWaitlist.setOnClickListener(view -> {
-            Intent intent = new Intent(this, EntrantNotificationListActivity.class);
-            intent.putExtra("event_id", eventId);
-            intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
-            intent.putExtra("isChosenEntrantsMode", false);
-            this.list_to_send = "waitlist";
-            entrantListLauncher.launch(intent);
+            String chosenList = "waitlist";
+            get_list(chosenList);
+            this.list_to_send = chosenList;
+
         });
 
         buttonToChosenEntrants.setOnClickListener(view -> {
-            Intent intent = new Intent(this, EntrantNotificationListActivity.class);
-            intent.putExtra("event_id", eventId);
-            intent.putStringArrayListExtra("selectedEntrants", selectedEntrants);
-            intent.putExtra("isChosenEntrantsMode", true);
-            this.list_to_send = "confirmedList";
-            entrantListLauncher.launch(intent);
+            String chosenList = "confirmedList";
+            get_list(chosenList);
+            this.list_to_send = chosenList;
+
+
         });
 
         ///
         buttCancel.setOnClickListener(view -> {
-            get_cancel_list();
-            this.list_to_send = "cancelledList";
+            String chosenList = "cancelledList";
+            get_list(chosenList);
+            this.list_to_send = chosenList;
+
         });
 
         ///
@@ -127,23 +124,10 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                                 Notification notification = new Notification(senderId, eventId, selectedEntrant, message);
                                 notification.sendNotification();
                                 Log.d("NotificationProcess", "Notification sent to waitlisted entrant: " + selectedEntrant);
-                            } else {
-                                // For ToChosenEntrants, retrieve the document ID (device ID) based on the name
-                                db.collection("users")
-                                        .whereEqualTo("Firstname", selectedEntrant.split(" ")[0])
-                                        .whereEqualTo("Lastname", selectedEntrant.split(" ")[1])
-                                        .get()
-                                        .addOnSuccessListener(querySnapshot -> {
-                                            if (!querySnapshot.isEmpty()) {
-                                                String receiverDeviceId = querySnapshot.getDocuments().get(0).getId();
-                                                Notification notification = new Notification(senderId, eventId, receiverDeviceId, message);
-                                                notification.sendNotification();
-                                                Log.d("NotificationProcess", "Notification sent to chosen entrant: " + receiverDeviceId);
-                                            } else {
-                                                Log.w("NotificationError", "No user found with the name " + selectedEntrant);
-                                            }
-                                        })
-                                        .addOnFailureListener(e -> Log.e("NotificationError", "Failed to fetch user document", e));
+//
+                            }
+                            else{
+                                Toast.makeText(this, "Empty list.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -166,7 +150,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @return
      *      the cancel list
      */
-    public void get_cancel_list() {
+    public void get_list(String chosenList) {
 
         DocumentReference eventRef = db.collection("events").document(eventId);
         eventRef.get()
@@ -174,10 +158,10 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         DocumentSnapshot doc = task.getResult();
                         if (doc.exists()) {
-                            ArrayList<String> cancelledList = (ArrayList<String>) doc.get("cancelledList");
-                            if (cancelledList != null && !cancelledList.isEmpty()) {
+                            ArrayList<String> FList = (ArrayList<String>) doc.get(chosenList);
+                            if (FList != null && !FList.isEmpty()) {
                                 this.selectedEntrants.clear();
-                                for (String userId : cancelledList) {
+                                for (String userId : FList) {
                                     this.selectedEntrants.add(userId);
                                 }
                             } else {

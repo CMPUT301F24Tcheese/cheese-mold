@@ -9,6 +9,7 @@ import com.google.firebase.firestore.auth.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 /**
@@ -41,6 +42,12 @@ public class Event implements Serializable, Parcelable {
     private ArrayList<String> cancelledList = new ArrayList<String>();
     private ArrayList<String> confirmedList = new ArrayList<String>();
 
+
+    ///
+    private Lottery lottery = new Lottery(new ArrayList<String>());
+
+
+    ////
 
     /**
      * Default constructor required by Firestore to create instances of the Event class.
@@ -359,5 +366,27 @@ public class Event implements Serializable, Parcelable {
 
     public void removeFromConfirmedList(String user) {
         this.confirmedList.remove(user);
+    }
+
+
+    public Lottery getLottery(){
+        return this.lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
+
+    public String selectToLottery(){
+        if (waitingList == null || waitingList.getList().isEmpty()) {
+            throw new IllegalStateException("The waiting list is empty or not initialized.");
+        }
+        Random rand = new Random();
+        int length = this.waitingList.getList().size();
+        int index = rand.nextInt(length);
+        String selected = this.waitingList.getList().get(index);
+        this.waitingList.getList().remove(index);
+        return selected;
+
     }
 }

@@ -19,13 +19,14 @@ import java.util.Set;
 
 public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.EntrantViewHolder> {
 
-    private List<String> entrantList;
+    private List<String> entrantList, entrantDisplay;
     private Set<String> selectedEntrants;
 
     // Constructor that takes in the list of entrants and the previously selected entrants
-    public EntrantListAdapter(List<String> entrantList, ArrayList<String> selectedEntrants) {
+    public EntrantListAdapter(List<String> entrantList, ArrayList<String> selectedEntrants, ArrayList<String> entrantListDisplay) {
         this.entrantList = entrantList;
         this.selectedEntrants = new HashSet<>(selectedEntrants); // Use a Set for efficient lookups
+        this.entrantDisplay = entrantListDisplay;
     }
 
     @NonNull
@@ -37,7 +38,8 @@ public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull EntrantViewHolder holder, int position) {
-        String fullName = entrantList.get(position);
+        String device = entrantList.get(position);
+        String fullName = entrantDisplay.get(position);
         holder.entrantNameTextView.setText(fullName);
 
         // Set the checkbox state based on whether the entrant is in the selectedEntrants set
@@ -46,9 +48,9 @@ public class EntrantListAdapter extends RecyclerView.Adapter<EntrantListAdapter.
         // Update the selectedEntrants set when the checkbox state changes
         holder.checkboxSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                selectedEntrants.add(fullName);
+                selectedEntrants.add(device);
             } else {
-                selectedEntrants.remove(fullName);
+                selectedEntrants.remove(device);
             }
         });
     }
