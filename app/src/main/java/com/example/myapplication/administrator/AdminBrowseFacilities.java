@@ -1,6 +1,8 @@
 /**
  * Activity for browsing facilities
  * Used by the Administrator Only
+ * @author Noah Vincent
+ * @Issue Facility browse button crashes the app
  */
 
 package com.example.myapplication.administrator;

@@ -1,6 +1,7 @@
 /**
  * The activity for the Browsing images
  * Used by Administrators only
+ * @author Noah Vincent
  */
 package com.example.myapplication.administrator;
 

@@ -1,5 +1,6 @@
 /**
  * Image object for saving url and keeping data
+ * @author Noah Vincent
  */
 
 package com.example.myapplication.administrator;

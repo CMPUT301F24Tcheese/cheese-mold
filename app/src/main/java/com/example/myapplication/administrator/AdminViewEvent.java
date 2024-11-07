@@ -1,4 +1,19 @@
+/**
+ * Activity for the viewing user data for the administrators
+ * Used by the Administrator Only
+ * @author Noah Vincent
+ */
+
 package com.example.myapplication.administrator;
+
+import android.os.Bundle;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import android.os.Bundle;
 import android.widget.Button;
