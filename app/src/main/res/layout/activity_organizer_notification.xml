@@ -64,11 +64,18 @@
 
     <Button
         android:id="@+id/buttonSend"
-        android:layout_width="160dp"
+        android:layout_width="379dp"
         android:layout_height="60dp"
-        android:text="Send"
-        android:textSize="20sp"
+        android:layout_gravity="end"
         android:layout_marginTop="8dp"
-        android:layout_gravity="end" />
+        android:text="Send"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/NotificationButtonCancel"
+        android:layout_width="379dp"
+        android:layout_height="60dp"
+        android:text="Cancel"
+        android:textSize="20sp" />
 
 </LinearLayout>
