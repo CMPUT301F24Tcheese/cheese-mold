@@ -1,5 +1,6 @@
 /**
  * FacilityArrayAdapter for displaying events in the browsing functionality for Administrators
+ * @author Noah Vincent
  */
 
 package com.example.myapplication.objects;

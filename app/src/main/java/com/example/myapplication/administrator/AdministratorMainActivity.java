@@ -2,6 +2,8 @@
  * Main Activity for the administrators
  * Used by the Administrator Only
  * Functionality to act as the home page for administrators
+ * @author Noah Vincent
+ * @Issue Facility browse button crashes the app
  */
 
 package com.example.myapplication.administrator;
@@ -71,7 +73,8 @@ public class AdministratorMainActivity extends AppCompatActivity {
 
         // click listener to browse facilites
         browseFacilitiesBtn.setOnClickListener(view -> {
-            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
+            // startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
+            // TODO button crashes app - fix for part 4
         });
 
         // click listener to browse events
