@@ -25,6 +25,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ * This Activity represents the the Detail of an event after the user scanned the QR code.
+ * The users are allowed ton join or unjoin to the waiting list of an event on this page.
+ */
+
 public class EventDetailActivity extends AppCompatActivity implements GeoAlertDialogFragment.GeolocationDialogListener {
 
     private FirebaseFirestore db;
@@ -40,7 +45,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_event);
 
-        // 初始化
+
         db = FirebaseFirestore.getInstance();
         joinEvent = findViewById(R.id.eventDetailJoin);
         cancel = findViewById(R.id.eventDetailCancel);

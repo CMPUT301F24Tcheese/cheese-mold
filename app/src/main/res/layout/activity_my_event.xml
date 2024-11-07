@@ -7,14 +7,16 @@
     android:background="@android:color/white">
 
     <!-- Toolbar -->
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/myEventtoolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#FDF7FE"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <TextView
@@ -28,20 +30,47 @@
             tools:layout_editor_absoluteY="18dp" />
 
         <ImageView
-            android:id="@+id/profileImage"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/profile"
-            android:layout_gravity="end"/>
-
-        <ImageView
             android:id="@+id/emailImage"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/email"
-            android:layout_gravity="start"/>
+            android:layout_gravity="start"
+            android:src="@drawable/email" />
 
     </androidx.appcompat.widget.Toolbar>
+
+    <Button
+        android:id="@+id/qrCodeBtn2"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="start"
+        android:background="@drawable/baseline_qr_code_scanner_24"
+        app:layout_constraintBottom_toBottomOf="@+id/myEventtoolbar"
+        app:layout_constraintEnd_toEndOf="@+id/myEventtoolbar"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/myEventtoolbar"
+        app:layout_constraintVertical_bias="0.551" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/updateProfileImg2"
+        android:layout_width="41dp"
+        android:layout_height="35dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="end"
+        android:background="@drawable/circular_image_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_person_outline_24"
+        app:layout_constraintBottom_toBottomOf="@+id/myEventtoolbar"
+        app:layout_constraintEnd_toEndOf="@+id/myEventtoolbar"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintStart_toEndOf="@+id/qrCodeBtn2"
+        app:layout_constraintTop_toTopOf="@+id/myEventtoolbar"
+        app:layout_constraintVertical_bias="0.551"
+        app:shapeAppearanceOverlay="@style/CircularImageView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myOwnEvents"

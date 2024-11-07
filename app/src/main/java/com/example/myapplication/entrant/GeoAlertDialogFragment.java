@@ -16,6 +16,11 @@ import androidx.fragment.app.DialogFragment;
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
 
+/**
+ * This Didalog Fragment is poped when the user attemps to join an event that requires geolocation
+ * The user can chose to join by clicking "join" or leave by clicking "cancel"
+ */
+
 public class GeoAlertDialogFragment extends DialogFragment {
 
     private GeolocationDialogListener listener;

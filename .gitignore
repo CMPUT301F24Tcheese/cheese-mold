@@ -14,6 +14,8 @@
 .cxx
 local.properties
 
+
+
 # Gradle files
 .gradle/
 build/
@@ -30,6 +32,15 @@ captures/
 .cxx/
 *.apk
 output.json
+# ignore Android Studio config
+.idea/
+*.iml
+
+# ignore build
+/build/
+
+# ignore local properties
+local.properties
 
 # IntelliJ
 *.iml

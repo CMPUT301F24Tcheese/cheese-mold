@@ -18,6 +18,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Kept to see further action
+ */
+
 public class EntrantNotificationListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewEntrants;
@@ -26,7 +30,7 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String eventId;
     private boolean isChosenEntrantsMode;
-    private ArrayList<String> selectedEntrants;
+    private ArrayList<String> selectedEntrants, entrantListDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
         recyclerViewEntrants = findViewById(R.id.recyclerViewEntrants);
         recyclerViewEntrants.setLayoutManager(new LinearLayoutManager(this));
         entrantList = new ArrayList<>();
+        entrantListDisplay = new ArrayList<>();
 
         // Retrieve previously selected entrants from Intent
         selectedEntrants = getIntent().getStringArrayListExtra("selectedEntrants");
@@ -46,7 +51,7 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
         }
 
         // Pass selectedEntrants to adapter
-        entrantListAdapter = new EntrantListAdapter(entrantList, selectedEntrants);
+        entrantListAdapter = new EntrantListAdapter(entrantList, selectedEntrants, entrantListDisplay);
         recyclerViewEntrants.setAdapter(entrantListAdapter);
 
         eventId = getIntent().getStringExtra("event_id");
@@ -84,7 +89,8 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
                                 String firstName = document.getString("Firstname");
                                 String lastName = document.getString("Lastname");
                                 String fullName = firstName + " " + lastName;
-                                entrantList.add(fullName);
+                                entrantListDisplay.add(fullName);
+                                entrantList.add(userId);
                             }
                             entrantListAdapter.notifyDataSetChanged();
                         } else {

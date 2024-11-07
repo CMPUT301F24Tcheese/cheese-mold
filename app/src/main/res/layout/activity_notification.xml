@@ -39,7 +39,7 @@
         </TextView>
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/updateProfileImg"
+            android:id="@+id/updateProfileImg2"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
