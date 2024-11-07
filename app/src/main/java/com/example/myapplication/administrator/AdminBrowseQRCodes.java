@@ -1,6 +1,7 @@
 /**
  * Activity for browsing QRCodes
  * Used by the Administrator Only
+ * @author Noah Vincent
  */
 
 package com.example.myapplication.administrator;

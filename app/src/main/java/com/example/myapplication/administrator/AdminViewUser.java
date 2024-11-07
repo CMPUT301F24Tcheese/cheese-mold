@@ -1,3 +1,9 @@
+/**
+ * Activity for the viewing event data for the administrators
+ * Used by the Administrator Only
+ * @author Noah Vincent
+ */
+
 package com.example.myapplication.administrator;
 
 import android.os.Bundle;
