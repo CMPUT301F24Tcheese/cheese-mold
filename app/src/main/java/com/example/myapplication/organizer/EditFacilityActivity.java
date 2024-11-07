@@ -51,6 +51,10 @@ public class EditFacilityActivity extends AppCompatActivity {
         buttonCancel.setOnClickListener(view -> finish());
     }
 
+    /**
+     * Loads existing facility data from Firestore and populates the input fields.
+     * Displays a Toast message if no facility is found or if loading fails.
+     */
     private void loadFacilityData() {
         db.collection("Facilities").document(facilityId).get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -72,6 +76,10 @@ public class EditFacilityActivity extends AppCompatActivity {
                 );
     }
 
+    /**
+     * Updates the facility details in Firestore with the data from the input fields.
+     * Validates input before attempting to update and displays Toast messages for success or failure.
+     */
     private void updateFacility() {
         String name = editTextName.getText().toString().trim();
         String description = editTextDescription.getText().toString().trim();
@@ -99,6 +107,18 @@ public class EditFacilityActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validates the input fields to ensure they are not empty and that city and province
+     * contain only alphabetic characters. Displays appropriate error messages via Toast.
+     *
+     * @param name The facility name
+     * @param description The facility description
+     * @param street The facility street address
+     * @param city The facility city
+     * @param province The facility province
+     * @param alphabeticPattern The regex pattern to check alphabetic input
+     * @return True if all inputs are valid, otherwise false
+     */
     private boolean validateInput(String name, String description, String street, String city, String province, String alphabeticPattern) {
         if (name.isEmpty() || description.isEmpty() || street.isEmpty() || city.isEmpty() || province.isEmpty()) {
             return false;
