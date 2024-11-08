@@ -69,7 +69,7 @@ public class NotificationActivity extends AppCompatActivity {
         notificationList.setAdapter(notificationAdapter);
 
         backBtn.setOnClickListener(view -> {
-            finish();
+            startActivity(new Intent(NotificationActivity.this, EntrantMainActivity.class));
         });
 
 

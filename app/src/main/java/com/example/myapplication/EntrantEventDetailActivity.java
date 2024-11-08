@@ -15,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.entrant.EntrantMainActivity;
 import com.example.myapplication.objects.Event;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,14 +57,16 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
         }
 
         cancel.setOnClickListener(view -> {
-            finish();
+            Intent intent1 = new Intent(EntrantEventDetailActivity.this, EntrantMainActivity.class);
+            startActivity(intent1);
         });
 
         unjoinEvent.setOnClickListener(view -> {
             FireStoreRemoveWaitingList(event.getId(), user);
             FireStoreRemoveeventId(event.getId(), user);
             Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
-            finish();
+            Intent intent1 = new Intent(EntrantEventDetailActivity.this, EntrantMainActivity.class);
+            startActivity(intent1);
         });
 
     }
