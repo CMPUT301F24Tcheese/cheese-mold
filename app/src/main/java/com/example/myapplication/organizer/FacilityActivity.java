@@ -1,3 +1,7 @@
+/**
+ * Activity for displaying a list of facilities.
+ * This activity retrieves facility data from Firestore and displays it in a RecyclerView.
+ */
 package com.example.myapplication.organizer;
 
 import android.os.Bundle;
@@ -12,7 +16,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
-
+/**
+ * FacilityActivity is responsible for displaying facilities using a RecyclerView.
+ * It loads facility data from Firestore and updates the UI accordingly.
+ */
 public class FacilityActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -20,6 +27,11 @@ public class FacilityActivity extends AppCompatActivity {
     private ArrayList<Facility> facilityList;
     private FirebaseFirestore db;
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and loads data from Firestore.
+     *
+     * @param savedInstanceState The saved instance state for restoring the activity.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +50,9 @@ public class FacilityActivity extends AppCompatActivity {
         loadFacilitiesFromFirebase();
     }
 
+    /**
+     * Reloads the facilities when the activity resumes to display the latest data.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -47,6 +62,8 @@ public class FacilityActivity extends AppCompatActivity {
 
     /**
      * Loads facilities from Firebase Firestore and updates the RecyclerView.
+     * If the task is successful, the facility list is populated and the adapter is notified.
+     * In case of an error, a log message is displayed.
      */
     private void loadFacilitiesFromFirebase() {
         db.collection("Facilities").get()

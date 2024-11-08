@@ -1,3 +1,9 @@
+
+/**
+ * Activity for displaying notifications to the user.
+ * This activity retrieves unread notifications from Firestore that are specific to the user's device ID.
+ * Notifications are displayed in a ListView and can be dismissed by navigating back.
+ */
 package com.example.myapplication.entrant;
 
 import android.content.Intent;
@@ -31,7 +37,8 @@ import org.checkerframework.checker.units.qual.N;
 import java.util.ArrayList;
 
 /**
- * this activity is where the Notification is going to be shown.
+ * NotificationActivity is responsible for fetching and displaying notifications specific to the user.
+ * The notifications are loaded from the Firestore database based on the device ID and displayed in a ListView.
  */
 public class NotificationActivity extends AppCompatActivity {
     private ArrayList<Notification> dataList;
@@ -41,6 +48,11 @@ public class NotificationActivity extends AppCompatActivity {
     private String deviceId;
     private Button backBtn;
 
+    /**
+     * Initializes the activity, sets up the ListView, and fetches notifications from Firestore.
+     *
+     * @param savedInstanceState The saved instance state for restoring the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

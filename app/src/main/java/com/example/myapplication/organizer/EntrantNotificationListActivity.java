@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Kept to see further action
+ * NOTE: !!! This file does not have any usage for current version, therefore NO Test Case for this java class !!!
+ * This activity displays a list of entrants for an event and allows the user to select entrants for notifications.
+ * The list can display either users with a specific role or entrants on the event waitlist.
  */
 
 public class EntrantNotificationListActivity extends AppCompatActivity {
@@ -32,6 +34,12 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
     private boolean isChosenEntrantsMode;
     private ArrayList<String> selectedEntrants, entrantListDisplay;
 
+    /**
+     * Called when the activity is first created. Sets up the UI and initializes the data loading.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this contains the most recent data supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +84,9 @@ public class EntrantNotificationListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the list of entrants based on the mode (chosen entrants or event waitlist).
+     */
     private void loadEntrants() {
         if (isChosenEntrantsMode) {
             db.collection("users")

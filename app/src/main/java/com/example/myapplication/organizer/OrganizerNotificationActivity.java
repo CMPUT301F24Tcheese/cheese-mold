@@ -20,7 +20,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * OrganizerNotificationActivity handles the process of sending notifications to different groups of entrants.
+ * It allows an organizer to select recipients from various entrant lists (e.g., waitlist, confirmed, cancelled)
+ * and send them a custom notification message.
+ */
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private FirebaseFirestore db; // Firestore instance
@@ -34,7 +38,11 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     private String list_to_send;
 
 
-
+    /**
+     * Initializes the activity, setting up UI components and button click listeners.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState().
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,9 +140,9 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     /// Kevin's implementation
 
     /**
-     * This method get the cancel list.
-     * @return
-     *      the cancel list
+     * Retrieves a specified list of entrants from Firestore and updates the selectedEntrants list.
+     * @param chosenList The name of the list to retrieve (e.g., "waitlist", "confirmedList", "cancelledList").
+     * @param onComplete A callback to run after the list is fetched.
      */
     public void get_list(String chosenList, Runnable onComplete) {
         DocumentReference eventRef = db.collection("events").document(eventId);
