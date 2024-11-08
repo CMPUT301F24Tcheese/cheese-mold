@@ -21,6 +21,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+/**
+ * This activity is used to unjoin event for entrants
+ * This will be integrated into one single activity on the next part
+ */
 public class EntrantEventDetailActivity extends AppCompatActivity {
 
     private ImageView eventPoster;
