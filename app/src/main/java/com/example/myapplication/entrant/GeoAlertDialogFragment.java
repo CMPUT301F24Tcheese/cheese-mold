@@ -51,6 +51,8 @@ public class GeoAlertDialogFragment extends DialogFragment {
         }
     }
 
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_geo_alert, container, false);

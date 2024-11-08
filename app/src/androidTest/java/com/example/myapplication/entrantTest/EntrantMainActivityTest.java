@@ -9,16 +9,23 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 
 import com.example.myapplication.R;
 import com.example.myapplication.entrant.EntrantMainActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 
 public class EntrantMainActivityTest {
     @Rule
     public ActivityScenarioRule<EntrantMainActivity> scenario = new ActivityScenarioRule<EntrantMainActivity>(EntrantMainActivity.class);
+
 
     @Test
     public void TestActivityLaunch() {
@@ -48,5 +55,9 @@ public class EntrantMainActivityTest {
         onView(withId(R.id.cancelUpdateText)).perform(click());
         onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));
     }
+
+
+
+
 
 }

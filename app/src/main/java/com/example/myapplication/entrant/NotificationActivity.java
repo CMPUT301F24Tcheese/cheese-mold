@@ -30,6 +30,9 @@ import org.checkerframework.checker.units.qual.N;
 
 import java.util.ArrayList;
 
+/**
+ * this activity is where the Notification is going to be shown.
+ */
 public class NotificationActivity extends AppCompatActivity {
     private ArrayList<Notification> dataList;
     private NotificationArrayAdapter notificationAdapter;
@@ -54,7 +57,7 @@ public class NotificationActivity extends AppCompatActivity {
         notificationList.setAdapter(notificationAdapter);
 
         backBtn.setOnClickListener(view -> {
-            finish();
+            startActivity(new Intent(NotificationActivity.this, EntrantMainActivity.class));
         });
 
 

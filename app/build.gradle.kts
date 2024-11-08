@@ -35,11 +35,14 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+
 }
 
 dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+
 
 
     //New firebase
@@ -93,6 +96,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
 
 // Ensure Google services plugin is applied at the app level
