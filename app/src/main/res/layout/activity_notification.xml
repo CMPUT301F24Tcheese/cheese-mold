@@ -7,7 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".entrant.NotificationActivity"
     android:orientation="vertical"
-    android:layout_margin="20dp">
+    android:layout_marginTop="30dp"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginBottom="20dp">
 
 
     <RelativeLayout
@@ -19,7 +21,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:background="@drawable/baseline_arrow_back_ios_new_24"
-            android:id="@+id/notificationBackBtn"
+            android:id="@+id/notificationActivityBackBtn"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true">
         </Button>
