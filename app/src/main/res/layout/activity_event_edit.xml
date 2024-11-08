@@ -57,7 +57,7 @@
 
             <Button
                 android:id="@+id/buttonUploadPoster"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Update Poster"
@@ -66,11 +66,21 @@
                 android:layout_marginEnd="8dp"/>
 
             <Button
-                android:id="@+id/buttonNotification"
-                android:layout_width="0dp"
+                android:id="@+id/buttonQRCode"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Notification"
+                android:text="QR Code"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/buttonNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Notify Entrants"
                 android:backgroundTint="#6200EE"
                 android:textColor="#FFFFFF"/>
         </LinearLayout>

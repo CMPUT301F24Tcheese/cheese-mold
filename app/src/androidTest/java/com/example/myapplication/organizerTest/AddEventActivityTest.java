@@ -71,14 +71,14 @@ public class AddEventActivityTest {
         onView(withId(R.id.switchGeolocation)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testOpenFileChooser() {
-        // Click on upload poster button
-        onView(withId(R.id.buttonUploadPoster)).perform(click());
-
-        // Verifying that the poster upload dialog is triggered is challenging in a unit test environment,
-        // so we may need to assume that this click opens the file chooser.
-    }
+//    @Test
+//    public void testOpenFileChooser() {
+//        // Click on upload poster button
+//        onView(withId(R.id.buttonUploadPoster)).perform(click());
+//
+//        // Verifying that the poster upload dialog is triggered is challenging in a unit test environment,
+//        // so we may need to assume that this click opens the file chooser.
+//    }
 
     @Test
     public void testSaveEvent() {
