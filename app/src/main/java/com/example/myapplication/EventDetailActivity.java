@@ -119,6 +119,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         } else {
             joinEvent.setOnClickListener(v -> {
                 if (eventToLoad.getGeo()) {
+
                     showGeolocationDialog(eventToLoad, user);
                 } else {
                     attemptToJoinWaitingList(eventToLoad.getId(), user);
