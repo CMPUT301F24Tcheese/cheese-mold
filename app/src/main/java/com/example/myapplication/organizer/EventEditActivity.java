@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -114,7 +115,7 @@ public class EventEditActivity extends AppCompatActivity {
                     selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDaySelected);
                     selectedDateTime.set(Calendar.MINUTE, minuteSelected);
 
-                    String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
+                    String formattedDateTime = DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
                     editTextDate.setText(formattedDateTime);
                 },
                 hour, minute, true // Use 24-hour format, change to false for AM/PM format
@@ -248,4 +249,5 @@ public class EventEditActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(EventEditActivity.this, "Failed to delete event", Toast.LENGTH_SHORT).show());
     }
+
 }
