@@ -13,7 +13,6 @@ import com.example.myapplication.objects.Facility;
 
 import com.example.myapplication.organizer.EditFacilityActivity;
 
-
 import java.util.List;
 
 // Adapter class for managing and displaying a list of facilities in a RecyclerView
@@ -21,12 +20,22 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
 
     private List<Facility> facilityList; // List to store Facility objects that will be displayed
 
-    // Constructor to initialize the adapter with a list of facilities
+    /**
+     * Constructor to initialize the adapter with a list of facilities.
+     *
+     * @param facilityList The list of Facility objects to be displayed.
+     */
     public FacilityAdapter(List<Facility> facilityList) {
         this.facilityList = facilityList; // Assign the provided list of facilities to the local variable
     }
 
-    // Called when the RecyclerView needs a new ViewHolder to display a facility
+    /**
+     * Called when the RecyclerView needs a new ViewHolder to display a facility.
+     *
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder instance.
+     */
     @NonNull
     @Override
     public FacilityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,7 +44,12 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         return new FacilityViewHolder(view); // Return a new ViewHolder instance
     }
 
-    // Called by RecyclerView to display data at a specific position
+    /**
+     * Called by RecyclerView to display data at a specific position.
+     *
+     * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull FacilityViewHolder holder, int position) {
         Facility facility = facilityList.get(position); // Retrieve the Facility object for the current position
@@ -55,7 +69,11 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         });
     }
 
-    // Returns the total number of items that the adapter will display
+    /**
+     * Returns the total number of items that the adapter will display.
+     *
+     * @return The size of the facility list.
+     */
     @Override
     public int getItemCount() {
         return facilityList.size(); // Return the size of the facility list
@@ -65,7 +83,11 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
     public static class FacilityViewHolder extends RecyclerView.ViewHolder {
         TextView facilityName, facilityDescription; // TextViews to display the facility name and description
 
-        // Constructor for initializing the ViewHolder with the item view layout
+        /**
+         * Constructor for initializing the ViewHolder with the item view layout.
+         *
+         * @param itemView The view representing a single item in the RecyclerView.
+         */
         public FacilityViewHolder(@NonNull View itemView) {
             super(itemView); // Call the parent class constructor
             // Link the TextViews with their corresponding views in the facility_item layout
