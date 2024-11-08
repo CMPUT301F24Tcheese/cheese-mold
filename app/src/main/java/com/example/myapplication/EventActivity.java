@@ -68,6 +68,10 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         });
     }
 
+    /**
+     * Loads events from Firestore and populates the RecyclerView with the data.
+     * Listens for changes in the Firestore collection and updates the UI accordingly.
+     */
     private void loadEventsFromFirestore() {
         CollectionReference eventCollection = db.collection("events");
 
@@ -88,6 +92,10 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         });
     }
 
+    /**
+     * Displays a dialog for the user to choose whether to add an event or a facility.
+     * Launches the appropriate activity based on the user's selection.
+     */
     private void showAddDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Action");
@@ -102,6 +110,12 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
         builder.create().show();
     }
 
+    /**
+     * Handles click events on individual event items in the RecyclerView.
+     * Launches the EventEditActivity with the selected event's details passed as extras.
+     *
+     * @param event The Event object that was clicked.
+     */
     @Override
     public void onEventClick(Event event) {
         Intent intent = new Intent(EventActivity.this, EventEditActivity.class);

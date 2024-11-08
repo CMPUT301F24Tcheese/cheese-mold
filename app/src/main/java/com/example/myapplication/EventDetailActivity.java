@@ -26,10 +26,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 /**
- * This Activity represents the the Detail of an event after the user scanned the QR code.
- * The users are allowed ton join or unjoin to the waiting list of an event on this page.
+ * This Activity represents the detail of an event after the user scanned the QR code.
+ * The users are allowed to join or unjoin the waiting list of an event on this page.
  */
-
 public class EventDetailActivity extends AppCompatActivity implements GeoAlertDialogFragment.GeolocationDialogListener {
 
     private FirebaseFirestore db;
@@ -45,7 +44,6 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_event);
 
-
         db = FirebaseFirestore.getInstance();
         joinEvent = findViewById(R.id.eventDetailJoin);
         cancel = findViewById(R.id.eventDetailCancel);
@@ -57,8 +55,6 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         user = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Uri data = intent.getData();
 
-
-
         if (data != null && "event".equals(data.getHost())) {
             // Extract the event ID from the deep link URL
             String eventId = data.getQueryParameter("id");
@@ -69,12 +65,16 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 Toast.makeText(this, "Event ID not found", Toast.LENGTH_SHORT).show();
                 finish();
             }
-
         }
 
         cancel.setOnClickListener(v -> finish());
     }
 
+    /**
+     * Loads event details from Firestore using the provided event ID.
+     *
+     * @param eventId The ID of the event to be loaded.
+     */
     private void loadEventDetailsFromFirestore(String eventId) {
         db.collection("events").document(eventId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -102,6 +102,10 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 });
     }
 
+    /**
+     * Configures the join button based on the user's current status regarding the event.
+     * Sets up the button to either join or unjoin the waiting list.
+     */
     private void setupJoinButton() {
         if (eventToLoad.getWaitingList() != null && eventToLoad.getWaitingList().contains(user)) {
             joinEvent.setText("Unjoin Event");
@@ -123,6 +127,12 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         }
     }
 
+    /**
+     * Attempts to add the user to the waiting list for the specified event.
+     *
+     * @param eventId The ID of the event to join.
+     * @param device The user's device ID.
+     */
     private void attemptToJoinWaitingList(String eventId, String device) {
         db.collection("events").document(eventId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -156,6 +166,12 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
         });
     }
 
+    /**
+     * Adds the event ID to the user's list of events in Firestore.
+     *
+     * @param eventId The ID of the event to add.
+     * @param device The user's device ID.
+     */
     private void FireStoreAddEventId(String eventId, String device) {
         db.collection("users").document(device)
                 .update("Event List", FieldValue.arrayUnion(eventId))
@@ -163,6 +179,12 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
     }
 
+    /**
+     * Removes the user's device ID from the event's waiting list in Firestore.
+     *
+     * @param eventId The ID of the event to update.
+     * @param device The user's device ID.
+     */
     private void FireStoreRemoveWaitingList(String eventId, String device) {
         db.collection("events").document(eventId)
                 .update("waitlist", FieldValue.arrayRemove(device))
@@ -170,6 +192,12 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
 
+    /**
+     * Removes the event ID from the user's list of events in Firestore.
+     *
+     * @param eventId The ID of the event to remove.
+     * @param device The user's device ID.
+     */
     private void FireStoreRemoveEventId(String eventId, String device) {
         db.collection("users").document(device)
                 .update("Event List", FieldValue.arrayRemove(eventId))
@@ -177,11 +205,23 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
                 .addOnFailureListener(e -> Log.w("Firestore", "Error removing element from array", e));
     }
 
+    /**
+     * Shows a geolocation dialog to the user for the specified event.
+     *
+     * @param event The event for which geolocation is needed.
+     * @param userId The ID of the user.
+     */
     public void showGeolocationDialog(Event event, String userId) {
         GeoAlertDialogFragment dialog = GeoAlertDialogFragment.newInstance(event, userId);
         dialog.show(getSupportFragmentManager(), "GeoAlertDialog");
     }
 
+    /**
+     * Callback method when the user clicks to join the event from the geolocation dialog.
+     *
+     * @param event The event to join.
+     * @param userId The ID of the user.
+     */
     @Override
     public void onJoinClicked(Event event, String userId) {
         if (event != null) {
