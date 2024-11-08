@@ -38,20 +38,6 @@
             android:textColor="@color/black">
         </TextView>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/updateProfileImg2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:background="@drawable/circular_image_background"
-            android:focusable="true"
-            android:src="@drawable/baseline_person_outline_24"
-            android:clickable="true"
-            android:scaleType="centerCrop"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            app:shapeAppearanceOverlay="@style/CircularImageView"/>
-
     </RelativeLayout>
 
     <ListView

@@ -43,12 +43,6 @@ dependencies {
     // Firebase BOM - Manages consistent versions for all Firebase libraries
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
-    //test fragement
-    val fragment_version = "1.8.5"
-
-    debugImplementation("androidx.fragment:fragment-testing-manifest:$fragment_version")
-
-    androidTestImplementation("androidx.fragment:fragment-testing:$fragment_version")
 
 
     //New firebase
@@ -102,6 +96,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
 
 // Ensure Google services plugin is applied at the app level

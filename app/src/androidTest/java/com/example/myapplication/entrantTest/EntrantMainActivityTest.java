@@ -26,6 +26,7 @@ public class EntrantMainActivityTest {
     @Rule
     public ActivityScenarioRule<EntrantMainActivity> scenario = new ActivityScenarioRule<EntrantMainActivity>(EntrantMainActivity.class);
 
+
     @Test
     public void TestActivityLaunch() {
         onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));

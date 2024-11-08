@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Activity for testing
+ */
 public class ProfileActivity extends AppCompatActivity {
 
     @Override
