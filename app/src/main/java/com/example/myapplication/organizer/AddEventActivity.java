@@ -1,5 +1,6 @@
 /**
- * Activity for creating new events
+ * Activity for creating new events, with the ability to upload event poster and
+ * generate event QR code for event sign-up
  * Only organizer with a facility can create new events
  */
 package com.example.myapplication.organizer;
@@ -236,6 +237,7 @@ public class AddEventActivity extends AppCompatActivity {
 
     /**
      * Check if the input is a positive int
+     * Aim to check if the entrant limit is a valid input
      * @param str the user input for entrants limit of a event
      * @return check the result
      */
