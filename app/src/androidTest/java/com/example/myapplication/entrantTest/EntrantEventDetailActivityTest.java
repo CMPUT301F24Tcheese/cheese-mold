@@ -19,16 +19,16 @@ import androidx.test.filters.LargeTest;
 
 import com.example.myapplication.EntrantEventDetailActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.entrant.EntrantMainActivity;
+
 import com.example.myapplication.objects.Event;
-import com.example.myapplication.objects.Users;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.HashMap;
+
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -38,12 +38,18 @@ public class EntrantEventDetailActivityTest {
 
 
     @Rule
+    /**
+     * The Extra is to send an Event object to avoid error
+     */
     public ActivityScenarioRule<EntrantEventDetailActivity> scenario =
             new ActivityScenarioRule<>(new Intent(ApplicationProvider.getApplicationContext(), EntrantEventDetailActivity.class)
                     .putExtra("event", (Parcelable) new Event("000000001", "abcd","testing","something",20L)));
 
 
     @Test
+    /**
+     * Test the launch of the Activity
+     */
     public void TestActivityLaunch() {
         onView(withId(R.id.entrantDetailLayout)).check(matches(isDisplayed()));
         onView(withId(R.id.entrantEventDetailCancel)).check(matches(isDisplayed()));

@@ -25,6 +25,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This activity is used for testing
+ */
+
 public class MyEventActivity extends AppCompatActivity implements EventAdapter.OnEventClickListener {
 
     private RecyclerView recyclerView; // RecyclerView for displaying the list of events.
