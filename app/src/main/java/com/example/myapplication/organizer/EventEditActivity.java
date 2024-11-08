@@ -1,5 +1,6 @@
 /**
- * Activity for editing existing event
+ * Activity for editing existing event, involving database information update,
+ * poster update and event deletion
  */
 package com.example.myapplication.organizer;
 
@@ -123,6 +124,7 @@ public class EventEditActivity extends AppCompatActivity {
 
     /**
      * This method allows the user to select an image from their device
+     * and asks for device permission
      */
     private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -198,7 +200,8 @@ public class EventEditActivity extends AppCompatActivity {
     }
 
     /**
-     * This method updates the event
+     * This method updates the event for all the editable fields and make instant update
+     * on the firebase for the event
      */
     private void updateEvent() {
         String updatedTitle = editTextTitle.getText().toString();
