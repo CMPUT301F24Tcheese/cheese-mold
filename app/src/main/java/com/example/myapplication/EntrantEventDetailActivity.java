@@ -61,16 +61,14 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
         }
 
         cancel.setOnClickListener(view -> {
-            Intent intent1 = new Intent(EntrantEventDetailActivity.this, EntrantMainActivity.class);
-            startActivity(intent1);
+            finish();
         });
 
         unjoinEvent.setOnClickListener(view -> {
             FireStoreRemoveWaitingList(event.getId(), user);
             FireStoreRemoveeventId(event.getId(), user);
             Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
-            Intent intent1 = new Intent(EntrantEventDetailActivity.this, EntrantMainActivity.class);
-            startActivity(intent1);
+            finish();
         });
 
     }
