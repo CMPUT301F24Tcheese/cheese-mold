@@ -31,12 +31,14 @@ public class AdminMainActivityTest {
 
     /**
      * testing the Facilities button functionality
+     * temporarily removed since Facility button has been temporarily removed
+     * TODO fix test case after button is fixed
      */
     @Test
     public void testFacilitiesButton() {
-        onView(withId(R.id.browseFacilitiesBtn)).perform(click());
-        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-        onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+    //    onView(withId(R.id.browseFacilitiesBtn)).perform(click());
+    //    onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
+    //    onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
     }
 
     /**

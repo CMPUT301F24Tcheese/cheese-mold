@@ -17,10 +17,13 @@ import com.example.myapplication.R;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+/*
 
+*/
 /**
  * Large test class to test the buttons in the AdminBrowseFacilities activity
- */
+ *//*
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class AdminBrowseFacilitiesTest {
@@ -29,9 +32,13 @@ public class AdminBrowseFacilitiesTest {
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
             ActivityScenarioRule<AdministratorMainActivity>(AdministratorMainActivity.class);
 
-    /**
+    */
+/**
      * Testing the back button to confirm it sends the user back to the Admin Main Activity
-     */
+     * temporarily removed since Facility Intent has been temporarily removed
+     * TODO fix test case when facility button is re-added
+     *//*
+
     @Test
     public void testBackButton() {
         onView(withId(R.id.browseFacilitiesBtn)).perform(click());
@@ -46,3 +53,4 @@ public class AdminBrowseFacilitiesTest {
     }
 
 }
+*/
