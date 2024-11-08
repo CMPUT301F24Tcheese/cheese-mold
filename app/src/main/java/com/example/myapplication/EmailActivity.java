@@ -1,3 +1,8 @@
+/**
+ * NOTE: !!!This class is not yet being used!!!
+ * Activity for managing email-related functions.
+ * This activity includes navigation to the user's profile when the avatar is clicked.
+ */
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -8,11 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * EmailActivity is responsible for handling email operations and interactions.
+ * It includes an ImageView for the user avatar, which navigates to ProfileActivity when clicked.
+ */
 public class EmailActivity extends AppCompatActivity {
 
     private ImageView userAvatar;
     private FirebaseFirestore db; // Firestore instance for Firebase operations
 
+    /**
+     * Initializes the activity, sets up the UI components, and sets click listeners.
+     *
+     * @param savedInstanceState The saved instance state for restoring the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
