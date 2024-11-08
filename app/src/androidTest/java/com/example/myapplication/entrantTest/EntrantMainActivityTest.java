@@ -42,7 +42,7 @@ public class EntrantMainActivityTest {
         onView(withId(R.id.notificationBtn)).perform(click());
         onView(withId(R.id.notificationMainLayout)).check(matches(isDisplayed()));
         onView(withText("Notifications")).check(matches(isDisplayed()));
-        onView(withId(R.id.notificationBackBtn)).perform(click());
+        onView(withId(R.id.notificationActivityBackBtn)).perform(click());
         onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));
     }
 
