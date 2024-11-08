@@ -5,18 +5,23 @@
 package com.example.myapplication.organizer;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.organizer.OrganizerMainActivity;
@@ -29,15 +34,18 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.microedition.khronos.opengles.GL;
+
 public class EventEditActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private FirebaseFirestore db;
     private StorageReference storageRef;
     private String eventId;
     private EditText editTextTitle, editTextDate, editTextLimitEntrants, editTextDescription;
-    private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification; ;
+    private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel, buttonDeleteEvent,buttonNotification, buttonQrCode;
     private Uri posterUri;
     private Calendar selectedDateTime;
+    private String qrCodeUrl;
 
     /**
      * onCreate function for the edit event activity
@@ -67,6 +75,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonCancel = findViewById(R.id.buttonCancel);
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
+        buttonQrCode = findViewById(R.id.buttonQRCode);
         selectedDateTime = Calendar.getInstance();
 
         loadEventData(eventId);
@@ -80,6 +89,16 @@ public class EventEditActivity extends AppCompatActivity {
             Intent intent = new Intent(EventEditActivity.this, OrganizerNotificationActivity.class);
             intent.putExtra("event_id", eventId); // Pass event ID to OrganizerNotificationActivity
             startActivity(intent);
+        });
+        buttonQrCode.setOnClickListener(view -> {
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.image_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            ImageView imageView = dialog.findViewById(R.id.dialogImageView);
+
+            Glide.with(this).load(qrCodeUrl).into(imageView);
+            dialog.show();
         });
     }
 
@@ -191,6 +210,7 @@ public class EventEditActivity extends AppCompatActivity {
                     editTextDate.setText(event.getDateTime());
                     editTextLimitEntrants.setText(event.getLimitEntrants() != null ? event.getLimitEntrants().toString() : "");
                     editTextDescription.setText(event.getDescription());
+                    qrCodeUrl = event.getQRcode();
                 } else {
                     Toast.makeText(EventEditActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
                 }
