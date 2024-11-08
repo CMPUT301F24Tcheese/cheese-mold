@@ -115,7 +115,7 @@ public class EventEditActivity extends AppCompatActivity {
                     selectedDateTime.set(Calendar.HOUR_OF_DAY, hourOfDaySelected);
                     selectedDateTime.set(Calendar.MINUTE, minuteSelected);
 
-                    String formattedDateTime = DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
+                    String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", selectedDateTime).toString();
                     editTextDate.setText(formattedDateTime);
                 },
                 hour, minute, true // Use 24-hour format, change to false for AM/PM format
