@@ -73,8 +73,7 @@ public class AdministratorMainActivity extends AppCompatActivity {
 
         // click listener to browse facilites
         browseFacilitiesBtn.setOnClickListener(view -> {
-            // startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
-            // TODO button crashes app - fix for part 4
+            startActivity(new Intent(AdministratorMainActivity.this, AdminBrowseFacilities.class));
         });
 
         // click listener to browse events

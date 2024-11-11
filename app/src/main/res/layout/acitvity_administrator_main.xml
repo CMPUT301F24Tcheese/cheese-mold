@@ -62,7 +62,6 @@
         android:id="@+id/browseFacilitiesBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:text="Facilities"
         app:layout_constraintBottom_toTopOf="@id/browseEventsBtn"
         app:layout_constraintEnd_toEndOf="parent"
