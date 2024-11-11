@@ -60,7 +60,7 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
 
         deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        backBtn = findViewById(R.id.notificationBackBtn);
+        backBtn = findViewById(R.id.notificationActivityBackBtn);
         db = FirebaseFirestore.getInstance();
 
         dataList = new ArrayList<Notification>();

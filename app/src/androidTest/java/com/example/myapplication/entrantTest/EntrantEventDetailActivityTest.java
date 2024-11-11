@@ -3,15 +3,20 @@ package com.example.myapplication.entrantTest;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.junit.Assert.assertTrue;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -63,20 +68,24 @@ public class EntrantEventDetailActivityTest {
     /**
      * Test the cancel button , check if it direct back to entrantMain
      */
-    public void TestCancel(){
+    public void TestCancel() {
         onView(withId(R.id.entrantEventDetailCancel)).check(matches(isDisplayed()));
         onView(withId(R.id.entrantEventDetailCancel)).perform(click());
-        onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));
+//        onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));
+
+        scenario.getScenario().onActivity(activity -> {
+            assertTrue(activity.isFinishing());
+        });
     }
 
     @Test
     /**
      * Test the uinjoin button , check if it direct back to entrantMain
      */
-    public void TestUnjoin(){
+    public void TestUnjoin() {
         onView(withId(R.id.entrantEventDetailUnjoin)).check(matches(isDisplayed()));
         onView(withId(R.id.entrantEventDetailUnjoin)).perform(click());
-        onView(withId(R.id.entrantMainLayout)).check(matches(isDisplayed()));
+        assertTrue(scenario.getScenario().getState() == Lifecycle.State.DESTROYED);
     }
 
 
