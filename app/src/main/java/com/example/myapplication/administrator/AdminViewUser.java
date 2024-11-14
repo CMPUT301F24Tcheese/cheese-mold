@@ -6,6 +6,7 @@
 
 package com.example.myapplication.administrator;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,98 +15,110 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
+import com.example.myapplication.administrator.fragments.DeleteQRCodeFragment;
+import com.example.myapplication.administrator.fragments.DeleteUserFragment;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
-public class AdminViewUser extends AppCompatActivity {
-        private Users user;
-        private ImageView profilePic;
-        private TextView userName;
-        private TextView role;
-        private TextView facility;
-        private ArrayAdapter<String> orgEventsAdapter;
-        private ListView orgEvents;
-        private ArrayAdapter<String> eventsAdapter;
-        private ListView events;
-        private Button back;
-        private Button delete;
-        private TextView facilityH;
-        private TextView eventOrgH;
-        private TextView eventsH;
-        private FirebaseFirestore db;
+public class AdminViewUser extends AppCompatActivity implements DeleteUserFragment.DeleteUserDialogListenerView {
+    private Users user;
+    private ImageView profilePic;
+    private TextView userName;
+    private TextView role;
+    private TextView facility;
+    private ArrayAdapter<String> orgEventsAdapter;
+    private ListView orgEvents;
+    private ArrayAdapter<String> eventsAdapter;
+    private ListView events;
+    private Button back;
+    private Button delete;
+    private TextView facilityH;
+    private TextView eventOrgH;
+    private TextView eventsH;
+    private FirebaseFirestore db;
 
-        ArrayList<String> orgEventsList;
-        ArrayList<String> eventsList;
+    ArrayList<String> orgEventsList;
+    ArrayList<String> eventsList;
+
 
     /**
      * on create for viewing an individual event from the Administrator view
+     *
      * @param savedInstanceState
      */
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_admin_user);
-            db = FirebaseFirestore.getInstance();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin_user);
+        db = FirebaseFirestore.getInstance();
 
-            // fetch the event from the other activity
-            user = getIntent().getParcelableExtra("user");
+        // fetch the event from the other activity
+        user = getIntent().getParcelableExtra("user");
 
-            back = findViewById(R.id.adminUserBack);
-            delete = findViewById(R.id.adminUserDelete);
+        back = findViewById(R.id.adminUserBack);
+        delete = findViewById(R.id.adminUserDelete);
 
-            profilePic = findViewById(R.id.ProfilePicture);
-            userName = findViewById(R.id.UserName);
-            role = findViewById(R.id.UserRole);
-            facility = findViewById(R.id.UserFacility);
-            orgEvents = findViewById(R.id.UserOrgEvents);
-            orgEventsAdapter = new ArrayAdapter<>(this, R.layout.textview);
-            orgEvents.setAdapter(orgEventsAdapter);
-            events = findViewById(R.id.UserInEvents);
-            eventsAdapter = new ArrayAdapter<>(this, R.layout.textview);
-            events.setAdapter(eventsAdapter);
+        profilePic = findViewById(R.id.ProfilePicture);
+        userName = findViewById(R.id.UserName);
+        role = findViewById(R.id.UserRole);
+        facility = findViewById(R.id.UserFacility);
+        orgEvents = findViewById(R.id.UserOrgEvents);
+        orgEventsAdapter = new ArrayAdapter<>(this, R.layout.textview);
+        orgEvents.setAdapter(orgEventsAdapter);
+        events = findViewById(R.id.UserInEvents);
+        eventsAdapter = new ArrayAdapter<>(this, R.layout.textview);
+        events.setAdapter(eventsAdapter);
 
-            facilityH = findViewById(R.id.faciliyHeader);
-            eventOrgH = findViewById(R.id.userOrgEventsHeader);
-            eventsH = findViewById(R.id.userInEventsHeader);
+        facilityH = findViewById(R.id.faciliyHeader);
+        eventOrgH = findViewById(R.id.userOrgEventsHeader);
+        eventsH = findViewById(R.id.userInEventsHeader);
 
-            Glide.with(com.example.myapplication.administrator.AdminViewUser.this).load(user.getProfilePicture()).into(profilePic);
-            userName.setText(user.getName());
-            role.setText(user.getRole());
+        Glide.with(com.example.myapplication.administrator.AdminViewUser.this).load(user.getProfilePicture()).into(profilePic);
+        userName.setText(user.getName());
+        role.setText(user.getRole());
 
-            if (Objects.equals(user.getRole(), "Organizer") || Objects.equals(user.getRole(), "Administrator")) {
-                getOrgFacility(user.getUserId(), facility);
-                getOrgEvents(user.getUserId());
-            }
-
-            getJoinedEvents(user.getUserId());
-
-            back.setOnClickListener(view -> {
-                finish();
-            });
-
-            delete.setOnClickListener(view -> {
-                // TODO add delete functionality for Project part 4
-            });
-
+        if (Objects.equals(user.getRole(), "Organizer") || Objects.equals(user.getRole(), "Administrator")) {
+            getOrgFacility(user.getUserId(), facility);
+            getOrgEvents(user.getUserId());
         }
+
+        getJoinedEvents(user.getUserId());
+
+        back.setOnClickListener(view -> {
+            setResult(0);
+            finish();
+        });
+
+        delete.setOnClickListener(view -> {
+            new DeleteUserFragment(user).show(getSupportFragmentManager(), "Delete User");
+        });
+
+    }
 
     /**
      * Method to find organizer facility if it exists
-     * @param id user id
+     *
+     * @param id       user id
      * @param facility Textview for the facility
      */
     private void getOrgFacility(String id, TextView facility) {
@@ -125,6 +138,7 @@ public class AdminViewUser extends AppCompatActivity {
 
     /**
      * method to find organizer events if they exist
+     *
      * @param id user id
      */
     private void getOrgEvents(String id) {
@@ -146,6 +160,7 @@ public class AdminViewUser extends AppCompatActivity {
 
     /**
      * method to find joined events if any exist
+     *
      * @param id user id
      */
     private void getJoinedEvents(String id) {
@@ -166,6 +181,7 @@ public class AdminViewUser extends AppCompatActivity {
 
     /**
      * method to add an event to the list
+     *
      * @param eventId id of event added to list
      */
     private void insertJoinedEvents(String eventId) {
@@ -181,5 +197,40 @@ public class AdminViewUser extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * deletes user from firebase
+     *
+     * @param user user to be deleted
+     */
+    @Override
+    public void setDeleted(Users user) {
+        db.collection("users").document(user.getUserId()).delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //latchOne.countDown();
+                    }
+                });
+        if (Objects.equals(user.getRole(), "Organizer")) {
+            db.collection("Facilities").document(user.getUserId()).delete();
+            db.collection("events").whereEqualTo("creatorID", user.getUserId())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null && !value.getDocuments().isEmpty()) {
+                                List<DocumentSnapshot> documents = value.getDocuments();
+                                for (DocumentSnapshot document : documents) {
+                                    DocumentReference docRef = document.getReference();
+                                    docRef.delete();
+                                }
+                            }
+                        }
+                    });
+        }
+        this.user = null;
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 }
