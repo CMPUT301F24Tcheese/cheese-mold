@@ -6,12 +6,16 @@
 
 package com.example.myapplication.administrator;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.administrator.fragments.DeleteEventFragment;
+import com.example.myapplication.administrator.fragments.DeleteUserFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,8 +34,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class AdminViewEvent extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class AdminViewEvent extends AppCompatActivity implements DeleteEventFragment.DeleteEventDialogListener {
     private Event event;
     private TextView title;
     private TextView description;
@@ -42,6 +51,8 @@ public class AdminViewEvent extends AppCompatActivity {
     private TextView facility;
     private TextView descriptionHeader;
     private FirebaseFirestore db;
+
+
 
     /**
      * onCreate for viewing an individual event for te Administrator
@@ -76,11 +87,12 @@ public class AdminViewEvent extends AppCompatActivity {
         setOrgAndFac(event.getCreatorID(), organizer, facility);
 
         back.setOnClickListener(view -> {
+            setResult(0);
             finish();
         });
 
         delete.setOnClickListener(view -> {
-            // TODO add delete functionality for Project part 4
+            new DeleteEventFragment(event).show(getSupportFragmentManager(), "Delete Event");
         });
 
     }
@@ -114,5 +126,41 @@ public class AdminViewEvent extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * deletes the event from Firebase
+     * @param event the event to be deleted
+     */
+    @Override
+    public void deleteEvent(Event event) {
+        db.collection("events").document(event.getId()).delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //latchOne.countDown();
+                    }
+                });
+//        db.collection("users").get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                ArrayList<String> eventlist = (ArrayList<String>) document.get("Event List");
+//                                String id = document.getId();
+//                                if (!eventlist.isEmpty()) {
+//                                    if (eventlist.contains(event.getId())) {
+//                                        DocumentReference doc = document.getReference();
+//                                        doc.update("Event List", eventlist);
+//                                    }
+                                    //                               }
+//                            }
+//                        }
+//                    }
+//                });
+        this.event = null;
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 }
