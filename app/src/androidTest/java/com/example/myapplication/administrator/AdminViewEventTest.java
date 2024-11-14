@@ -6,24 +6,21 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isNotFocused;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.Matchers.anything;
 
-import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.example.myapplication.R;
-import com.example.myapplication.entrant.EntrantMainActivity;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Users;
-import com.example.myapplication.organizer.OrganizerMainActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Rule;
@@ -33,11 +30,11 @@ import org.junit.runner.RunWith;
 import java.util.HashMap;
 
 /**
- * Large test class to test the buttons in the AdminBrowseEvents activity
+ * Large test class to test the buttons in the AdminViewUser activity
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class AdminBrowseEventsTest {
+public class AdminViewEventTest {
     private FirebaseFirestore db;
 
     @Rule
@@ -45,20 +42,20 @@ public class AdminBrowseEventsTest {
             ActivityScenarioRule<AdministratorMainActivity>(AdministratorMainActivity.class);
 
     /**
-     * defines the event that is for display
+     * defines event object for display
      */
     private void setTestItems() {
         db = FirebaseFirestore.getInstance();
         String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + "Test" + "+" + "Person";// URL for default profile picture
-        Event event = new Event("000000000", "Test", "Test description", defaultProfilePicUrl, defaultProfilePicUrl, "000000000");
+        Event event = new Event("000000000", "Fun Test Event", "Test description", defaultProfilePicUrl, defaultProfilePicUrl, "000000000");
         uploadData(event);
     }
 
     /**
-     * uploads test data to firestore
-     * @param event event object for display
+     * uploads test event data to firebase
+     * @param event user object for display
      */
-    private void uploadData(Event event) {
+    private void uploadData(@NonNull Event event) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("name", event.getTitle());
         data.put("description", event.getDescription());
@@ -91,44 +88,85 @@ public class AdminBrowseEventsTest {
     }
 
     /**
-     * deletes test data added in upload event
+     * deletes the test event from firebase
      */
-    private void deleteData() {
-        db.collection("events").document("000000000").delete();
+    private void deleteEvent() {
+        db.collection("events").document("000000000").delete()
+                        .addOnFailureListener(e -> Log.w("Firestore", "Error removing event data", e));
         db.collection("users").document("000000000").delete();
         db.collection("Facilities").document("000000000").delete();
     }
 
     /**
-     * Testing the back button to confirm it sends the user back to the Admin Main Activity
+     * deletes the test event from firebase
      */
-    @Test
-    public void testBackButton() {
-        onView(withId(R.id.browseEventsBtn)).perform(click());
-        // verify we've entered the appropriate view before going back
-        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-        onView(withId(R.id.back_button)).perform(click());
-        // confirms we have left the events view
-        onView(withId(R.id.browseHeader)).check(doesNotExist());
-        onView(withId(R.id.browseHeader)).check(doesNotExist());
-        //confirms we have arrived back at the administrator main activity
-        onView(withId(R.id.welcomeTextView)).check(matches(isDisplayed()));
+    private void deleteEventOther() {
+        db.collection("users").document("000000000").delete();
+        db.collection("Facilities").document("000000000").delete();
     }
 
     /**
-     * Testing that selecting an event will open a new page that displays the event information
+     * tests if the back button
      */
     @Test
-    public void testSelectEvent() {
-        // setting event and corresponding creator and facility for display
+    public void testBackButton() {
+        // setting test event
         setTestItems();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 
-        // click on test data
+        // click on newly created test profile
         onData(anything()).inAdapterView(withId(R.id.contentListView)).atPosition(0).perform(click());
 
-        // check if new view is displayed
+        onView(withId(R.id.adminEventBack)).perform(click());
+
+        // checking if the view is correct
+        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
+        onView(withText("Fun Test Event")).check(matches(isDisplayed()));
+
+        // removing test event
+        deleteEvent();
+    }
+
+    /**
+     * tests the delete button
+     */
+    @Test
+    public void testDeleteButton() {
+        // setting test event
+        setTestItems();
+
+        onView(withId(R.id.browseEventsBtn)).perform(click());
+
+        // click on newly created test profile
+        onData(anything()).inAdapterView(withId(R.id.contentListView)).atPosition(0).perform(click());
+
+        onView(withId(R.id.adminEventDelete)).perform(click());
+
+        // checking if view is correct
+        onView(withText("Delete Event?")).check(matches(isDisplayed()));
+
+        // removing test event
+        deleteEvent();
+    }
+
+    /**
+     * tests the cancel button that appears after clicking the delete button
+     */
+    @Test
+    public void testDeleteButtonCancel() {
+        // setting test event
+        setTestItems();
+
+        onView(withId(R.id.browseEventsBtn)).perform(click());
+
+        // click on newly created test profile
+        onData(anything()).inAdapterView(withId(R.id.contentListView)).atPosition(0).perform(click());
+
+        onView(withId(R.id.adminEventDelete)).perform(click());
+        onView(withText("Cancel")).perform(click());
+
+        // checking if view is correct
         onView(withId(R.id.adminEventName)).check(matches(isDisplayed()));
         onView(withId(R.id.poster)).check(matches(isDisplayed()));
         onView(withId(R.id.organizer)).check(matches(isDisplayed()));
@@ -137,9 +175,30 @@ public class AdminBrowseEventsTest {
         onView(withId(R.id.adminEventDelete)).check(matches(isDisplayed()));
         onView(withId(R.id.adminEventBack)).check(matches(isDisplayed()));
 
-        // remove test data
-        deleteData();
-
+        // removing test event
+        deleteEvent();
     }
 
+    /**
+     * tests the delete button that appears after clicking the delete button
+     */
+    @Test
+    public void testDeleteButtonDelete() {
+        // setting test event
+        setTestItems();
+
+        onView(withId(R.id.browseEventsBtn)).perform(click());
+
+        // click on newly created test profile
+        onData(anything()).inAdapterView(withId(R.id.contentListView)).atPosition(0).perform(click());
+
+        onView(withId(R.id.adminEventDelete)).perform(click());
+        onView(withText("Delete")).perform(click());
+
+        // checking if view is correct
+        onView(withText("Fun Test Event")).check(doesNotExist());
+
+        // removing test event
+        deleteEventOther();
+    }
 }

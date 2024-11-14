@@ -72,13 +72,15 @@ public class Event implements Serializable, Parcelable {
 
     /**
      * Constructor for the administrator's use.
+     * @param eventID
      * @param title
      * @param description
      * @param posterUrl
      * @param QRcode
      * @param creatorID
      */
-    public Event(String title, String description, String posterUrl, String QRcode, String creatorID) {
+    public Event(String eventID, String title, String description, String posterUrl, String QRcode, String creatorID) {
+        this.id = eventID;
         this.title = title; // Set the event title.
         this.description = description; // Set the event description.
         this.posterUrl = posterUrl; // Set the URL for the event's poster image.
