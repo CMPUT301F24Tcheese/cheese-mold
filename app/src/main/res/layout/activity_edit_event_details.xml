@@ -89,7 +89,7 @@
         android:layout_marginBottom="16dp"
         android:text="Update Event"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonCancel"

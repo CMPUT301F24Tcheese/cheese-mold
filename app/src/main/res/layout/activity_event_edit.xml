@@ -38,11 +38,19 @@
         android:id="@+id/buttonDeleteEvent"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="77dp"
+        android:layout_above="@+id/buttonBack"
+        android:layout_marginBottom="75dp"
         android:layout_weight="1"
         android:backgroundTint="#D33A2E"
         android:text="Delete Event"
         android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:text="Back" />
 
 </RelativeLayout>
