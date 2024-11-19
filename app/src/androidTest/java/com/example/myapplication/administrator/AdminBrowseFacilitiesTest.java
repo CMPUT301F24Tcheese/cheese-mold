@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -38,6 +39,9 @@ import java.util.HashMap;
 @LargeTest
 public class AdminBrowseFacilitiesTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
+    final CountDownLatch latchTwo = new CountDownLatch(1);
+
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -89,8 +93,10 @@ public class AdminBrowseFacilitiesTest {
      * Testing the delete facility button functionality
      */
     @Test
-    public void testDeleteFacilityDelete() {
+    public void testDeleteFacilityDelete() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseFacilitiesBtn)).perform(click());
         onView(withText("invalidName")).check(matches(isDisplayed()));
         onData(anything()).inAdapterView(withId(R.id.contentListView)).atPosition(0).perform(longClick());
@@ -119,6 +125,7 @@ public class AdminBrowseFacilitiesTest {
         db.collection("Facilities").document("00000").set(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "Facility data added successfully!");
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding event data", e));
 
@@ -128,6 +135,7 @@ public class AdminBrowseFacilitiesTest {
         db.collection("users").document("00000").set(data2)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!");
+                    latchTwo.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e));
     }

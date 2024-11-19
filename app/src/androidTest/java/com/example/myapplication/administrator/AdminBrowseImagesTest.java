@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Large test class to test the buttons in the AdminBrowseImages activity
@@ -34,6 +35,9 @@ import java.util.HashMap;
 @LargeTest
 public class AdminBrowseImagesTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
+    final CountDownLatch latchTwo = new CountDownLatch(1);
+
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -83,8 +87,10 @@ public class AdminBrowseImagesTest {
      * testing if selecting long click on a profile picture brings up the delete fragment
      */
     @Test
-    public void testSelectProfilePicture() {
+    public void testSelectProfilePicture() throws InterruptedException { // failed
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // click on the profiles tab
         onView(withId(R.id.profilesTextView)).perform(click());
@@ -105,8 +111,10 @@ public class AdminBrowseImagesTest {
      * testing if selecting long click on a profile picture brings up the delete fragment
      */
     @Test
-    public void testSelectPoster() {
+    public void testSelectPoster() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
 
         // long click for delete
@@ -125,8 +133,10 @@ public class AdminBrowseImagesTest {
      * Testing the cancel button when deleting a profile picture
      */
     @Test
-    public void testSelectProfileCancel() {
+    public void testSelectProfileCancel() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // click on the profiles tab
         onView(withId(R.id.profilesTextView)).perform(click());
@@ -148,8 +158,10 @@ public class AdminBrowseImagesTest {
      * Testing the cancel button when deleting a profile picture
      */
     @Test
-    public void testSelectPosterCancel() {
+    public void testSelectPosterCancel() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
 
         // long click for delete
@@ -169,8 +181,10 @@ public class AdminBrowseImagesTest {
      * Testing the delete profile picture button functionality
      */
     @Test
-    public void testSelectProfileDelete() {
+    public void testSelectProfileDelete() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // click on the profiles tab
         onView(withId(R.id.profilesTextView)).perform(click());
@@ -193,8 +207,10 @@ public class AdminBrowseImagesTest {
      * testing the delete poster button functionality
      */
     @Test
-    public void testSelectPosterDelete() {
+    public void testSelectPosterDelete() throws InterruptedException {
         setTestItems();
+        latchOne.await();
+        latchTwo.await();
         onView(withId(R.id.browseImagesBtn)).perform(click());
 
         // long click for delete
@@ -227,6 +243,7 @@ public class AdminBrowseImagesTest {
         db.collection("users").document("0000").set(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "user data added successfully!");
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e));
 
@@ -237,6 +254,7 @@ public class AdminBrowseImagesTest {
         db.collection("events").document("0000").set(data2)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "event data added successfully!");
+                    latchTwo.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding event data", e));
     }

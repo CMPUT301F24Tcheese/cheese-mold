@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Large test class to test the buttons in the AdminBrowseUsers activity
@@ -38,6 +39,7 @@ import java.util.HashMap;
 @LargeTest
 public class AdminBrowseUsersTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -69,6 +71,7 @@ public class AdminBrowseUsersTest {
         db.collection("users").document("000000000").set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!"); // Log success message
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e)); // Log error if data upload fails
     }
@@ -105,9 +108,10 @@ public class AdminBrowseUsersTest {
      * Testing that selecting a user will open a new page that displays the user information
      */
     @Test
-    public void testSelectUser() {
+    public void testSelectUser() throws InterruptedException {
         // setting test user
         setTestItems();
+        latchOne.await();
 
         onView(withId(R.id.browseProfilesBtn)).perform(click());
 
