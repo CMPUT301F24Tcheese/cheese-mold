@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.R;
-import com.example.myapplication.administrator.AdminBrowseUsers;
-import com.example.myapplication.objects.QRCode;
 import com.example.myapplication.objects.Users;
 
 public class DeleteUserFragment extends DialogFragment {
@@ -32,7 +30,7 @@ public class DeleteUserFragment extends DialogFragment {
      * interface for deleting the user in the activity
      */
     public interface DeleteUserDialogListenerView {
-        void setDeleted(Users users);
+        void DeleteUser(Users users);
     }
 
     /**
@@ -65,7 +63,7 @@ public class DeleteUserFragment extends DialogFragment {
                 .setView(view)
                 .setTitle("Delete User?")
                 .setNegativeButton("Delete", (dialog, which) -> {
-                    listenerView.setDeleted(user);
+                    listenerView.DeleteUser(user);
                 })
                 .setPositiveButton("Cancel", null)
                 .create();

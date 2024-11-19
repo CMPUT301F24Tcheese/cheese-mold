@@ -23,6 +23,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.administrator.fragments.DeleteQRCodeFragment;
 import com.example.myapplication.administrator.fragments.DeleteUserFragment;
 import com.example.myapplication.objects.Event;
+import com.example.myapplication.objects.Facility;
 import com.example.myapplication.objects.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -205,32 +206,116 @@ public class AdminViewUser extends AppCompatActivity implements DeleteUserFragme
      * @param user user to be deleted
      */
     @Override
-    public void setDeleted(Users user) {
+    public void DeleteUser(Users user) {
         db.collection("users").document(user.getUserId()).delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //latchOne.countDown();
+                        removeUsers(user.getUserId());
+                        DeleteFacility(user.getUserId());
                     }
                 });
-        if (Objects.equals(user.getRole(), "Organizer")) {
-            db.collection("Facilities").document(user.getUserId()).delete();
-            db.collection("events").whereEqualTo("creatorID", user.getUserId())
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (value != null && !value.getDocuments().isEmpty()) {
-                                List<DocumentSnapshot> documents = value.getDocuments();
-                                for (DocumentSnapshot document : documents) {
-                                    DocumentReference docRef = document.getReference();
-                                    docRef.delete();
+        //this.user = null;
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
+
+    /**
+     * method to remove deleted user from cancelled list, confirmed list, and wait list
+     * @param id user id
+     */
+    public void removeUsers(String id) {
+        db.collection("events").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                ArrayList<String> cancel = (ArrayList<String>) document.get("cancelledList");
+                                ArrayList<String> confirm = (ArrayList<String>) document.get("confirmedList");
+                                ArrayList<String> wait = (ArrayList<String>) document.get("waitlist");
+                                DocumentReference documentReference = document.getReference();
+                                if (cancel != null) {
+                                    if (cancel.contains(id)) {
+                                        cancel.remove(id);
+                                        documentReference.update("cancelledList", cancel);
+                                    }
+                                }
+                                if (confirm != null) {
+                                    if (confirm.contains(id)) {
+                                        confirm.remove(id);
+                                        documentReference.update("confirmedList", confirm);
+                                    }
+                                }
+                                if (wait != null) {
+                                    if (wait.contains(id)) {
+                                        wait.remove(id);
+                                        documentReference.update("waitlist", wait);
+                                    }
                                 }
                             }
                         }
-                    });
-        }
-        this.user = null;
-        setResult(Activity.RESULT_OK);
-        finish();
+                    }
+                });
+    }
+
+    /**
+     * deleting the facility linked to the user being deleted
+     * @param id facility id
+     */
+    public void DeleteFacility(String id) {
+        db.collection("Facilities").document(id).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        DeleteEvents(id);
+                    }
+                });
+    }
+
+    /**
+     * method to delete events that are within the event that is deleted
+     * @param id facility id
+     */
+    public void DeleteEvents(String id) {
+        db.collection("events").whereEqualTo("creatorID", id).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                String eventId = document.getId();
+                                RemoveEvents(eventId);
+                                DocumentReference documentReference = document.getReference();
+                                documentReference.delete();
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * method to remove the events from user lists
+     * @param id event id
+     */
+    public void RemoveEvents(String id) {
+        db.collection("users").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                ArrayList<String> list = (ArrayList<String>) document.get("Event List");
+                                if (list != null) {
+                                    if (list.contains(id)) {
+                                        list.remove(id);
+                                        DocumentReference documentReference = document.getReference();
+                                        documentReference.update("Event List", list);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
 }
