@@ -24,6 +24,7 @@ import com.example.myapplication.EntrantEventDetailActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.controllers.RoleActivityController;
 import com.example.myapplication.entrant.CaptureAct;
 import com.example.myapplication.entrant.NotificationActivity;
 import com.example.myapplication.objects.Event;
@@ -58,6 +59,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
     private boolean facilityExist;
     private LinearLayout viewFacilityLayout, viewEventLayout, facilityDetailLayout, facilityExistLayout, facilityNotExistLayout;
     private boolean isFacilityView;
+    private RoleActivityController roleActivityController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
         db = FirebaseFirestore.getInstance(); // Get the instance of Firebase Firestore database
 
         setContentView(R.layout.activity_organizer_main); // Set the layout for the main activity screen
+        roleActivityController = new RoleActivityController(this);
 
         // Initialize the UI elements
         viewFacilityLayout = findViewById(R.id.viewFacilityLayout);
@@ -105,7 +108,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
 
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        getData(device);
+        roleActivityController.getData(device, updateProfileImg);
         isFacilityView = true;
 
         // Refreshes the facility view on swipe
@@ -155,34 +158,29 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
     }
 
     /**
-     * Retrieves user data from Firestore and loads it into the activity UI components
-     * @param device The unique ID of the logged-in user
+     * Interface for the callback after checking facility existence.
      */
-    private void getData(String device) {
-        // Access the "users" collection in Firestore and get the document corresponding to the userId
-        db.collection("users").document(device).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) { // Check if the data retrieval task was successful
-                        DocumentSnapshot document = task.getResult(); // Get the document snapshot from Firestore
-
-                        if(document.exists()) { // Verify that the document exists
-                            String profilePicUrl = document.getString("Profile Picture"); // Retrieve the URL of the user's profile picture
-
-                            // Load the user's profile picture using Glide, a third-party image loading library
-                            Glide.with(OrganizerMainActivity.this)
-                                    .load(profilePicUrl) // Load the image from the URL obtained from Firestore
-                                    .placeholder(R.drawable.baseline_person_outline_24) // Display a default placeholder while the image loads
-                                    .error(R.drawable.baseline_person_outline_24) // Show a default image if loading the picture fails
-                                    .into(updateProfileImg); // Set the loaded image into the ImageView
-                        } else {
-                            Log.d("MainActivity", "No such document"); // Log a message if the document does not exist
-                        }
-                    } else {
-                        Log.w("MainActivity", "Error getting documents.", task.getException()); // Log a warning if there was an error retrieving the document
-                    }
-                });
+    interface OnFacilityExistCheckCompleteListener {
+        void onComplete();
     }
 
+
+    /**
+     * Checks if a facility exists for the current user.
+     *
+     * @param callback Callback to be executed after the check is complete.
+     */
+    private void checkFacilityExist(OnFacilityExistCheckCompleteListener callback) {
+        db.collection("Facilities").document(device).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    facilityExist = documentSnapshot.exists();
+                    callback.onComplete();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("OrganizerMainActivityFacilityExist", "Error getting document: " + e.getMessage());
+                    callback.onComplete();
+                });
+    }
 
     /**
      * Displays the facility view based on whether the facility exists or not.
@@ -210,7 +208,7 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
                 fab.setOnClickListener(view -> {
                     startActivity(new Intent(OrganizerMainActivity.this, AddEventActivity.class));
                 });
-                getFacilityData(); // Load the facility data
+                roleActivityController.getFacilityData(device, organizerMainFacilityName, organizerMainFacilityAddress, facilityEventAdapter, facilityEventList); // Load the facility data
             }
         });
     }
@@ -221,122 +219,9 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
     private void showEventsView() {
         viewFacilityLayout.setVisibility(View.GONE);
         viewEventLayout.setVisibility(View.VISIBLE);
-        loadJoinedEvents(); // Load the events the organizer has joined
+        roleActivityController.loadJoinedEvents(device, joinedEventAdapter, joinedEventList); // Load the events the organizer has joined
+
     }
-
-
-    /**
-     * Interface for the callback after checking facility existence.
-     */
-    interface OnFacilityExistCheckCompleteListener {
-        void onComplete();
-    }
-
-
-    /**
-     * Checks if a facility exists for the current user.
-     *
-     * @param callback Callback to be executed after the check is complete.
-     */
-    private void checkFacilityExist(OnFacilityExistCheckCompleteListener callback) {
-        db.collection("Facilities").document(device).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    facilityExist = documentSnapshot.exists();
-                    callback.onComplete();
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("OrganizerMainActivityFacilityExist", "Error getting document: " + e.getMessage());
-                    callback.onComplete();
-                });
-    }
-
-
-    /**
-     * Retrieves the facility data from Firestore and updates the UI.
-     */
-    private void getFacilityData() {
-        db.collection("Facilities").document(device).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Facility facility = documentSnapshot.toObject(Facility.class);
-                        if (facility != null) {
-                            organizerMainFacilityName.setText(facility.getName());
-                            organizerMainFacilityAddress.setText(facility.getAdress());
-                            loadFacilityEvents();
-                        }
-                    }
-                });
-    }
-
-
-    /**
-     * Loads events associated with the facility from Firestore.
-     */
-    private void loadFacilityEvents() {
-        facilityEventList.clear();
-        facilityEventAdapter.notifyDataSetChanged();
-        db.collection("events").whereEqualTo("creatorID", device).get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                            Event event = doc.toObject(Event.class);
-                            if (event != null) {
-                                event.setId(doc.getId());
-                                facilityEventList.add(event);
-                            }
-                        }
-                        facilityEventAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("Load Facility Events", "No events found for this creator.");
-                    }
-                }).addOnFailureListener(e -> Log.e("Event Data", "Error fetching events", e));
-    }
-
-
-    /**
-     * Loads events that the user has joined.
-     */
-    private void loadJoinedEvents() {
-        joinedEventList.clear();
-        joinedEventAdapter.notifyDataSetChanged();
-        db.collection("users").document(device).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        ArrayList<String> eventListFromDb = (ArrayList<String>) documentSnapshot.get("Event List");
-                        if (eventListFromDb != null && !eventListFromDb.isEmpty()) {
-                            for (String event : eventListFromDb) {
-                                Log.d("getEventsFromFirestore", event);
-                                loadEvents(event);
-                            }
-                        } else {
-                            Log.d("getEventsFromFirestore", "No events found in the user's event list.");
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("getEventsFromFirestore", "Error fetching user event list: " + e.getMessage());
-                });
-    }
-
-
-    /**
-     * Loads a specific event from Firestore and updates the joined event list.
-     *
-     * @param eventId The ID of the event to load.
-     */
-    private void loadEvents(String eventId) {
-        db.collection("events").document(eventId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        event.setId(documentSnapshot.getId());
-                        joinedEventList.add(event);
-                        joinedEventAdapter.notifyDataSetChanged();
-                    }
-                });
-    }
-
 
     /**
      * Refreshes the data displayed in the UI.
@@ -349,10 +234,10 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
         eventList.clear();
         adapter.notifyDataSetChanged();
         if (forFacility) {
-            loadFacilityEvents();
+            roleActivityController.loadFacilityEvents(device, facilityEventAdapter, facilityEventList);
             facilitySwipeRefreshLayout.setRefreshing(false);
         } else {
-            loadJoinedEvents();
+            roleActivityController.loadJoinedEvents(device, joinedEventAdapter, joinedEventList);
             eventSwipeRefreshLayout.setRefreshing(false);
         }
 
@@ -382,14 +267,15 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
         intent.putExtra("event", (Parcelable) event);
         startActivity(intent);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        getData(device);
+        roleActivityController.getData(device, updateProfileImg);
         if (isFacilityView) {
             showFacilityView();
         } else {
-            loadJoinedEvents();
+            roleActivityController.loadJoinedEvents(device, joinedEventAdapter, joinedEventList);
         }
 
     }
