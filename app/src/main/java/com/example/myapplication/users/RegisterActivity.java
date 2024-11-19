@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -20,40 +18,22 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.administrator.AdministratorMainActivity;
-import com.example.myapplication.entrant.EntrantMainActivity;
+import com.example.myapplication.controllers.UserController;
 import com.example.myapplication.objects.Users;
-import com.example.myapplication.organizer.OrganizerMainActivity;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Register Activity that handles the user registration process
  */
 public class RegisterActivity extends AppCompatActivity {
-
-    private FirebaseFirestore db; // Firestore database object
-    private StorageReference storageReference; // Firebase Storage reference for storing images
-    private CollectionReference usersRef; // Reference to the "users" collection in Firestore
     private EditText registerEmail; // EditText for user to input email
     private EditText registerFirstname; // EditText for user to input first name
     private EditText registerLastname; // EditText for user to input last name
     private Spinner roleSelector; // Spinner for selecting user roles (not used in current implementation)
     private Button registerBtn; // Button to trigger registration
-    private TextView loginRedirect; // TextView to redirect user to login page
     private ImageView profilePicture; // ImageView to display profile picture
     Uri imageUri; // URI for the selected profile picture
     private String device;
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register); // Set the layout for the activity
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-
-        // Initialize Firebase services
-        db = FirebaseFirestore.getInstance(); // Initialize Firestore database
-        usersRef = db.collection("users"); // Get reference to the "users" collection in Firestore
-        storageReference = FirebaseStorage.getInstance().getReference(); // Initialize Firebase Storage reference
+        userController = new UserController(this);
 
         // Initialize UI elements
         registerEmail = findViewById(R.id.registerEmail); // Get reference to EditText for email
@@ -97,19 +73,22 @@ public class RegisterActivity extends AppCompatActivity {
                 // Check if any of the fields are empty
                 if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Please fill out all the fields", Toast.LENGTH_SHORT).show(); // Show error message
-                } else if (!isValidEmail(email)){
+                } else if (!userController.isValidEmail(email)){
                     Toast.makeText(RegisterActivity.this, "Enter valid email", Toast.LENGTH_SHORT).show(); // Display error message
                 } else {
                     if (imageUri == null) {
                         String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + firstname + "+" + lastname; // URL for default profile picture
-                        uploadUserData(new Users(device, firstname, lastname, email, defaultProfilePicUrl, role)); // Upload user data with default profile picture
+                        userController.uploadUserData(new Users(device, firstname, lastname, email, defaultProfilePicUrl, role)); // Upload user data with default profile picture
+                        resetFields();
                     } else {
-                        uploadImageAndData(imageUri, new Users(device, firstname, lastname, email, "", role)); // Upload selected image and user data
+                        userController.uploadImageAndData(imageUri, new Users(device, firstname, lastname, email, "", role)); // Upload selected image and user data
+                        resetFields();
                     }
                 }
             }
         });
     }
+
 
     /**
      * Launcher is used to launch the gallery when selecting photo. It takes the image URI
@@ -129,30 +108,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
     });
 
-    /**
-     * Stores the profile photo into firebase storage in the profile image directory
-     * If upload is successful, generates a URL for the image which is passed into
-     * uploadUserData function which then goes on to upload all the data in firestore
-     * @param image URI of the selected profile image
-     * @param user User object to upload to firebase
-     */
-    private void uploadImageAndData(Uri image, Users user) {
-        StorageReference reference = storageReference.child("profile_images/" + UUID.randomUUID() + ".jpg"); // Create a unique path for the profile image
-        reference.putFile(image) // Upload the image to Firebase Storage
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString();
-                            user.setProfilePicture(downloadUrl);// Get the download URL of the uploaded image
-                            uploadUserData(user); // Upload user data along with the image URL
-                        });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(RegisterActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show(); // Show error if image upload fails
-                });
-    }
 
     /**
      * Resets the input fields after successful user registration
@@ -164,40 +119,4 @@ public class RegisterActivity extends AppCompatActivity {
         profilePicture.setImageResource(R.drawable.baseline_person_outline_24); // Reset the profile picture to default icon
     }
 
-    private boolean isValidEmail(String email) {
-        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-        return email.matches(emailPattern);
-    }
-
-    /**
-     * Function takes the user data and uploads them into firestore database
-     * Redirects the user to login if storing is successful.
-     * @param user User object which will be uploaded to firebase
-     */
-    private void uploadUserData(Users user) {
-        HashMap<String, Object> data = new HashMap<>(); // Create a HashMap to store user data
-        data.put("Email", user.getEmail()); // Add user's email to the map
-        data.put("role", user.getRole());
-        data.put("Firstname", user.getFirstName()); // Add user's first name to the map
-        data.put("Lastname", user.getLastName()); // Add user's last name to the map
-        data.put("Profile Picture", user.getProfilePicture()); // Add user's profile picture URL to the map
-        data.put("Event List", user.getEventList()); // **(2) Add waitlist to the event map**
-
-        usersRef.document(device).set(data) // Store the user data in Firestore under the user's unique ID
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "User data added successfully!"); // Log success message
-                    resetFields(); // Reset input fields after successful registration
-                    if (user.getRole().equals("Entrant")) {
-                        startActivity(new Intent(this, EntrantMainActivity.class)); // navigate to main screen
-                        finish(); // Close the MainActivity
-                    } else if (user.getRole().equals("Organizer")) {
-                        startActivity(new Intent(this, OrganizerMainActivity.class)); // navigate to main screen
-                        finish(); // Close the MainActivity
-                    } else if (user.getRole().equals("Administrator")) {
-                        startActivity(new Intent(this, AdministratorMainActivity.class)); // Navigate to main screen
-                        finish(); // Close the MainActivity
-                    }
-                })
-                .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e)); // Log error if data upload fails
-    }
 }
