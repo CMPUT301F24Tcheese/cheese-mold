@@ -8,6 +8,7 @@ package com.example.myapplication.administrator;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -19,16 +20,26 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.administrator.ImageArrayAdapter;
+import com.example.myapplication.administrator.fragments.DeletePosterFragment;
+import com.example.myapplication.administrator.fragments.DeleteProfilePicFragment;
+import com.example.myapplication.administrator.fragments.DeleteQRCodeFragment;
 import com.example.myapplication.objects.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
-public class AdminBrowseImages extends AppCompatActivity {
+public class AdminBrowseImages extends AppCompatActivity implements DeletePosterFragment.DeletePosterDialogListener, DeleteProfilePicFragment.DeleteProfilePicDialogListener {
     private FirebaseFirestore db;
     private Button back;
     private TextView posterTextView;
@@ -41,6 +52,56 @@ public class AdminBrowseImages extends AppCompatActivity {
     private PosterArrayAdapter posterAdapter;
     private ArrayList<Image> dataListProfiles;
     private ArrayList<Image> dataListPosters;
+    private Image del;
+
+    @Override
+    public void DeletePoster(Image image) {
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("posterUrl", null);
+        db.collection("events").document(image.getId())
+                .update(updates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        posterAdapter.remove(image);
+                        posterAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    @Override
+    public void DeleteProfilePic(Image image) throws InterruptedException {
+        del = image;
+        db.collection("users").document(image.getId()).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            String name = document.getString("Firstname") + '+' + document.getString("Lastname");
+                            String id = document.getId();
+                            String defaultProfilePicUrl = "https://avatar.iran.liara.run/username?username=" + name;
+                            Map<String,Object> updates = new HashMap<>();
+                            updates.put("Profile Picture", defaultProfilePicUrl);
+                            replaceProfilePic(updates, id, defaultProfilePicUrl);
+                        }
+                    }
+                });
+    }
+
+    private void replaceProfilePic(Map<String, Object> updates, String id, String url) {
+        db.collection("users").document(id)
+                .update(updates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        profileAdapter.remove(del);
+                        del.setUrl(url);
+                        profileAdapter.add(del);
+                        profileAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
 
     /**
      * onCreate function for displaying Image information
@@ -83,6 +144,24 @@ public class AdminBrowseImages extends AppCompatActivity {
 
         back.setOnClickListener(view -> {
             finish();
+        });
+
+        profileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Image image = dataListProfiles.get(i);
+                new DeleteProfilePicFragment(image).show(getSupportFragmentManager(), "Delete profile pic");
+                return false;
+            }
+        });
+
+        posterList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Image image = dataListPosters.get(i);
+                new DeletePosterFragment(image).show(getSupportFragmentManager(), "Delete poster image");
+                return false;
+            }
         });
     }
 

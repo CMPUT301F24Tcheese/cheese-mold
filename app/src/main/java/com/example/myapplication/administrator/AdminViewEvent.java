@@ -79,7 +79,9 @@ public class AdminViewEvent extends AppCompatActivity implements DeleteEventFrag
         title.setText(event.getTitle());
         description.setText(event.getDescription());
 
-        Glide.with(AdminViewEvent.this).load(event.getPosterUrl()).into(poster);
+        if (event.getPosterUrl() != null) {
+            Glide.with(AdminViewEvent.this).load(event.getPosterUrl()).into(poster);
+        }
 
         organizer = findViewById(R.id.organizer);
         facility = findViewById(R.id.facility);
