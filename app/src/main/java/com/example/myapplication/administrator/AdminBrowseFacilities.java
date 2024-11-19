@@ -26,6 +26,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -54,6 +56,53 @@ public class AdminBrowseFacilities extends AppCompatActivity implements DeleteFa
                                         facilityAdapter.notifyDataSetChanged();
                                     }
                                 });
+    }
+
+    /**
+     * method to delete events that are within the event that is deleted
+     * @param id facility id
+     */
+    @Override
+    public void DeleteEvents(String id) {
+        db.collection("events").whereEqualTo("creatorID", id).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                String eventId = document.getId();
+                                RemoveEvents(eventId);
+                                DocumentReference documentReference = document.getReference();
+                                documentReference.delete();
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * method to remove the events from user lists
+     * @param id event id
+     */
+    public void RemoveEvents(String id) {
+        db.collection("users").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                ArrayList<String> list = (ArrayList<String>) document.get("Event List");
+                                if (list != null) {
+                                    if (list.contains(id)) {
+                                        list.remove(id);
+                                        DocumentReference documentReference = document.getReference();
+                                        documentReference.update("Event List", list);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     /**
