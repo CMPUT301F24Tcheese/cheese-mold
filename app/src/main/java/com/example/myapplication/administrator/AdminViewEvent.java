@@ -140,29 +140,35 @@ public class AdminViewEvent extends AppCompatActivity implements DeleteEventFrag
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //latchOne.countDown();
+                        RemoveEvents(event.getId());
                     }
                 });
-//        db.collection("users").get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                ArrayList<String> eventlist = (ArrayList<String>) document.get("Event List");
-//                                String id = document.getId();
-//                                if (!eventlist.isEmpty()) {
-//                                    if (eventlist.contains(event.getId())) {
-//                                        DocumentReference doc = document.getReference();
-//                                        doc.update("Event List", eventlist);
-//                                    }
-                                    //                               }
-//                            }
-//                        }
-//                    }
-//                });
-        this.event = null;
         setResult(Activity.RESULT_OK);
         finish();
+    }
+
+    /**
+     * method to remove the events from user lists
+     * @param id event id
+     */
+    public void RemoveEvents(String id) {
+        db.collection("users").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                ArrayList<String> list = (ArrayList<String>) document.get("Event List");
+                                if (list != null) {
+                                    if (list.contains(id)) {
+                                        list.remove(id);
+                                        DocumentReference documentReference = document.getReference();
+                                        documentReference.update("Event List", list);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
 }

@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Large test class to test the buttons in the AdminBrowseEvents activity
@@ -39,6 +40,9 @@ import java.util.HashMap;
 @LargeTest
 public class AdminBrowseEventsTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
+    final CountDownLatch latchTwo = new CountDownLatch(1);
+    final CountDownLatch latchThree = new CountDownLatch(1);
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -69,6 +73,7 @@ public class AdminBrowseEventsTest {
         db.collection("events").document("000000000").set(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "event data added successfully!");
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding event data", e));
 
@@ -78,6 +83,7 @@ public class AdminBrowseEventsTest {
         db.collection("users").document("000000000").set(data2)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!");
+                    latchTwo.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e));
 
@@ -86,6 +92,7 @@ public class AdminBrowseEventsTest {
         db.collection("Facilities").document("000000000").set(data3)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "facility data added successfully!");
+                    latchThree.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding facility data", e));
     }
@@ -119,9 +126,13 @@ public class AdminBrowseEventsTest {
      * Testing that selecting an event will open a new page that displays the event information
      */
     @Test
-    public void testSelectEvent() {
+    public void testSelectEvent() throws InterruptedException {
         // setting event and corresponding creator and facility for display
         setTestItems();
+
+        latchOne.await();
+        latchTwo.await();
+        latchThree.await();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 

@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Large test class to test the buttons in the AdminViewUser activity
@@ -35,6 +36,7 @@ import java.util.HashMap;
 @LargeTest
 public class AdminViewUserTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -66,6 +68,7 @@ public class AdminViewUserTest {
         db.collection("users").document("000000000").set(data) // Store the user data in Firestore under the user's unique ID
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!"); // Log success message
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e)); // Log error if data upload fails
     }
@@ -86,9 +89,10 @@ public class AdminViewUserTest {
      * tests if the back button
      */
     @Test
-    public void testBackButton() {
+    public void testBackButton() throws InterruptedException {
         // setting test user
         setTestItems();
+        latchOne.await();
 
         onView(withId(R.id.browseProfilesBtn)).perform(click());
 
@@ -109,9 +113,11 @@ public class AdminViewUserTest {
      * tests the delete button
      */
     @Test
-    public void testDeleteButton() {
+    public void testDeleteButton() throws InterruptedException {
         // setting test user
         setTestItems();
+
+        latchOne.await();
 
         onView(withId(R.id.browseProfilesBtn)).perform(click());
 
@@ -131,9 +137,11 @@ public class AdminViewUserTest {
      * tests the cancel button that appears after clicking the delete button
      */
     @Test
-    public void testCancelButton() {
+    public void testCancelButton() throws InterruptedException { // failed
         // setting test user
         setTestItems();
+
+        latchOne.await();
 
         onView(withId(R.id.browseProfilesBtn)).perform(click());
 
@@ -158,9 +166,11 @@ public class AdminViewUserTest {
      * tests the delete button that appears after clicking the delete button
      */
     @Test
-    public void testDeleteDeleteButton() {
+    public void testDeleteDeleteButton() throws InterruptedException {
         // setting test user
         setTestItems();
+
+        latchOne.await();
 
         onView(withId(R.id.browseProfilesBtn)).perform(click());
 

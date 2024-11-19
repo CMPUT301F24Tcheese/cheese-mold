@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Large test class to test the buttons in the AdminViewUser activity
@@ -36,6 +37,10 @@ import java.util.HashMap;
 @LargeTest
 public class AdminViewEventTest {
     private FirebaseFirestore db;
+    final CountDownLatch latchOne = new CountDownLatch(1);
+    final CountDownLatch latchTwo = new CountDownLatch(1);
+    final CountDownLatch latchThree = new CountDownLatch(1);
+
 
     @Rule
     public ActivityScenarioRule<AdministratorMainActivity> scenario = new
@@ -66,6 +71,7 @@ public class AdminViewEventTest {
         db.collection("events").document("000000000").set(data)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "event data added successfully!");
+                    latchOne.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding event data", e));
 
@@ -75,6 +81,7 @@ public class AdminViewEventTest {
         db.collection("users").document("000000000").set(data2)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "User data added successfully!");
+                    latchTwo.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding user data", e));
 
@@ -83,6 +90,7 @@ public class AdminViewEventTest {
         db.collection("Facilities").document("000000000").set(data3)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "facility data added successfully!");
+                    latchThree.countDown();
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding facility data", e));
     }
@@ -109,9 +117,13 @@ public class AdminViewEventTest {
      * tests if the back button
      */
     @Test
-    public void testBackButton() {
+    public void testBackButton() throws InterruptedException {
         // setting test event
         setTestItems();
+
+        latchOne.await();
+        latchTwo.await();
+        latchThree.await();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 
@@ -132,9 +144,13 @@ public class AdminViewEventTest {
      * tests the delete button
      */
     @Test
-    public void testDeleteButton() {
+    public void testDeleteButton() throws InterruptedException {
         // setting test event
         setTestItems();
+
+        latchOne.await();
+        latchTwo.await();
+        latchThree.await();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 
@@ -154,9 +170,13 @@ public class AdminViewEventTest {
      * tests the cancel button that appears after clicking the delete button
      */
     @Test
-    public void testDeleteButtonCancel() {
+    public void testDeleteButtonCancel() throws InterruptedException {
         // setting test event
         setTestItems();
+
+        latchOne.await();
+        latchTwo.await();
+        latchThree.await();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 
@@ -183,9 +203,13 @@ public class AdminViewEventTest {
      * tests the delete button that appears after clicking the delete button
      */
     @Test
-    public void testDeleteButtonDelete() {
+    public void testDeleteButtonDelete() throws InterruptedException {
         // setting test event
         setTestItems();
+
+        latchOne.await();
+        latchTwo.await();
+        latchThree.await();
 
         onView(withId(R.id.browseEventsBtn)).perform(click());
 

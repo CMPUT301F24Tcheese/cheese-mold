@@ -6,10 +6,7 @@ import android.view.LayoutInflater;
 
 import com.example.myapplication.objects.Facility;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.R;
-import com.example.myapplication.objects.Facility;
 
 /**
  * fragment used to delete a facility after a long click
@@ -40,6 +36,7 @@ public class DeleteFacilityFragment extends DialogFragment {
      */
     public interface DeleteFacilityDialogueListener {
         void DeleteFacility(Facility facility);
+        void DeleteEvents(String id);
     }
 
     /**
@@ -73,6 +70,7 @@ public class DeleteFacilityFragment extends DialogFragment {
                 .setTitle("Delete Facility?")
                 .setNegativeButton("Delete", (dialog, which) -> {
                     listener.DeleteFacility(facility);
+                    listener.DeleteEvents(facility.getId());
                 })
                 .setPositiveButton("Cancel", null)
                 .create();
