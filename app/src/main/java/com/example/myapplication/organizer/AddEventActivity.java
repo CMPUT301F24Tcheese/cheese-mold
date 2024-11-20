@@ -283,7 +283,7 @@ public class AddEventActivity extends AppCompatActivity {
                         uploadQRCodeToStorage(eventId, qrCode);
                     }
                     Toast.makeText(AddEventActivity.this, "Event Created", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(AddEventActivity.this, OrganizerMainActivity.class));
+                    //startActivity(new Intent(AddEventActivity.this, OrganizerMainActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(AddEventActivity.this, "Failed to create event", Toast.LENGTH_SHORT).show());

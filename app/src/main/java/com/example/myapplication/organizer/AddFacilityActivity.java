@@ -122,7 +122,6 @@ public class AddFacilityActivity extends AppCompatActivity {
             db.collection("Facilities").document(organizerId).set(facility)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(AddFacilityActivity.this, "Facility built", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(AddFacilityActivity.this, OrganizerMainActivity.class));
                         finish();
                     })
                     .addOnFailureListener(e -> {
