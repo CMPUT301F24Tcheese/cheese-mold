@@ -42,7 +42,7 @@ public class EventEditActivity extends AppCompatActivity {
     private String eventId;
     private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode;
     private String qrCodeUrl;
-
+    private Button buttonViewVariousLists;
 
     /**
      * onCreate function for the edit event activity
@@ -66,6 +66,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
+        buttonViewVariousLists = findViewById(R.id.buttonViewVariousLists);
 
         loadEventData(eventId);
 
@@ -85,6 +86,12 @@ public class EventEditActivity extends AppCompatActivity {
 
             Glide.with(this).load(qrCodeUrl).into(imageView);
             dialog.show();
+        });
+
+        buttonViewVariousLists.setOnClickListener(view -> {
+            Intent intent = new Intent(EventEditActivity.this, ListOptionsActivity.class);
+            intent.putExtra("event_id", eventId);
+            startActivity(intent);
         });
 
         buttonEditEventDetail.setOnClickListener(view -> {
