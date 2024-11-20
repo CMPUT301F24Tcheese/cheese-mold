@@ -66,7 +66,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
-        buttonViewVariousLists = findViewById(R.id.buttonViewVariousLists);
+        buttonViewVariousLists = findViewById(R.id.btn_view_various_lists);
 
         loadEventData(eventId);
 
