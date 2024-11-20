@@ -54,6 +54,8 @@
         <activity android:name=".organizer.OrganizerMainActivity" /> <!-- Register EntrantMainActivity -->
         <activity android:name=".entrant.EntrantMainActivity" /> <!-- Register EventActivity -->
         <activity android:name=".organizer.EditEventDetailActivity" />
+        <activity android:name=".organizer.ListOptionsActivity" />
+        <activity android:name=".organizer.ListViewActivity" />
         <activity
             android:name=".EventActivity"
             android:exported="true" /> <!-- Register ProfileActivity -->

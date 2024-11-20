@@ -54,10 +54,13 @@
         android:text="Back" />
 
     <Button
-        android:id="@+id/btn_view_various_lists"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonViewLists"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonNotification"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
         android:text="View Various Lists"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center" />
+        android:textColor="#FFFFFF" />
+
 </RelativeLayout>

@@ -42,7 +42,7 @@ public class EventEditActivity extends AppCompatActivity {
     private String eventId;
     private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode;
     private String qrCodeUrl;
-    private Button buttonViewVariousLists;
+    private Button buttonViewLists;
 
     /**
      * onCreate function for the edit event activity
@@ -66,7 +66,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
-        buttonViewVariousLists = findViewById(R.id.btn_view_various_lists);
+        buttonViewLists = findViewById(R.id.buttonViewLists);
 
         loadEventData(eventId);
 
@@ -88,7 +88,7 @@ public class EventEditActivity extends AppCompatActivity {
             dialog.show();
         });
 
-        buttonViewVariousLists.setOnClickListener(view -> {
+        buttonViewLists.setOnClickListener(view -> {
             Intent intent = new Intent(EventEditActivity.this, ListOptionsActivity.class);
             intent.putExtra("event_id", eventId);
             startActivity(intent);
