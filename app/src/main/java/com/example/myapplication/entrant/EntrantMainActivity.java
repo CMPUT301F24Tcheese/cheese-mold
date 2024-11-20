@@ -1,7 +1,9 @@
 package com.example.myapplication.entrant;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,6 +26,7 @@ import com.example.myapplication.EntrantEventDetailActivity;
 import com.example.myapplication.EventAdapter;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.controllers.NotificationController;
 import com.example.myapplication.controllers.RoleActivityController;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.users.UpdateProfileActivity;
@@ -49,14 +54,25 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
     private String device;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RoleActivityController roleActivityController;
+    private NotificationController notificationController;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
 
+        // Request POST_NOTIFICATIONS permission if needed (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
         setContentView(R.layout.activity_entrant_main); // Set the layout for the main activity screen
         roleActivityController = new RoleActivityController(this);
+        notificationController = new NotificationController(this);
 
         // Initialize the UI elements
         notificationBtn = findViewById(R.id.notificationBtn);
@@ -73,6 +89,7 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         roleActivityController.getData(device, updateProfile);
+        notificationController.startListening(device);
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -142,5 +159,14 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         super.onResume();
         roleActivityController.getData(device, updateProfile);
         roleActivityController.loadJoinedEvents(device, eventAdapter, eventList);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Stop listening to avoid memory leaks
+        if (notificationController != null) {
+            notificationController.stopListening();
+        }
     }
 }
