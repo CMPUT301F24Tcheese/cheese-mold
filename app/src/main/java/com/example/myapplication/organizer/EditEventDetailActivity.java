@@ -216,9 +216,9 @@ public class EditEventDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(EditEventDetailActivity.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(EditEventDetailActivity.this, OrganizerMainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+//                    Intent intent = new Intent(EditEventDetailActivity.this, OrganizerMainActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(EditEventDetailActivity.this, "Failed to update event", Toast.LENGTH_SHORT).show());
