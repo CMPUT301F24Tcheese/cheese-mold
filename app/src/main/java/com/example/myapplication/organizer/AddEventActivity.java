@@ -220,13 +220,17 @@ public class AddEventActivity extends AppCompatActivity {
         event.put("limitEntrants", Integer.parseInt(limitEntrants));
         event.put("geolocationEnabled", geolocationEnabled);
         event.put("creatorID", device);
+        event.put("DrawAmount",0);
+        event.put("maxCapacity",0L);
 
         ArrayList<String> waitlist = new ArrayList<>();
         ArrayList<String> cancelledList = new ArrayList<>();
         ArrayList<String> confirmedList = new ArrayList<>();
+        ArrayList<String> lotteryList = new ArrayList<>();
         event.put("waitlist", waitlist);
         event.put("cancelledList", cancelledList);
         event.put("confirmedList", confirmedList);
+        event.put("lotteryList",lotteryList);
 
         if (posterUri != null) {
             uploadPosterAndSaveEvent(event);
