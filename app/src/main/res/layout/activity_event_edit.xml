@@ -6,6 +6,16 @@
     android:background="#F5F5F5">
 
     <Button
+        android:id="@+id/button_lottery"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonViewLists"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:text="Lottery Draw"
+        android:textColor="#FFFFFF" />
+
+    <Button
         android:id="@+id/buttonEditEventDetail"
         android:layout_width="400dp"
         android:layout_height="wrap_content"

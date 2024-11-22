@@ -4,4 +4,7 @@
         <item>Entrant</item>
         <item>Organizer</item>
     </string-array>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
