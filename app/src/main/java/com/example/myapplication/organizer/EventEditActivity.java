@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.notifications.Notification;
 import com.example.myapplication.objects.Event;
 import com.example.myapplication.objects.Lottery;
 import com.example.myapplication.objects.WaitingList;
@@ -177,6 +178,8 @@ public class EventEditActivity extends AppCompatActivity {
                             eventToLoad.setFinalEntrantsNum(inputLong);
                             eventToLoad.setFirstDraw(false);
                             processLottery();
+                            senNotificationToList("waitlist","Sorry, You lost the lottery");
+                            senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
 
                         } catch (NumberFormatException e) {
                             showToast("Invalid Input"); // gives error when something else are typed
@@ -195,9 +198,13 @@ public class EventEditActivity extends AppCompatActivity {
                 showToast("The Lottery is full, Please wait for Entrant response");
             } else {
                 eventToLoad.drawLottery();
+                senNotificationToList("waitlist","Sorry, You lost the lottery");
+                senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
                 Log.d("Local", "After draw: " + eventToLoad.getWaitingList().toString());
                 updateFirebaseLottery(eventId, eventToLoad);
                 showToast("Draw successful!");
+
+
             }
         }
 
@@ -285,4 +292,49 @@ public class EventEditActivity extends AppCompatActivity {
     }
 
 
-}
+    /**
+     * Send notification to desired list of users
+     * @param list
+     *      the name of the list in firebase
+     * @param message
+     *      the message to send
+     */
+    public void senNotificationToList(String list, String message){
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(eventSnapshot -> {
+                    if (eventSnapshot.exists()) {
+                        List<String> listTosend = (List<String>) eventSnapshot.get(list);
+
+                        for (String selectedEntrant : listTosend) {
+                            if (listTosend != null && listTosend.contains(selectedEntrant)) {
+                                // Entrant is on the waitlist, use the device ID directly
+                                Notification notification = new Notification(eventToLoad.getCreatorID(),eventId,selectedEntrant,message);
+                                notification.sendNotification();
+                                Log.d("NotificationProcess", "Notification sent to waitlisted entrant: " + selectedEntrant);
+//
+                            }
+                            else{
+                                Toast.makeText(this, "Empty list.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        Toast.makeText(this, "Notifications sent to selected entrants.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("NotificationError", "Event document not found for eventId: " + eventId);
+                        Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("NotificationError", "Error fetching event document for eventId: " + eventId, e);
+                    Toast.makeText(this, "Failed to send notifications.", Toast.LENGTH_SHORT).show();
+                });
+
+
+        }
+
+    }
+
+
+
+
+
