@@ -57,6 +57,7 @@ public class EventEditActivity extends AppCompatActivity {
     private String eventId;
     private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode, buttonLottery;
     private String qrCodeUrl;
+    private Button buttonViewLists;
     private Event eventToLoad;
 
 
@@ -82,6 +83,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonDeleteEvent = findViewById(R.id.buttonDeleteEvent);
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
+        buttonViewLists = findViewById(R.id.buttonViewLists);
         buttonLottery = findViewById(R.id.button_lottery);
 
         loadEventData(eventId);
@@ -104,6 +106,12 @@ public class EventEditActivity extends AppCompatActivity {
             dialog.show();
         });
 
+        buttonViewLists.setOnClickListener(view -> {
+            Intent intent = new Intent(EventEditActivity.this, ListOptionsActivity.class);
+            intent.putExtra("event_id", eventId);
+            startActivity(intent);
+        });
+
         buttonEditEventDetail.setOnClickListener(view -> {
             Intent intent = new Intent(EventEditActivity.this, EditEventDetailActivity.class);
             intent.putExtra("event_id", eventId);
@@ -111,116 +119,107 @@ public class EventEditActivity extends AppCompatActivity {
         });
 
         buttonLottery.setOnClickListener(view -> {
-           db.collection("events").document(eventId)
-                   .get()
-                   .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot doc = task.getResult();
-                                if (doc.exists()) {
-
-                                    eventToLoad = doc.toObject(Event.class);
-                                    if (eventToLoad != null) {
-                                        eventToLoad.setId(doc.getId());
-
-                                        // Retrieve cloud object to local
-                                        ArrayList<String> fireWaitlist = (ArrayList<String>) doc.get("waitlist");
-                                        ArrayList<String> fireLotteryList = (ArrayList<String>) doc.get("lotteryList");
-
-
-
-                                        eventToLoad.setWaitingList(fireWaitlist);
-                                        ArrayList<String> waitlist = eventToLoad.getWaitingList();
-
-                                        Log.d("Local", "Retrieved waitlist: " + waitlist.toString());
-
-                                        //set the data from firebase to Long
-                                        Long maxCapacity = doc.getLong("maxCapacity");
-                                        if (maxCapacity != null) {
-                                            eventToLoad.setFinalEntrantsNum(maxCapacity);
-                                        }
-
-
-                                        if (waitlist != null && !waitlist.isEmpty()) {
-
-                                            // The Organizer only need to set the max capacity of the event once.
-                                            if (eventToLoad.getDrawAmount() == 0){
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(EventEditActivity.this);
-
-                                                final EditText input = new EditText(EventEditActivity.this);
-                                                input.setHint("Type something...");
-                                                input.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
-                                                builder.setView(input)
-                                                        .setTitle("Draw Lottery")
-                                                        .setMessage("Please enter the capacity for the event")
-                                                        .setPositiveButton("Confirm", (dialog, which) -> {
-                                                            // Perform the lottery draw
-                                                            String inputText = input.getText().toString();
-
-                                                            try {
-                                                                    long inputLong = Long.parseLong(inputText);
-                                                                    Toast.makeText(EventEditActivity.this, "Capacity of this event: " + inputLong, Toast.LENGTH_SHORT).show();
-
-                                                                    eventToLoad.setFinalEntrantsNum(inputLong);
-                                                                    eventToLoad.setDrawAmount(eventToLoad.getDrawAmount() + 1);
-
-
-
-
-                                                            } catch (NumberFormatException e) {
-                                                                    Toast.makeText(EventEditActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                                                            }
-
-                                                            //
-                                                            if (eventToLoad.getLottery().size() == eventToLoad.getFinalEntrantsNum() && eventToLoad.getFinalEntrantsNum() > 0){
-                                                                Toast.makeText(EventEditActivity.this, "The Lottery is full, Please wait for Entrant response", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                            else {
-                                                                eventToLoad.drawLottery();
-                                                                Log.d("Local", "After draw: " + waitlist.toString());
-                                                                updateFirebaseLottery(eventId, eventToLoad);
-                                                            }
-
-
-                                                        })
-                                                        .setNegativeButton("Cancel", null)
-                                                        .show();
-                                            }
-
-
-
-
-                                        }
-
-                                        else {
-                                            Toast.makeText(EventEditActivity.this, "Wait list is empty, cannot make draws", Toast.LENGTH_SHORT).show();
-
-                                        }
-
-                                    }
-                                } else {
-                                    Toast.makeText(EventEditActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
-                                }
+            loadEventData(eventId);
+            db.collection("events").document(eventId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            if (doc != null && doc.exists()) {
+                                handleLottery();
                             } else {
-                                Log.w("Firestore", "Error getting document", task.getException());
+                                showToast("Event not found");
                             }
+                        } else {
+                            Log.w("Firestore", "Error getting document", task.getException());
                         }
                     });
-
         });
     }
 
+    /***
+     * This is the helper function to handle the lottery draw
+     * if it is the first draw, it calls the Capacity dialogue to fill in, it it isn't it will make the draw.
+     */
+    private void handleLottery() {
+            ArrayList<String> waitlist = eventToLoad.getWaitingList();
+
+
+            if (waitlist == null || waitlist.isEmpty()) {
+                showToast("Wait list is empty, cannot make draws");
+                return;
+            }
+
+            if (eventToLoad.getFirstDraw()) {
+                promptForCapacity();
+            } else {
+                processLottery();
+            }
+        }
 
     /**
-     * This update the firbase LotteryList and WaitingList after the draw
+     * A helper function to pop the Capacity dialogue
+     * It records user's response and store in the event object
+     * It will proceed with the draw once confirm button is hit
+     */
+    private void promptForCapacity() {
+            EditText input = new EditText(this);
+            input.setHint("Type something...");
+            input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Draw Lottery")
+                    .setMessage("Please enter the capacity for the event")
+                    .setView(input)
+                    .setPositiveButton("Confirm", (dialog, which) -> {
+                        try {
+                            long inputLong = Long.parseLong(input.getText().toString());
+                            eventToLoad.setFinalEntrantsNum(inputLong);
+                            eventToLoad.setFirstDraw(false);
+                            processLottery();
+
+                        } catch (NumberFormatException e) {
+                            showToast("Invalid Input"); // gives error when something else are typed
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        }
+
+    /**
+     * this function check the size of the Lottery list.
+     * It gives a warning message if the Lottery list is full, else it proceeds with the draw
+     */
+    private void processLottery() {
+            if (eventToLoad.getLottery().size() >= eventToLoad.getFinalEntrantsNum() && eventToLoad.getFinalEntrantsNum() > 0) {
+                showToast("The Lottery is full, Please wait for Entrant response");
+            } else {
+                eventToLoad.drawLottery();
+                Log.d("Local", "After draw: " + eventToLoad.getWaitingList().toString());
+                updateFirebaseLottery(eventId, eventToLoad);
+                showToast("Draw successful!");
+            }
+        }
+
+    /**
+     * Just a helper function to show message
+     * @param message
+     */
+        private void showToast(String message) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+
+
+
+    /**
+     * This update the firebase fields after the draw
      */
     public void updateFirebaseLottery(String eventId, Event eventToLoad) {
         db.collection("events").document(eventId)
-                .update("lotteryList", (List<String>) eventToLoad.getLottery(),
-                        "waitlist", (List<String>) eventToLoad.getWaitingList(),
-                        "DrawAmount", (long) eventToLoad.getDrawAmount(),
-                        "maxCapacity", (long) eventToLoad.getFinalEntrantsNum())
+                .update("lotteryList", eventToLoad.getLottery(),
+                        "waitlist", eventToLoad.getWaitingList(),
+                        "firstDraw",  eventToLoad.getFirstDraw(),
+                        "maxCapacity",  eventToLoad.getFinalEntrantsNum())
                 .addOnSuccessListener(aVoid -> {
                     Log.d("Firestore", "Array updated successfully!");
                 })
@@ -240,9 +239,19 @@ public class EventEditActivity extends AppCompatActivity {
         DocumentReference eventRef = db.collection("events").document(eventId);
         eventRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Event event = task.getResult().toObject(Event.class);
-                if (event != null) {
-                    qrCodeUrl = event.getQRcode();
+                DocumentSnapshot doc = task.getResult();
+                eventToLoad = doc.toObject(Event.class);
+                if (eventToLoad != null) {
+                    qrCodeUrl = eventToLoad.getQRcode();
+
+                    eventToLoad.setId(doc.getId());
+                    eventToLoad.setWaitingList((ArrayList<String>) doc.get("waitlist"));
+                    eventToLoad.setFinalEntrantsNum(doc.getLong("maxCapacity"));
+                    eventToLoad.setFirstDraw(doc.getBoolean("firstDraw"));
+                    eventToLoad.setLottery((ArrayList<String>) doc.get("lotteryList"));
+                    Log.d("Local", "Retrieved waitlist: " + eventToLoad.getWaitingList() );
+
+
                 } else {
                     Toast.makeText(EventEditActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
                 }

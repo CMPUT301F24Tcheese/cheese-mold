@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -54,6 +55,8 @@
         <activity android:name=".organizer.OrganizerMainActivity" /> <!-- Register EntrantMainActivity -->
         <activity android:name=".entrant.EntrantMainActivity" /> <!-- Register EventActivity -->
         <activity android:name=".organizer.EditEventDetailActivity" />
+        <activity android:name=".organizer.ListOptionsActivity" />
+        <activity android:name=".organizer.ListViewActivity" />
         <activity
             android:name=".EventActivity"
             android:exported="true" /> <!-- Register ProfileActivity -->

@@ -220,7 +220,7 @@ public class AddEventActivity extends AppCompatActivity {
         event.put("limitEntrants", Integer.parseInt(limitEntrants));
         event.put("geolocationEnabled", geolocationEnabled);
         event.put("creatorID", device);
-        event.put("DrawAmount",0);
+        event.put("firstDraw",true);
         event.put("maxCapacity",0L);
 
         ArrayList<String> waitlist = new ArrayList<>();

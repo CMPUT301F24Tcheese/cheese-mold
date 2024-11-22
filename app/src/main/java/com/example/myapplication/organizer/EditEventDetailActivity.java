@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -36,6 +38,7 @@ public class EditEventDetailActivity extends AppCompatActivity {
     private Button buttonUpdateEvent, buttonUploadPoster, buttonCancel;
     private Uri posterUri;
     private Calendar selectedDateTime;
+    private ImageView imageViewPosterPreview;
 
     /**
      * onCreate function for the edit event activity
@@ -64,6 +67,7 @@ public class EditEventDetailActivity extends AppCompatActivity {
         buttonUploadPoster = findViewById(R.id.buttonUploadPoster);
         buttonCancel = findViewById(R.id.buttonCancel);
         selectedDateTime = Calendar.getInstance();
+        imageViewPosterPreview = findViewById(R.id.imageViewPosterPreview);
 
         loadEventData(eventId);
 
@@ -118,14 +122,17 @@ public class EditEventDetailActivity extends AppCompatActivity {
      * and asks for device permission
      */
     private void openFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Poster Image"), PICK_IMAGE_REQUEST);
     }
 
     /**
      * Handles the result of the image selection activity.
      * It is activated when the user select an image from their device
      * it retrieves the selected image URI, converts it to a bitmap, and displays the image
+     * The selected image will replace the previous event poster
      * @param requestCode request the code of the activity
      * @param resultCode see if the code matches
      * @param data the result data from image selection
@@ -135,6 +142,12 @@ public class EditEventDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             posterUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), posterUri);
+                imageViewPosterPreview.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             uploadPosterToFirebase();
         }
     }
@@ -168,7 +181,8 @@ public class EditEventDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * This method get the event data from database
+     * This method get the event data from database and load it to the current view as a reference
+     * The current poster is also loaded
      * @param eventId the current eventID
      */
     private void loadEventData(String eventId) {
@@ -181,6 +195,13 @@ public class EditEventDetailActivity extends AppCompatActivity {
                     editTextDate.setText(event.getDateTime());
                     editTextLimitEntrants.setText(event.getLimitEntrants() != null ? event.getLimitEntrants().toString() : "");
                     editTextDescription.setText(event.getDescription());
+
+                    String posterUrl = event.getPosterUrl();
+                    if (posterUrl != null && !posterUrl.isEmpty()) {
+                        Glide.with(this)
+                                .load(posterUrl)
+                                .into(imageViewPosterPreview);
+                    }
                 } else {
                     Toast.makeText(EditEventDetailActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
                 }
@@ -216,9 +237,9 @@ public class EditEventDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(EditEventDetailActivity.this, "Event updated successfully", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(EditEventDetailActivity.this, OrganizerMainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+//                    Intent intent = new Intent(EditEventDetailActivity.this, OrganizerMainActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(EditEventDetailActivity.this, "Failed to update event", Toast.LENGTH_SHORT).show());

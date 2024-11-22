@@ -9,7 +9,7 @@
         android:id="@+id/button_lottery"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonNotification"
+        android:layout_below="@+id/buttonViewLists"
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:text="Lottery Draw"
@@ -62,5 +62,15 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:text="Back" />
+
+    <Button
+        android:id="@+id/buttonViewLists"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonNotification"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:text="View Various Lists"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>
