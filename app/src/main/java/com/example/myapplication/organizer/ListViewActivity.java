@@ -123,14 +123,17 @@ public class ListViewActivity extends AppCompatActivity {
 
 
     private String mapListTypeToFieldName(String listType) {
+        if (listType == null) return null;
+
         switch (listType) {
             case "waiting":
                 return "waitlist";
             case "cancelled":
                 return "cancelledList";
-            case "lottery":
+            case "invited":
                 return "lotteryList";
             default:
+                System.out.println("Invalid listType: " + listType);
                 return null;
         }
     }
