@@ -92,7 +92,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             Log.d("Local","Lottery List After remove: " + event.getLottery());
             Log.d("Local","cancel List After remove: " + event.getCancelledList());
 
-            //FireStoreRemoveeventId(event.getId(),user);
+            FireStoreRemoveeventId(event.getId(),user);
             Toast.makeText(EntrantEventDetailActivity.this,"You are removed from the event: "+event.getTitle(),Toast.LENGTH_SHORT).show();
 
             event.drawLottery();
