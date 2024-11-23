@@ -73,7 +73,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             buttonConfirm.setVisibility(View.GONE);
             buttonDecline.setVisibility(View.GONE);
             Toast.makeText(EntrantEventDetailActivity.this,"You are now joined to the event: "+event.getTitle(),Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(EntrantEventDetailActivity.this,EntrantMainActivity.class));
+            finish();
 
         });
 
@@ -82,8 +82,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             FireStoreAddList(event.getId(),user,"cancelledList");
             FireStoreRemoveeventId(event.getId(),user);
             Toast.makeText(EntrantEventDetailActivity.this,"You are removed from the event: "+event.getTitle(),Toast.LENGTH_SHORT).show();
-            Intent intent1 = new Intent(EntrantEventDetailActivity.this,EntrantMainActivity.class);
-            startActivity(intent1);
+            finish();
 
         });
 
@@ -104,7 +103,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             FireStoreRemoveList(event.getId(), user, "waitlist");
             FireStoreRemoveeventId(event.getId(), user);
             Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(EntrantEventDetailActivity.this,EntrantMainActivity.class));
+            finish();;
         });
 
 
