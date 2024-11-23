@@ -198,9 +198,10 @@ public class EventEditActivity extends AppCompatActivity {
         }
 
 
-
     /**
-     * This update the firebase fields after the draw
+     * Update firebase after a draw from organizer
+     * @param eventId
+     * @param eventToLoad
      */
     public void updateFirebaseLottery(String eventId, Event eventToLoad) {
         db.collection("events").document(eventId)
