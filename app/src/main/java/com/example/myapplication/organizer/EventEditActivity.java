@@ -178,8 +178,7 @@ public class EventEditActivity extends AppCompatActivity {
                             eventToLoad.setFinalEntrantsNum(inputLong);
                             eventToLoad.setFirstDraw(false);
                             processLottery();
-                            senNotificationToList("waitlist","Sorry, You lost the lottery");
-                            senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
+
 
                         } catch (NumberFormatException e) {
                             showToast("Invalid Input"); // gives error when something else are typed
