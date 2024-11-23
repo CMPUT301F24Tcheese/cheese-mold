@@ -197,8 +197,8 @@ public class EventEditActivity extends AppCompatActivity {
                 showToast("The Lottery is full, Please wait for Entrant response");
             } else {
                 eventToLoad.drawLottery();
-                senNotificationToList("waitlist","Sorry, You lost the lottery");
-                senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
+                senNotificationToList("waitlist","Sorry, You lost the lottery for the following event: " + eventToLoad.getTitle());
+                senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the following event: " + eventToLoad.getTitle());
                 Log.d("Local", "After draw: " + eventToLoad.getWaitingList().toString());
                 updateFirebaseLottery(eventId, eventToLoad);
                 showToast("Draw successful!");

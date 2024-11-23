@@ -2,6 +2,7 @@ package com.example.myapplication.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.PropertyName;
@@ -104,6 +105,13 @@ public class Event implements Serializable, Parcelable {
         posterUrl = in.readString();
         QRcode = in.readString();
         creatorID = in.readString();
+        lottery = in.createStringArrayList();
+        confirmedList = in.createStringArrayList();
+        cancelledList = in.createStringArrayList();
+        maxCapacity = in.readLong();
+
+
+
     }
 
 
@@ -120,6 +128,12 @@ public class Event implements Serializable, Parcelable {
         dest.writeString(posterUrl);
         dest.writeString(QRcode);
         dest.writeString(creatorID);
+        dest.writeStringList(lottery);
+        dest.writeStringList(confirmedList);
+        dest.writeStringList(cancelledList);
+        dest.writeLong(maxCapacity);
+
+
     }
 
 
