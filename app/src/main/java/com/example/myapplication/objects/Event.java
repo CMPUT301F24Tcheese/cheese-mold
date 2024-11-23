@@ -105,10 +105,13 @@ public class Event implements Serializable, Parcelable {
         posterUrl = in.readString();
         QRcode = in.readString();
         creatorID = in.readString();
+
         lottery = in.createStringArrayList();
-        confirmedList = in.createStringArrayList();
         cancelledList = in.createStringArrayList();
-        maxCapacity = in.readLong();
+        confirmedList = in.createStringArrayList();
+
+        ArrayList<String> waitlistData = in.createStringArrayList();
+        waitingList = new WaitingList(waitlistData);
 
 
 
@@ -128,10 +131,14 @@ public class Event implements Serializable, Parcelable {
         dest.writeString(posterUrl);
         dest.writeString(QRcode);
         dest.writeString(creatorID);
+
+
         dest.writeStringList(lottery);
-        dest.writeStringList(confirmedList);
         dest.writeStringList(cancelledList);
-        dest.writeLong(maxCapacity);
+        dest.writeStringList(confirmedList);
+
+        // Write waitingList as ArrayList<String>
+        dest.writeStringList(waitingList.getList());
 
 
     }

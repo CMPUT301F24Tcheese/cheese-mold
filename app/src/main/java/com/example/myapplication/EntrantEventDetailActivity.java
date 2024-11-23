@@ -65,7 +65,6 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
 
         else {
             Log.d("Local","Confirm List: " + event.getConfirmedList());
-            Log.d("Local","Max Capacity: " + event.getFinalEntrantsNum());
         }
 
         buttonConfirm.setOnClickListener(view -> {
