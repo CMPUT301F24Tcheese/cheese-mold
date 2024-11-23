@@ -1,7 +1,9 @@
 package com.example.myapplication.objects;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.PropertyName;
@@ -90,6 +92,7 @@ public class Event implements Serializable, Parcelable {
         this.posterUrl = posterUrl; // Set the URL for the event's poster image.
         this.QRcode = QRcode;
         this.creatorID = creatorID;
+
     }
 
 
@@ -104,7 +107,31 @@ public class Event implements Serializable, Parcelable {
         posterUrl = in.readString();
         QRcode = in.readString();
         creatorID = in.readString();
+
+        // Handle nullable maxCapacity
+        if (in.readByte() == 0) {
+            maxCapacity = null;
+        } else {
+            maxCapacity = in.readLong();
+        }
+
+        // Read lists
+        lottery = in.createStringArrayList();
+        cancelledList = in.createStringArrayList();
+        confirmedList = in.createStringArrayList();
+
+        // Read waitingList
+        ArrayList<String> waitlistData = in.createStringArrayList();
+        waitingList = new WaitingList(waitlistData);
+
+        // Handle nullable firstDraw
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            firstDraw = in.readBoolean();
+        } else {
+            firstDraw = in.readByte() != 0;
+        }
     }
+
 
 
     /**
@@ -120,7 +147,31 @@ public class Event implements Serializable, Parcelable {
         dest.writeString(posterUrl);
         dest.writeString(QRcode);
         dest.writeString(creatorID);
+
+        // Write nullable maxCapacity
+        if (maxCapacity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(maxCapacity);
+        }
+
+        // Write lists
+        dest.writeStringList(lottery);
+        dest.writeStringList(cancelledList);
+        dest.writeStringList(confirmedList);
+
+        // Write waitingList
+        dest.writeStringList(waitingList.getList());
+
+        // Write nullable firstDraw
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(firstDraw != null && firstDraw);
+        } else {
+            dest.writeByte((byte) (firstDraw != null && firstDraw ? 1 : 0));
+        }
     }
+
 
 
     /**
@@ -383,6 +434,10 @@ public class Event implements Serializable, Parcelable {
         this.lottery = lottery;
     }
 
+    public void removeFromLotteryList(String user) {
+        this.lottery.remove(user);
+    }
+
     public void setFinalEntrantsNum(Long num){
         this.maxCapacity = num;
     }
@@ -418,6 +473,7 @@ public class Event implements Serializable, Parcelable {
     public boolean getFirstDraw(){
         return this.firstDraw;
     }
+
 
     public void setFirstDraw(boolean draw){
         this.firstDraw = draw;

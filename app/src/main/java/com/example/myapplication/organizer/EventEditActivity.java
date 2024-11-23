@@ -5,53 +5,29 @@
 package com.example.myapplication.organizer;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.EventDetailActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.notifications.Notification;
 import com.example.myapplication.objects.Event;
-import com.example.myapplication.objects.Lottery;
-import com.example.myapplication.objects.WaitingList;
-import com.example.myapplication.organizer.OrganizerMainActivity;
-import com.example.myapplication.organizer.OrganizerNotificationActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import javax.microedition.khronos.opengles.GL;
 
 public class EventEditActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -144,10 +120,16 @@ public class EventEditActivity extends AppCompatActivity {
      */
     private void handleLottery() {
             ArrayList<String> waitlist = eventToLoad.getWaitingList();
+            ArrayList<String> confirmedList = eventToLoad.getConfirmedList();
+            Long maxCapacity = eventToLoad.getFinalEntrantsNum();
 
+            Log.d("Lottery","confirm size: " + confirmedList.size());
 
             if (waitlist == null || waitlist.isEmpty()) {
                 showToast("Wait list is empty, cannot make draws");
+                return;
+            } else if (confirmedList.size() == maxCapacity) {
+                showToast("Event is full, cannot make draws");
                 return;
             }
 
@@ -178,8 +160,7 @@ public class EventEditActivity extends AppCompatActivity {
                             eventToLoad.setFinalEntrantsNum(inputLong);
                             eventToLoad.setFirstDraw(false);
                             processLottery();
-                            senNotificationToList("waitlist","Sorry, You lost the lottery");
-                            senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
+
 
                         } catch (NumberFormatException e) {
                             showToast("Invalid Input"); // gives error when something else are typed
@@ -198,10 +179,10 @@ public class EventEditActivity extends AppCompatActivity {
                 showToast("The Lottery is full, Please wait for Entrant response");
             } else {
                 eventToLoad.drawLottery();
-                senNotificationToList("waitlist","Sorry, You lost the lottery");
-                senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the event.");
-                Log.d("Local", "After draw: " + eventToLoad.getWaitingList().toString());
                 updateFirebaseLottery(eventId, eventToLoad);
+                senNotificationToList("lotteryList","Congratulation! You won the lottery. Please confirm you attendance to the following event: " + eventToLoad.getTitle());
+                senNotificationToList("waitlist","Sorry, You lost the lottery for the following event: " + eventToLoad.getTitle());
+                Log.d("Local", "After draw: " + eventToLoad.getWaitingList().toString());
                 showToast("Draw successful!");
 
 
@@ -217,9 +198,10 @@ public class EventEditActivity extends AppCompatActivity {
         }
 
 
-
     /**
-     * This update the firebase fields after the draw
+     * Update firebase after a draw from organizer
+     * @param eventId
+     * @param eventToLoad
      */
     public void updateFirebaseLottery(String eventId, Event eventToLoad) {
         db.collection("events").document(eventId)
@@ -318,7 +300,7 @@ public class EventEditActivity extends AppCompatActivity {
                             }
                         }
 
-                        Toast.makeText(this, "Notifications sent to selected entrants.", Toast.LENGTH_SHORT).show();
+
                     } else {
                         Log.e("NotificationError", "Event document not found for eventId: " + eventId);
                         Toast.makeText(this, "Event not found.", Toast.LENGTH_SHORT).show();

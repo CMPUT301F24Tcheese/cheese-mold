@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
@@ -85,7 +86,16 @@ public class EventActivity extends AppCompatActivity implements EventAdapter.OnE
                 for (QueryDocumentSnapshot doc : value) {
                     Event event = doc.toObject(Event.class);
                     event.setId(doc.getId());
+                    event.setWaitingList((ArrayList<String>) doc.get("waitlist"));
+                    event.setFinalEntrantsNum(doc.getLong("maxCapacity"));
+                    event.setFirstDraw(doc.getBoolean("firstDraw"));
+                    event.setLottery((ArrayList<String>) doc.get("lotteryList"));
+
+                    //Log.d("Local", "Lottery list:" + event.getLottery());
+
                     eventList.add(event);
+
+
                 }
                 eventAdapter.notifyDataSetChanged();
             }
