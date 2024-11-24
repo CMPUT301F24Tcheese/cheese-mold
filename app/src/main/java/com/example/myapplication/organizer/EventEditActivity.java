@@ -128,7 +128,7 @@ public class EventEditActivity extends AppCompatActivity {
             if (waitlist == null || waitlist.isEmpty()) {
                 showToast("Wait list is empty, cannot make draws");
                 return;
-            } else if (confirmedList.size() == maxCapacity) {
+            } else if (confirmedList.size() == maxCapacity && maxCapacity!=0) {
                 showToast("Event is full, cannot make draws");
                 return;
             }

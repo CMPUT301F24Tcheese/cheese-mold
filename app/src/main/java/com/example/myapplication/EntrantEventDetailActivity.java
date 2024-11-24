@@ -99,7 +99,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             updateFirebaseLottery(event.getId(), event);
             senNotificationToList("lotteryList","Congratulation! You won the lottery because an entrant declined the offer. Please confirm you attendance to the following event: " + event.getTitle());
 
-
+            FireStoreRemoveList(event.getId(),user,"cancelledList");
 
             finish();
 
@@ -124,10 +124,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
             finish();;
         });
-
-
     }
-
 
 
     /**
