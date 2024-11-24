@@ -29,4 +29,14 @@
         android:textSize="16sp"
         android:gravity="center"
         android:padding="8dp" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
 </LinearLayout>
