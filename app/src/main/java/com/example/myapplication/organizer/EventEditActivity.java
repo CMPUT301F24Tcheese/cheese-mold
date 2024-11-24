@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,11 +35,10 @@ import java.util.List;
 public class EventEditActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String eventId;
-    private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode, buttonLottery;
+    private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode, buttonLottery, buttonMap;
     private String qrCodeUrl;
     private Button buttonViewLists;
     private Event eventToLoad;
-
 
     /**
      * onCreate function for the edit event activity
@@ -61,6 +63,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
         buttonViewLists = findViewById(R.id.buttonViewLists);
+        buttonMap = findViewById(R.id.buttonMap);
         buttonLottery = findViewById(R.id.button_lottery);
 
         loadEventData(eventId);
@@ -94,6 +97,13 @@ public class EventEditActivity extends AppCompatActivity {
             intent.putExtra("event_id", eventId);
             startActivity(intent);
         });
+
+        buttonMap.setOnClickListener(view -> {
+            Intent intent = new Intent(EventEditActivity.this, MapActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
 
         buttonLottery.setOnClickListener(view -> {
             loadEventData(eventId);
@@ -293,7 +303,7 @@ public class EventEditActivity extends AppCompatActivity {
                                 Notification notification = new Notification(eventToLoad.getCreatorID(),eventId,selectedEntrant,message);
                                 notification.sendNotification();
                                 Log.d("NotificationProcess", "Notification sent to waitlisted entrant: " + selectedEntrant);
-//
+
                             }
                             else{
                                 Toast.makeText(this, "Empty list.", Toast.LENGTH_SHORT).show();
@@ -312,11 +322,6 @@ public class EventEditActivity extends AppCompatActivity {
                 });
 
 
-        }
-
     }
 
-
-
-
-
+}

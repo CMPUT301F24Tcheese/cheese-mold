@@ -109,6 +109,7 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
             options.setPrompt("Scan QR code");
             options.setOrientationLocked(true);
             options.setCaptureActivity(CaptureAct.class);
+            options.setBeepEnabled(false);
 
             barcodeLauncher.launch(options);
         });

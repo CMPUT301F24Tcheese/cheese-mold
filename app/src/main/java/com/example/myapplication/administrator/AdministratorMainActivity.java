@@ -77,6 +77,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
     private RoleActivityController roleActivityController;
     private TextView organizerMainFacilityName, organizerMainFacilityAddress;
     private NotificationController notificationController;
+    private SwipeRefreshLayout facilitySwipeRefreshLayout, eventSwipeRefreshLayout;
 
     /**
      * onCreate function for displaying home page information
@@ -124,6 +125,8 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
         fab = findViewById(R.id.organizerMainAddEventFab);
         organizerMainFacilityName = findViewById(R.id.organizerMainFacilityName);
         organizerMainFacilityAddress = findViewById(R.id.organizerMainFacilityAddress);
+        facilitySwipeRefreshLayout = findViewById(R.id.adminMainFacilitySwipeRefreshLayout);
+        eventSwipeRefreshLayout = findViewById(R.id.adminMainEventSwipeRefreshLayout);
 
 
         facilityEventsView.setLayoutManager(new LinearLayoutManager(this));
@@ -143,6 +146,16 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         notificationController.startListening(device);
 
+        // Refreshes the facility view on swipe
+        facilitySwipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshData(facilityEventList, facilityEventAdapter, true);
+        });
+
+        // Refreshes the event view on swipe
+        eventSwipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshData(joinedEventList, joinedEventAdapter, false);
+        });
+
         notificationBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, NotificationActivity.class));
         });
@@ -152,6 +165,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
             options.setPrompt("Scan QR code");
             options.setOrientationLocked(true);
             options.setCaptureActivity(CaptureAct.class);
+            options.setBeepEnabled(false);
 
             barcodeLauncher.launch(options);
         });
@@ -284,6 +298,27 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
         viewFacilityLayout.setVisibility(View.GONE);
         viewEventsLayout.setVisibility(View.GONE);
         viewBrowseButtonsLayout.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
+     * Refreshes the data displayed in the UI.
+     *
+     * @param eventList The list of events to refresh.
+     * @param adapter   The adapter associated with the RecyclerView.
+     * @param forFacility Whether the refresh is for facility events or joined events.
+     */
+    private void refreshData(ArrayList<Event> eventList, EventAdapter adapter, boolean forFacility) {
+        eventList.clear();
+        adapter.notifyDataSetChanged();
+        if (forFacility) {
+            roleActivityController.loadFacilityEvents(device, adapter, eventList);
+            facilitySwipeRefreshLayout.setRefreshing(false);
+        } else {
+            roleActivityController.loadJoinedEvents(device, adapter, eventList);
+            eventSwipeRefreshLayout.setRefreshing(false);
+        }
+
     }
 
     @Override

@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Material3.Light.NoActionBar"
         tools:targetApi="31">
+        <activity
+            android:name=".organizer.MapActivity"
+            android:exported="false" />
         <activity
             android:name=".EntrantEventDetailActivity"
             android:exported="false" />
@@ -41,6 +45,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Register EntrantMainActivity -->
@@ -103,6 +108,11 @@
             android:theme="@style/zxing_CaptureTheme">
         </activity>
 
+        <service
+            android:name="EventDetailActivity"
+            android:foregroundServiceType="location">
+
+        </service>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
