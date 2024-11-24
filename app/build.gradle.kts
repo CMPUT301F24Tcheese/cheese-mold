@@ -1,3 +1,5 @@
+import org.bouncycastle.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services") // Ensure Google services plugin is applied
@@ -15,6 +17,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        buildConfigField("String", "MAPTILER_API_KEY", "\"hyziky4wFX7lg684aCbZ\"")
     }
 
     buildTypes {
@@ -61,6 +64,9 @@ dependencies {
     // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.espresso.intents)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     testImplementation(libs.ext.junit)
@@ -100,6 +106,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.mapbox.maps:android:10.16.5")
 
 }
 

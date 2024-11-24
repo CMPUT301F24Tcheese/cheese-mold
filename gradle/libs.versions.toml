@@ -13,6 +13,9 @@ firebaseFirestore = "25.1.1"
 junitJupiter = "5.8.1"
 core = "1.6.1"
 espressoIntents = "3.6.1"
+playServicesLocation = "21.3.0"
+navigationFragment = "2.8.1"
+navigationUi = "2.8.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +31,9 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 core = { group = "androidx.test", name = "core", version.ref = "core" }
 espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "espressoIntents" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
