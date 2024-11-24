@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.widget.Button;
@@ -40,9 +41,10 @@ import javax.microedition.khronos.opengles.GL;
 public class EventEditActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String eventId;
-    private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode;
+    private Button buttonEditEventDetail, buttonBack, buttonDeleteEvent,buttonNotification, buttonQrCode, buttonMap;
     private String qrCodeUrl;
     private Button buttonViewLists;
+    private Event event;
 
     /**
      * onCreate function for the edit event activity
@@ -56,6 +58,7 @@ public class EventEditActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         eventId = getIntent().getStringExtra("event_id");
+        event = getIntent().getParcelableExtra("event");
         if (eventId == null || eventId.isEmpty()) {
             Toast.makeText(this, "Event ID not provided", Toast.LENGTH_SHORT).show();
             finish();
@@ -67,6 +70,7 @@ public class EventEditActivity extends AppCompatActivity {
         buttonNotification = findViewById(R.id.buttonNotification);
         buttonQrCode = findViewById(R.id.buttonQRCode);
         buttonViewLists = findViewById(R.id.buttonViewLists);
+        buttonMap = findViewById(R.id.buttonMap);
 
         loadEventData(eventId);
 
@@ -97,6 +101,12 @@ public class EventEditActivity extends AppCompatActivity {
         buttonEditEventDetail.setOnClickListener(view -> {
             Intent intent = new Intent(EventEditActivity.this, EditEventDetailActivity.class);
             intent.putExtra("event_id", eventId);
+            startActivity(intent);
+        });
+
+        buttonMap.setOnClickListener(view -> {
+            Intent intent = new Intent(EventEditActivity.this, MapActivity.class);
+            intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
     }
