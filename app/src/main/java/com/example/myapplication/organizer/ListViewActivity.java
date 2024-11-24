@@ -1,6 +1,7 @@
 package com.example.myapplication.organizer;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,9 @@ public class ListViewActivity extends AppCompatActivity {
         listAdapter = new ListAdapter(dataList);
         recyclerView.setAdapter(listAdapter);
 
+        Button backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> finish());
+
         String listType = getIntent().getStringExtra("listType");
         String eventId = getIntent().getStringExtra("event_id");
 
@@ -57,6 +61,8 @@ public class ListViewActivity extends AppCompatActivity {
             title = "Invited List";
         } else if ("cancelled".equals(listType)) {
             title = "Cancelled List";
+        } else if ("confirmed".equals(listType)) {
+            title = "Confirmed List";
         }
         titleTextView.setText(title);
     }
@@ -132,6 +138,8 @@ public class ListViewActivity extends AppCompatActivity {
                 return "cancelledList";
             case "invited":
                 return "lotteryList";
+            case "confirmed":
+                return "confirmedList";
             default:
                 System.out.println("Invalid listType: " + listType);
                 return null;

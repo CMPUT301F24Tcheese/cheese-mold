@@ -17,6 +17,9 @@ public class ListOptionsActivity extends AppCompatActivity {
         findViewById(R.id.btn_waiting_list).setOnClickListener(v -> openListPage(eventId, "waiting"));
         findViewById(R.id.btn_invited_list).setOnClickListener(v -> openListPage(eventId, "invited"));
         findViewById(R.id.btn_cancelled_list).setOnClickListener(v -> openListPage(eventId, "cancelled"));
+        findViewById(R.id.btn_confirmed_list).setOnClickListener(v -> openListPage(eventId, "confirmed"));
+
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
     private void openListPage(String eventId, String listType) {
