@@ -277,13 +277,18 @@ public class OrganizerMainActivity extends AppCompatActivity implements EventAda
 
     @Override
     public void onEventClick(Event event) {
-        Intent intent = isFacilityView ?
-                new Intent(OrganizerMainActivity.this, EventEditActivity.class) :
-                new Intent(OrganizerMainActivity.this, EntrantEventDetailActivity.class);
 
-        intent.putExtra("event_id", event.getId());
-        intent.putExtra("event", (Parcelable) event);
-        startActivity(intent);
+        Intent intent1;
+        if (isFacilityView){
+            intent1 = new Intent(new Intent(OrganizerMainActivity.this, EventEditActivity.class));
+            intent1.putExtra("event_id", event.getId());
+        }
+        else {
+            intent1 = new Intent(OrganizerMainActivity.this, EntrantEventDetailActivity.class);
+            intent1.putExtra("event", (Parcelable) event);
+        }
+
+        startActivity(intent1);
     }
 
     @Override

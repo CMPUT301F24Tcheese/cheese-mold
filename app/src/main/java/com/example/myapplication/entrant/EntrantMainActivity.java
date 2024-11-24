@@ -57,6 +57,7 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
     private NotificationController notificationController;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Call the parent class's onCreate method to initialize the activity
@@ -69,6 +70,8 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
                         new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
+
+
 
         setContentView(R.layout.activity_entrant_main); // Set the layout for the main activity screen
         roleActivityController = new RoleActivityController(this);
@@ -142,6 +145,8 @@ public class EntrantMainActivity extends AppCompatActivity implements EventAdapt
         Intent intent =  new Intent(EntrantMainActivity.this, EntrantEventDetailActivity.class); // Create an intent to open the EventEditActivity.
         intent.putExtra("device",device);
         intent.putExtra("event", (Parcelable) event);
+
+        Log.d("Local","Lottery List Before: " + event.getLottery());
         startActivity(intent);
     }
 

@@ -17,6 +17,24 @@
         android:layout_height="match_parent">
 
         <Button
+            android:id="@+id/button_decline"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:text="Decline"
+            app:icon="@android:drawable/ic_menu_close_clear_cancel"
+            app:iconTint="#E91E1E"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/entrantEventDetailUnjoin"
+            app:layout_constraintHorizontal_bias="0.041"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailCancel"
+            android:visibility="gone"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
             android:id="@+id/entrantEventDetailUnjoin"
             android:layout_width="140dp"
             android:layout_height="50dp"
@@ -27,20 +45,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailName"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.849" />
 
         <Button
             android:id="@+id/entrantEventDetailCancel"
             android:layout_width="140dp"
             android:layout_height="50dp"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="28dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="48dp"
             android:text="Cancel"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/entrantEventDetailUnjoin"
+            app:layout_constraintHorizontal_bias="0.041"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailName"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.849" />
 
         <TextView
             android:id="@+id/entrantEventDetailName"
@@ -57,8 +77,8 @@
 
         <TextView
             android:id="@+id/entrantEventDetailDescription"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
+            android:layout_width="351dp"
+            android:layout_height="259dp"
             android:layout_marginTop="20dp"
             android:text="Description"
             android:textSize="18sp"
@@ -76,6 +96,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/common_full_open_on_phone" />
+
+        <Button
+            android:id="@+id/button_confirm"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="28dp"
+            android:text="Confirm"
+            app:icon="@android:drawable/ic_input_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/entrantEventDetailUnjoin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -89,6 +89,13 @@ public class RoleActivityController {
                     Event event = documentSnapshot.toObject(Event.class);
                     if (event != null) {
                         event.setId(documentSnapshot.getId());
+                        event.setId(documentSnapshot.getId());
+                        event.setWaitingList((ArrayList<String>) documentSnapshot.get("waitlist"));
+                        event.setFinalEntrantsNum(documentSnapshot.getLong("maxCapacity"));
+                        event.setFirstDraw(documentSnapshot.getBoolean("firstDraw"));
+                        event.setLottery((ArrayList<String>) documentSnapshot.get("lotteryList"));
+
+                        Log.d("Local", "Lottery list:" + event.getLottery());
                         eventList.add(event);
                         eventAdapter.notifyDataSetChanged();
                     }

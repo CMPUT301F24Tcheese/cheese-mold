@@ -15,6 +15,7 @@ public class EventTest {
     }
 
 
+
     // Test for Event WaitingList
     @Test
     /**
@@ -202,5 +203,36 @@ public class EventTest {
         Event event = mockEvent();
         event.setCreatorID("Creator123");
         assertEquals("Creator123", event.getCreatorID());
+    }
+
+    /**
+     * Testing lottery draw
+     */
+    @Test
+    public void testLotteryDraw(){
+        Event event = mockEvent();
+        ArrayList<String> waitlist = event.getWaitingList();
+        ArrayList<String> lottery = event.getLottery();
+
+        waitlist.add("1");
+        waitlist.add("2");
+        waitlist.add("3");
+
+        System.out.println("Lottery entries: " + lottery);
+        System.out.println("Remaining waiting list: " + waitlist + "\n");
+
+        // before the draw.
+        assertEquals(0,lottery.size());
+
+        event.setFinalEntrantsNum(2L);
+        event.drawLottery();
+        assertEquals(1,waitlist.size());
+
+        // after the draw
+        assertEquals(2,lottery.size());
+
+        System.out.println("Lottery entries: " + lottery);
+        System.out.println("Remaining waiting list: " + waitlist + "\n");
+
     }
 }
