@@ -7,7 +7,6 @@ import com.google.type.DateTime;
  * The Facility class represents a facility
  */
 public class Facility {
-    private String creatorId;
     private String name;
     private String id;
     private String street;
@@ -38,15 +37,6 @@ public class Facility {
         this.street = street;
         this.city = city;
         this.province = province;
-    }
-
-
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
     }
 
     public String getName() {

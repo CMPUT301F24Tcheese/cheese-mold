@@ -57,6 +57,8 @@ public class ListViewActivity extends AppCompatActivity {
             title = "Invited List";
         } else if ("cancelled".equals(listType)) {
             title = "Cancelled List";
+        } else if ("confirmed".equals(listType)) {
+            title = "Confirmed List";
         }
         titleTextView.setText(title);
     }
@@ -132,6 +134,8 @@ public class ListViewActivity extends AppCompatActivity {
                 return "cancelledList";
             case "invited":
                 return "lotteryList";
+            case "confirmed":
+                return "confirmedList";
             default:
                 System.out.println("Invalid listType: " + listType);
                 return null;

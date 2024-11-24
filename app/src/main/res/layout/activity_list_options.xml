@@ -3,25 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_invited_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Invited List" />
+
+        <Button
+            android:id="@+id/btn_cancelled_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Cancelled List"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btn_waiting_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Waiting List"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btn_confirmed_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Confirmed List"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/btn_invited_list"
+        android:id="@+id/btn_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Invited Entrants" />
-
-    <Button
-        android:id="@+id/btn_cancelled_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Cancelled Entrants"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/btn_waiting_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Waiting List"
-        android:layout_marginTop="8dp" />
+        android:text="Back"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/white"
+        android:textColor="@color/white" />
 </LinearLayout>

@@ -35,16 +35,6 @@ public class FacilityTest {
     }
 
     /**
-     * Tests the setCreatorId and getCreatorId methods.
-     */
-    @Test
-    public void testSetAndGetCreatorId() {
-        Facility facility = new Facility();
-        facility.setCreatorId("creator123");
-        assertEquals("creator123", facility.getCreatorId());
-    }
-
-    /**
      * Tests the setName and getName methods.
      */
     @Test

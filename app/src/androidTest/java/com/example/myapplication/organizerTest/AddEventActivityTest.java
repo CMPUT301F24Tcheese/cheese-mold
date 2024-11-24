@@ -39,11 +39,11 @@ public class AddEventActivityTest {
         onView(withId(R.id.editTextEventName)).check(matches(withText("Sample Event")));
 
         // Enter event description
-        onView(withId(R.id.editTextEventDescription)).perform(typeText("This is a test description for the event."));
+        onView(withId(R.id.editTextEventDescription)).perform(replaceText("This is a test description for the event."));
         onView(withId(R.id.editTextEventDescription)).check(matches(withText("This is a test description for the event.")));
 
         // Set the event entrant limit
-        onView(withId(R.id.editTextLimitEntrants)).perform(typeText("100"));
+        onView(withId(R.id.editTextLimitEntrants)).perform(replaceText("100"));
         onView(withId(R.id.editTextLimitEntrants)).check(matches(withText("100")));
     }
 

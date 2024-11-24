@@ -159,9 +159,8 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * This method check if the event name created is unique, preventing same event name
-     */
+
+
     private void checkEventNameUnique() {
         String eventName = editTextEventName.getText().toString().trim();
 
@@ -169,28 +168,10 @@ public class AddEventActivity extends AppCompatActivity {
             Toast.makeText(this, "Event name is required", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        db.collection("events").whereEqualTo("name", eventName)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        boolean isDuplicate = false;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.exists()) {
-                                isDuplicate = true;
-                                break;
-                            }
-                        }
-                        if (isDuplicate) {
-                            Toast.makeText(AddEventActivity.this, "Event name already exists. Please choose a different name.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            saveEvent();
-                        }
-                    } else {
-                        Toast.makeText(AddEventActivity.this, "Error checking event name uniqueness", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        // Event name can now be duplicated; directly proceed to save the event
+        saveEvent();
     }
+
 
     /**
      * This method saves the event and upload it to database

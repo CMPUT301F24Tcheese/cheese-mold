@@ -60,6 +60,7 @@ dependencies {
 
     // Glide library for profile picture
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.espresso.intents)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.core)
     testImplementation(libs.ext.junit)
