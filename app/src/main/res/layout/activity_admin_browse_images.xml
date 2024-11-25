@@ -14,11 +14,36 @@
         android:paddingVertical="10dp">
 
         <Button
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingVertical="4dp"
-            android:text="Back"/>
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/baseline_mail_outline_24"
+            android:id="@+id/notificationBtn"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true">
+        </Button>
+
+        <Button
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/qrCodeBtn"
+            android:background="@drawable/baseline_qr_code_scanner_24"
+            android:layout_gravity="start"
+            android:layout_marginStart="40dp"
+            android:layout_centerVertical="true"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/updateProfileImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:background="@drawable/circular_image_background"
+            android:focusable="true"
+            android:src="@drawable/baseline_person_outline_24"
+            android:clickable="true"
+            android:scaleType="centerCrop"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:shapeAppearanceOverlay="@style/CircularImageView"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -96,6 +121,14 @@
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="4dp"
+            android:text="Back"
+            android:layout_gravity="end|bottom"/>
 
     </FrameLayout>
 

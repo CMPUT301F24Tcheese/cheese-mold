@@ -7,21 +7,32 @@
 
 package com.example.myapplication.administrator;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.administrator.fragments.DeleteFacilityFragment;
+import com.example.myapplication.controllers.NotificationController;
+import com.example.myapplication.controllers.RoleActivityController;
+import com.example.myapplication.entrant.CaptureAct;
+import com.example.myapplication.entrant.NotificationActivity;
 import com.example.myapplication.objects.Facility;
 import com.example.myapplication.objects.FacilityArrayAdapter;
+import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +42,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 
@@ -41,6 +54,14 @@ public class AdminBrowseFacilities extends AppCompatActivity implements DeleteFa
     private ListView facilityList;
     private FacilityArrayAdapter facilityAdapter;
     private ArrayList<Facility> dataList;
+    private Button notificationBtn;
+    private Button qrCodeBtn;
+    private ImageView updateProfileImg;
+    private NotificationController notificationController;
+    private RoleActivityController roleActivityController;
+    private String device;
+
+
 
     /**
      * Method to delete facilities that violate app policy
@@ -115,7 +136,13 @@ public class AdminBrowseFacilities extends AppCompatActivity implements DeleteFa
         setContentView(R.layout.activity_admin_browse);
         db = FirebaseFirestore.getInstance();
 
+        roleActivityController = new RoleActivityController(this);
+        notificationController = new NotificationController(this);
+
         back = findViewById(R.id.back_button);
+        notificationBtn = findViewById(R.id.notificationBtn);
+        qrCodeBtn = findViewById(R.id.qrCodeBtn);
+        updateProfileImg = findViewById(R.id.updateProfileImg);
 
         header = findViewById(R.id.browseHeader);
         header.setText("FACILITIES");
@@ -125,6 +152,29 @@ public class AdminBrowseFacilities extends AppCompatActivity implements DeleteFa
         facilityList = findViewById(R.id.contentListView);
         facilityAdapter = new FacilityArrayAdapter(this, dataList);
         facilityList.setAdapter(facilityAdapter);
+
+        device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        notificationController.startListening(device);
+        roleActivityController.getData(device, updateProfileImg);
+
+        notificationBtn.setOnClickListener(view -> {
+            startActivity(new Intent(AdminBrowseFacilities.this, NotificationActivity.class));
+        });
+
+        // Set a click listener on the update profile button
+        updateProfileImg.setOnClickListener(view -> {
+            startActivity(new Intent(AdminBrowseFacilities.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
+        });
+
+        qrCodeBtn.setOnClickListener(view -> {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Scan QR code");
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(CaptureAct.class);
+            options.setBeepEnabled(false);
+
+            barcodeLauncher.launch(options);
+        });
 
         // searching firebase to get all existing facility information
         db.collection("Facilities").get()
@@ -162,6 +212,19 @@ public class AdminBrowseFacilities extends AppCompatActivity implements DeleteFa
             }
         });
     }
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() == null) {
+            Toast.makeText(AdminBrowseFacilities.this, "Cancelled", Toast.LENGTH_SHORT).show();
+        } else {
+            String scannedUrl = result.getContents();
+            if (scannedUrl.startsWith("myapp://event")) {
+                Toast.makeText(AdminBrowseFacilities.this, "Scan Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scannedUrl));
+                startActivity(intent);
+            }
+        }
+    });
 
 
 }

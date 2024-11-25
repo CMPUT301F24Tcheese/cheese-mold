@@ -5,16 +5,22 @@
  */
 package com.example.myapplication.administrator;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +29,12 @@ import com.example.myapplication.administrator.ImageArrayAdapter;
 import com.example.myapplication.administrator.fragments.DeletePosterFragment;
 import com.example.myapplication.administrator.fragments.DeleteProfilePicFragment;
 import com.example.myapplication.administrator.fragments.DeleteQRCodeFragment;
+import com.example.myapplication.controllers.NotificationController;
+import com.example.myapplication.controllers.RoleActivityController;
+import com.example.myapplication.entrant.CaptureAct;
+import com.example.myapplication.entrant.NotificationActivity;
 import com.example.myapplication.objects.QRCode;
+import com.example.myapplication.users.UpdateProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,6 +44,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +66,14 @@ public class AdminBrowseImages extends AppCompatActivity implements DeletePoster
     private ArrayList<Image> dataListProfiles;
     private ArrayList<Image> dataListPosters;
     private Image del;
+    private Button notificationBtn;
+    private Button qrCodeBtn;
+    private ImageView updateProfileImg;
+    private NotificationController notificationController;
+    private RoleActivityController roleActivityController;
+    private String device;
+
+
 
     @Override
     public void DeletePoster(Image image) {
@@ -113,7 +134,14 @@ public class AdminBrowseImages extends AppCompatActivity implements DeletePoster
         setContentView(R.layout.activity_admin_browse_images);
         db = FirebaseFirestore.getInstance();
 
+        roleActivityController = new RoleActivityController(this);
+        notificationController = new NotificationController(this);
+
         back = findViewById(R.id.back_button);
+        notificationBtn = findViewById(R.id.notificationBtn);
+        qrCodeBtn = findViewById(R.id.qrCodeBtn);
+        updateProfileImg = findViewById(R.id.updateProfileImg);
+
 
         dataListProfiles = new ArrayList<Image>();
         dataListPosters = new ArrayList<Image>();
@@ -131,6 +159,10 @@ public class AdminBrowseImages extends AppCompatActivity implements DeletePoster
 
         posters = findViewById(R.id.viewPostersLayout);
         profiles = findViewById(R.id.viewProfilesLayout);
+
+        device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        notificationController.startListening(device);
+        roleActivityController.getData(device, updateProfileImg);
 
         showPosters();
 
@@ -163,7 +195,39 @@ public class AdminBrowseImages extends AppCompatActivity implements DeletePoster
                 return false;
             }
         });
+
+        notificationBtn.setOnClickListener(view -> {
+            startActivity(new Intent(AdminBrowseImages.this, NotificationActivity.class));
+        });
+
+        // Set a click listener on the update profile button
+        updateProfileImg.setOnClickListener(view -> {
+            startActivity(new Intent(AdminBrowseImages.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
+        });
+
+        qrCodeBtn.setOnClickListener(view -> {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Scan QR code");
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(CaptureAct.class);
+            options.setBeepEnabled(false);
+
+            barcodeLauncher.launch(options);
+        });
     }
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() == null) {
+            Toast.makeText(AdminBrowseImages.this, "Cancelled", Toast.LENGTH_SHORT).show();
+        } else {
+            String scannedUrl = result.getContents();
+            if (scannedUrl.startsWith("myapp://event")) {
+                Toast.makeText(AdminBrowseImages.this, "Scan Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scannedUrl));
+                startActivity(intent);
+            }
+        }
+    });
 
     /**
      * set posters to visible and profiles to invisible
