@@ -78,6 +78,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
     private TextView organizerMainFacilityName, organizerMainFacilityAddress;
     private NotificationController notificationController;
     private SwipeRefreshLayout facilitySwipeRefreshLayout, eventSwipeRefreshLayout;
+    private ImageView updateProfileImg;
 
     /**
      * onCreate function for displaying home page information
@@ -127,6 +128,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
         organizerMainFacilityAddress = findViewById(R.id.organizerMainFacilityAddress);
         facilitySwipeRefreshLayout = findViewById(R.id.adminMainFacilitySwipeRefreshLayout);
         eventSwipeRefreshLayout = findViewById(R.id.adminMainEventSwipeRefreshLayout);
+        updateProfileImg = findViewById(R.id.updateProfileImg);
 
 
         facilityEventsView.setLayoutManager(new LinearLayoutManager(this));
@@ -145,6 +147,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
 
         device = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         notificationController.startListening(device);
+        roleActivityController.getData(device, updateProfileImg);
 
         // Refreshes the facility view on swipe
         facilitySwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -158,6 +161,11 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
 
         notificationBtn.setOnClickListener(view -> {
             startActivity(new Intent(AdministratorMainActivity.this, NotificationActivity.class));
+        });
+
+        // Set a click listener on the update profile button
+        updateProfileImg.setOnClickListener(view -> {
+            startActivity(new Intent(AdministratorMainActivity.this, UpdateProfileActivity.class)); // Navigate to the update profile screen
         });
 
         qrCodeBtn.setOnClickListener(view -> {
@@ -335,6 +343,7 @@ public class AdministratorMainActivity extends AppCompatActivity implements Even
     @Override
     protected void onResume() {
         super.onResume();
+        roleActivityController.getData(device, updateProfileImg);
         if (isFacilityView) {
             showFacilityView();
         } else {
