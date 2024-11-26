@@ -9,7 +9,7 @@
         android:id="@+id/button_lottery"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonViewLists"
+        android:layout_below="@+id/buttonMap"
         android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:text="Lottery Draw"
@@ -82,5 +82,7 @@
         android:layout_weight="1"
         android:text="Entrant Map"
         android:textColor="#FFFFFF" />
+
+
 
 </RelativeLayout>
