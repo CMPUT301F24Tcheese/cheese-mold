@@ -463,7 +463,7 @@ public class Event implements Serializable, Parcelable {
         Random rand = new Random();
 
         // If maxCapacity exceeds available users, use all users in the waiting list
-        int drawSize = Math.min(maxCapacity.intValue(), waitingList.getList().size());
+        int drawSize = maxCapacity.intValue() - confirmedList.size();
 
         Log.d("drawLottery", "Starting lottery with maxCapacity: " + maxCapacity);
         Log.d("drawLottery", "Waiting list size: " + waitingList.getList().size());
