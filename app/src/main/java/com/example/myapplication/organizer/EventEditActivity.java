@@ -157,7 +157,7 @@ public class EventEditActivity extends AppCompatActivity {
      */
     private void promptForCapacity() {
             EditText input = new EditText(this);
-            input.setHint("Type something...");
+            input.setHint("Number of entrants");
             input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
 
             new AlertDialog.Builder(this)
