@@ -187,10 +187,7 @@ public class AddEventActivity extends AppCompatActivity {
             return;
         }
 
-        if (!isPositiveInteger(limitEntrants)) {
-            Toast.makeText(this, "Entrant limit must be a positive number.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
 
         boolean geolocationEnabled = switchGeolocation.isChecked();
 
@@ -198,11 +195,21 @@ public class AddEventActivity extends AppCompatActivity {
         event.put("name", eventName);
         event.put("description", eventDescription);
         event.put("dateTime", eventDateTime);
-        event.put("limitEntrants", Integer.parseInt(limitEntrants));
         event.put("geolocationEnabled", geolocationEnabled);
         event.put("creatorID", device);
         event.put("firstDraw",true);
         event.put("maxCapacity",0L);
+
+        if (!TextUtils.isEmpty(limitEntrants)) {
+            if (!isPositiveInteger(limitEntrants)) {
+                Toast.makeText(this, "Entrant limit must be a positive number.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            event.put("limitEntrants", Integer.parseInt(limitEntrants));
+        }
+        else {
+            event.put("limitEntrants", null);
+        }
 
         ArrayList<String> waitlist = new ArrayList<>();
         ArrayList<String> cancelledList = new ArrayList<>();
