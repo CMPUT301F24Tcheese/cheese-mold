@@ -196,7 +196,7 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
      */
     private void FireStoreAddEventId(String eventId, String device) {
         db.collection("users").document(device)
-                .update("Event List", FieldValue.arrayUnion(eventId), "location")
+                .update("Event List", FieldValue.arrayUnion(eventId))
                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Element added to array"))
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding element to array", e));
     }
