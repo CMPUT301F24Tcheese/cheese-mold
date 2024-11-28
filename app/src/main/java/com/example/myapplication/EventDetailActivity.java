@@ -289,6 +289,9 @@ public class EventDetailActivity extends AppCompatActivity implements GeoAlertDi
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                attemptToJoinWaitingList(eventToLoad.getId(), user);
             }
         } else {
             Log.e("EventDetailActivity", "Event is null in onJoinClicked");
