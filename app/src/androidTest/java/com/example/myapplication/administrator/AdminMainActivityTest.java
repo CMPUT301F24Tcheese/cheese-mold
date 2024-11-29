@@ -36,9 +36,8 @@ public class AdminMainActivityTest {
      */
     @Test
     public void testFacilitiesButton() {
-    //    onView(withId(R.id.browseFacilitiesBtn)).perform(click());
-    //    onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-    //    onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.browseFacilitiesBtn)).perform(click());
+        onView(withId(R.id.adminContentFrame)).check(matches(isDisplayed()));
     }
 
     /**
@@ -47,8 +46,7 @@ public class AdminMainActivityTest {
     @Test
     public void testProfilesButton() {
         onView(withId(R.id.browseProfilesBtn)).perform(click());
-        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-        onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.adminContentFrame)).check(matches(isDisplayed()));
     }
 
     /**
@@ -57,8 +55,7 @@ public class AdminMainActivityTest {
     @Test
     public void testEventsButton() {
         onView(withId(R.id.browseEventsBtn)).perform(click());
-        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-        onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.adminContentFrame)).check(matches(isDisplayed()));
     }
 
     /**
@@ -67,7 +64,7 @@ public class AdminMainActivityTest {
     @Test
     public void testImagesButton() {
         onView(withId(R.id.browseImagesBtn)).perform(click());
-        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.imagesContentFrame)).check(matches(isDisplayed()));
     }
 
     /**
@@ -76,8 +73,7 @@ public class AdminMainActivityTest {
     @Test
     public void testQRCodeButton() {
         onView(withId(R.id.browseQRcodesBtn)).perform(click());
-        onView(withId(R.id.browseHeader)).check(matches(isDisplayed()));
-        onView(withId(R.id.contentListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.adminContentFrame)).check(matches(isDisplayed()));
     }
 
 }

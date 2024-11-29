@@ -50,14 +50,11 @@ public class AdminBrowseImagesTest {
     public void testBackButton() {
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // verify we've entered the appropriate view before going back
-        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.postersTextView)).check(matches(isDisplayed()));
+        // leave the poster view
         onView(withId(R.id.back_button)).perform(click());
-        // confirms we have left the events view
-        onView(withId(R.id.posterListView)).check(doesNotExist());
-        onView(withId(R.id.profileListView)).check(doesNotExist());
-        onView(withId(R.id.browseHeader)).check(doesNotExist());
         //confirms we have arrived back at the administrator main activity
-        onView(withId(R.id.welcomeTextView)).check(matches(isDisplayed()));
+        onView(withId(R.id.browseImagesBtn)).check(matches(isDisplayed()));
     }
 
     /**
@@ -68,19 +65,19 @@ public class AdminBrowseImagesTest {
     public void testProfileAndPosterTabs() {
         onView(withId(R.id.browseImagesBtn)).perform(click());
         // verify we've entered the appropriate view before going back
-        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.viewPostersLayout)).check(matches(isDisplayed()));
 
         // click on the profiles tab
         onView(withId(R.id.profilesTextView)).perform(click());
 
         // verify tab has switched correctly
-        onView(withId(R.id.profileListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.viewProfilesLayout)).check(matches(isDisplayed()));
 
         // switch back to the poster tab
         onView(withId(R.id.postersTextView)).perform(click());
 
         // verify tab has switched back
-        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.viewPostersLayout)).check(matches(isDisplayed()));
     }
 
     /**
@@ -148,7 +145,7 @@ public class AdminBrowseImagesTest {
         onView(withText("Cancel")).perform(click());
 
         // verify view hasn't changed
-        onView(withId(R.id.profileListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.profilesTextView)).check(matches(isDisplayed()));
 
         // delete test items
         deleteTestItems();
@@ -196,7 +193,7 @@ public class AdminBrowseImagesTest {
         onView(withText("Delete")).perform(click());
 
         // checking if image has been removed
-        onView(withId(R.id.profileListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.profilesTextView)).check(matches(isDisplayed()));
         onView(withText("Test Person")).check(matches(isDisplayed()));
 
         // delete test items
@@ -220,7 +217,7 @@ public class AdminBrowseImagesTest {
         onView(withText("Delete")).perform(click());
 
         // checking if image has been removed
-        onView(withId(R.id.posterListView)).check(matches(isDisplayed()));
+        onView(withId(R.id.postersTextView)).check(matches(isDisplayed()));
         onView(withText("Test event")).check(doesNotExist());
 
         // delete test items
