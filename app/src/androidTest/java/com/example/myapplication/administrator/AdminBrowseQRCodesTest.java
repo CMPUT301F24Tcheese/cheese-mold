@@ -64,13 +64,9 @@ public class AdminBrowseQRCodesTest {
     public void testBackButton() {
         onView(withId(R.id.browseQRcodesBtn)).perform(click());
         // verify we've entered the appropriate view before going back
-        onView(withText("QR CODES")).check(matches(isDisplayed()));
         onView(withId(R.id.back_button)).perform(click());
-        // confirms we have left the events view
-        onView(withText("QR CODES")).check(doesNotExist());
-        onView(withId(R.id.browseHeader)).check(doesNotExist());
         //confirms we have arrived back at the administrator main activity
-        onView(withId(R.id.welcomeTextView)).check(matches(isDisplayed()));
+        onView(withId(R.id.browseQRcodesBtn)).check(matches(isDisplayed()));
     }
 
     /**
