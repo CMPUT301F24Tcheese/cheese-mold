@@ -33,7 +33,7 @@
                 android:textColor="@color/lavender"
                 android:textStyle="bold"/>
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:id="@+id/profilePicture"
@@ -44,7 +44,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="@drawable/circular_image_background"
-                android:contentDescription="Profile Picture"/>
+                android:contentDescription="Profile Picture"
+                app:shapeAppearanceOverlay="@style/CircularImageView"/>
 
 
             <Spinner

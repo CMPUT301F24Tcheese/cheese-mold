@@ -121,7 +121,7 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
             FireStoreRemoveList(event.getId(), user, "waitlist");
             FireStoreRemoveeventId(event.getId(), user);
             Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
-            finish();;
+            finish();
         });
     }
 
