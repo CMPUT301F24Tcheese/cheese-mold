@@ -167,6 +167,9 @@ public class EventEditActivity extends AppCompatActivity {
                     .setPositiveButton("Confirm", (dialog, which) -> {
                         try {
                             long inputLong = Long.parseLong(input.getText().toString());
+                            if (inputLong > eventToLoad.getWaitingList().size()) {
+                                inputLong = eventToLoad.getWaitingList().size();
+                            }
                             eventToLoad.setFinalEntrantsNum(inputLong);
                             eventToLoad.setFirstDraw(false);
                             processLottery();
