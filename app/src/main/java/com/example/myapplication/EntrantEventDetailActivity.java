@@ -69,6 +69,15 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
         if (event.getLottery().contains(user)){
             buttonConfirm.setVisibility(View.VISIBLE);
             buttonDecline.setVisibility(View.VISIBLE);
+
+        }
+
+
+
+        // Make unjoin invisible if they joined the event
+        if (event.getConfirmedList().contains(user)){
+            unjoinEvent.setVisibility(View.GONE);
+
         }
 
         else {
@@ -118,10 +127,16 @@ public class EntrantEventDetailActivity extends AppCompatActivity {
         });
 
         unjoinEvent.setOnClickListener(view -> {
-            FireStoreRemoveList(event.getId(), user, "waitlist");
-            FireStoreRemoveeventId(event.getId(), user);
-            Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
-            finish();;
+            if (event.getLottery().contains(user)){
+                Toast.makeText(EntrantEventDetailActivity.this,"You cannot unjoin, please confirm or decline your offer.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                FireStoreRemoveList(event.getId(), user, "waitlist");
+                FireStoreRemoveeventId(event.getId(), user);
+                Toast.makeText(EntrantEventDetailActivity.this, "Unjoined " + event.getTitle(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
         });
     }
 
