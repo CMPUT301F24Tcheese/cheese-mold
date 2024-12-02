@@ -1,3 +1,7 @@
+/**
+ * Activity for editing existing event, involving database information update,
+ * poster update and event deletion
+ */
 package com.example.myapplication.organizer;
 
 import android.app.DatePickerDialog;
