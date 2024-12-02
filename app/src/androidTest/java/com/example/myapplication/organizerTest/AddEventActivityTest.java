@@ -1,9 +1,10 @@
 package com.example.myapplication.organizerTest;
 
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -35,17 +36,21 @@ public class AddEventActivityTest {
     @Test
     public void testEnterEventDetails() {
         // Enter event name
-        onView(withId(R.id.editTextEventName)).perform(typeText("Sample Event"));
+        onView(withId(R.id.editTextEventName))
+                .perform(typeText("Sample Event"), closeSoftKeyboard());
         onView(withId(R.id.editTextEventName)).check(matches(withText("Sample Event")));
 
         // Enter event description
-        onView(withId(R.id.editTextEventDescription)).perform(replaceText("This is a test description for the event."));
+        onView(withId(R.id.editTextEventDescription))
+                .perform(replaceText("This is a test description for the event."), closeSoftKeyboard());
         onView(withId(R.id.editTextEventDescription)).check(matches(withText("This is a test description for the event.")));
 
         // Set the event entrant limit
-        onView(withId(R.id.editTextLimitEntrants)).perform(replaceText("100"));
+        onView(withId(R.id.editTextLimitEntrants))
+                .perform(replaceText("100"), closeSoftKeyboard());
         onView(withId(R.id.editTextLimitEntrants)).check(matches(withText("100")));
     }
+
 
     @Test
     public void testSetEventDateTime() {
