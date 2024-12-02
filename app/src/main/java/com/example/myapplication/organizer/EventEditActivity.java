@@ -1,6 +1,6 @@
 /**
- * Activity for editing existing event, involving database information update,
- * poster update and event deletion
+ * Activity for displaying all the information related to the selected event
+ * including event editing, QR code display, lists of entrants. etc.
  */
 package com.example.myapplication.organizer;
 
