@@ -1,6 +1,8 @@
 # Event Mate
 Welcome to Event Mate, an event management android app
 
+https://github.com/user-attachments/assets/92843720-cec2-4448-ab63-e9cc77cf5203
+
 # Team Members
 | CCID          | GitHub Username |
 | ------------- |-----------------|
